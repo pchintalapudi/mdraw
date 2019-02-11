@@ -172,3 +172,5 @@ class Bond {
     return new Bond(this._start, this._end, this.id);
   }
 }
+
+export {RGroup, Bond, BondState}

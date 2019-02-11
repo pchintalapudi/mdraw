@@ -3,12 +3,15 @@
         "outDir": "./dist/",
         "noImplicitThis": true,
         "noImplicitAny": true,
-        "strict":true,
+        "strict": true,
         "module": "es6",
         "moduleResolution": "node",
         "target": "es5",
         "lib": ["es5", "es6", "dom"],
         "allowJs": true,
         "sourceMap": true
-    }
+    },
+    "include": [
+        "./src/**/*"
+    ]
 }
