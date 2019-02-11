@@ -23,7 +23,7 @@ class PeriodicTableElement {
 }
 
 function initElements(): PeriodicTableElement[] {
-  let implArr: PeriodicTableElement[];
+  let implArr: PeriodicTableElement[] = [];
   Elements.elements.forEach(e => implArr.push(new PeriodicTableElement(e)));
   return implArr;
 }

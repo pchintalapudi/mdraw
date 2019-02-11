@@ -2,12 +2,12 @@ import { PeriodicTableElement } from "./element";
 
 class RGroup {
   private _payload: PeriodicTableElement;
-  private _bonds: Map<number, Bond>;
-  private _charge: number;
-  private _x: number;
-  private _y: number;
+  private _bonds = new Map<number, Bond>();
+  private _charge: number = 0;
+  private _x: number = 0;
+  private _y: number = 0;
   public readonly id: number;
-  public shouldUpdate: boolean;
+  public shouldUpdate: boolean = true;
   private static idGen: number = 0;
 
   constructor(payload: PeriodicTableElement) {
@@ -65,10 +65,10 @@ class RGroup {
       if (!val.contains(this)) {
         let bond = val.clone();
         bond.replace(other, this, false);
-        bond.getPeer(this)._bonds.set(bond.id, bond);
+        bond.getPeer(this)!._bonds.set(bond.id, bond);
         this._bonds.set(bond.id, bond);
       } else {
-          this._bonds.delete(val.id);
+        this._bonds.delete(val.id);
       }
     });
   }
@@ -77,9 +77,9 @@ class RGroup {
     other.bonds.forEach(val => {
       if (!val.contains(this)) {
         this._bonds.delete(val.id);
-        val.getPeer(other)._bonds.set(val.id, val);
+        val.getPeer(other)!._bonds.set(val.id, val);
       } else {
-          this._bonds.set(val.id, val);
+        this._bonds.set(val.id, val);
       }
     });
   }
@@ -100,14 +100,14 @@ enum BondState {
 class Bond {
   private _start: RGroup;
   private _end: RGroup;
-  private _state: BondState;
-  public shouldUpdate: boolean;
+  private _state: BondState = BondState.SINGLE_LINEAR;
+  public shouldUpdate: boolean = true;
   public readonly id: number;
   private static idGen = 0;
 
   constructor(start: RGroup, end: RGroup, id = Bond.idGen++) {
-    this.start = start;
-    this.end = end;
+    this._start = start;
+    this._end = end;
     this.id = id;
   }
 
@@ -168,7 +168,7 @@ class Bond {
     if (this._end) this._end.bonds.set(this.id, this);
   }
 
-  public clone() {
+  public clone(): Bond {
     return new Bond(this._start, this._end, this.id);
   }
 }
