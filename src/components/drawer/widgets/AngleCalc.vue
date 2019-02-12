@@ -1,14 +1,14 @@
 <template>
-  <article class="angle-calc">
+  <article id="angle-calc">
     <form>
-        <label for="offset">Offset Angle</label>
+      <label for="offset">Offset Angle</label>
       <input type="number" name="offset" id="offset" v-model="offset" min="-360" max="360" step="5">
       <label for="sides">Sides in Polygon</label>
       <input type="number" name="sides" id="sides" v-model="sideCount" min="3" max="20">
     </form>
     <svg
-      :style="'transform:rotate(' + offset + 'deg)'"
-      viewBox="0 0 85 85"
+      :style="'transform:rotate(' + realOffset + 'deg)'"
+      viewBox="0 0 100 100"
       preserveAspectRatio="XMidYMid"
     >
       <polygon :points="points"></polygon>
@@ -31,9 +31,9 @@ export default Vue.extend({
         size = 40;
       for (let i = 0; i < this.sideCount; i++) {
         let str = "";
-        str += 42.5 + size * Math.sin((2 * Math.PI * i) / this.sideCount);
+        str += this.calcX(i);
         str += ",";
-        str += 42.5 + size * Math.cos((2 * Math.PI * i) / this.sideCount);
+        str += this.calcY(i);
         points.push(str);
       }
       return points.join(" ");
@@ -47,22 +47,26 @@ export default Vue.extend({
             this.calcX(i) +
             "px, " +
             this.calcY(i) +
-            "px)",
+            "px) rotate(" +
+            -this.realOffset +
+            "deg);fill:white",
           text:
-            Number.parseFloat(this.offset.toString()) +
-            (i * 360) / this.sideCount +
+            Number(((this.realOffset + i * 360 / this.sideCount + 360) % 360).toFixed(2)) +
             ""
         });
       }
       return texts;
+    },
+    realOffset(): number {
+      return (Number(this.offset) + 360) % 360 || 0;
     }
   },
   methods: {
     calcX(side: number) {
-      return 42.5 + 40 * Math.sin((2 * Math.PI * side) / this.sideCount);
+      return 50 + 40 * Math.sin((2 * Math.PI * side) / this.sideCount);
     },
     calcY(side: number) {
-      return 42.5 + 40 * Math.cos((2 * Math.PI * side) / this.sideCount);
+      return 50 + 40 * Math.cos((2 * Math.PI * side) / this.sideCount);
     }
   }
 });

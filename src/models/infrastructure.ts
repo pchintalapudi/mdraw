@@ -1,87 +1,17 @@
 import { PeriodicTableElement } from "./element";
 
 class RGroup {
-  private _payload: PeriodicTableElement;
-  private _bonds = new Map<number, Bond>();
-  private _charge: number = 0;
-  private _x: number = 0;
-  private _y: number = 0;
+  public payload: PeriodicTableElement;
+  public bonds = new Map<number, Bond>();
+  public charge: number = 0;
+  public x: number = 0;
+  public y: number = 0;
   public readonly id: number;
-  public shouldUpdate: boolean = true;
   private static idGen: number = 0;
 
   constructor(payload: PeriodicTableElement) {
-    this._payload = payload;
+    this.payload = payload;
     this.id = RGroup.idGen++;
-  }
-
-  get payload() {
-    return this._payload;
-  }
-
-  set payload(payload: PeriodicTableElement) {
-    this._payload = payload;
-    this.requestUpdate();
-  }
-
-  get bonds() {
-    return this._bonds;
-  }
-
-  get charge() {
-    return this._charge;
-  }
-
-  set charge(charge: number) {
-    this._charge = charge;
-    this.requestUpdate();
-  }
-
-  get x() {
-    return this._x;
-  }
-
-  set x(x: number) {
-    this._x = x;
-    this.requestUpdate(true);
-  }
-
-  get y() {
-    return this._y;
-  }
-
-  set y(y: number) {
-    this._y = y;
-    this.requestUpdate(true);
-  }
-
-  private requestUpdate(bonds = false) {
-    this.shouldUpdate = true;
-    if (bonds) this._bonds.forEach(val => (val.shouldUpdate = true));
-  }
-
-  public combine(other: RGroup) {
-    other.bonds.forEach(val => {
-      if (!val.contains(this)) {
-        let bond = val.clone();
-        bond.replace(other, this, false);
-        bond.getPeer(this)!._bonds.set(bond.id, bond);
-        this._bonds.set(bond.id, bond);
-      } else {
-        this._bonds.delete(val.id);
-      }
-    });
-  }
-
-  public uncombine(other: RGroup) {
-    other.bonds.forEach(val => {
-      if (!val.contains(this)) {
-        this._bonds.delete(val.id);
-        val.getPeer(other)!._bonds.set(val.id, val);
-      } else {
-        this._bonds.set(val.id, val);
-      }
-    });
   }
 }
 
@@ -101,7 +31,6 @@ class Bond {
   private _start: RGroup;
   private _end: RGroup;
   private _state: BondState = BondState.SINGLE_LINEAR;
-  public shouldUpdate: boolean = true;
   public readonly id: number;
   private static idGen = 0;
 
@@ -116,10 +45,13 @@ class Bond {
   }
 
   set start(start: RGroup) {
-    if (this._start) this._start.bonds.delete(this.id);
+    this.setStart(start);
+  }
+
+  setStart(start: RGroup, clean = true) {
+    if (clean && this._start) this._start.bonds.delete(this.id);
     this._start = start;
     start.bonds.set(this.id, this);
-    this.shouldUpdate = true;
   }
 
   get end() {
@@ -127,10 +59,13 @@ class Bond {
   }
 
   set end(end: RGroup) {
-    if (this._end) this._end.bonds.delete(this.id);
+    this.setEnd(end);
+  }
+
+  setEnd(end: RGroup, clean = true) {
+    if (clean && this._end) this._end.bonds.delete(this.id);
     this._end = end;
     end.bonds.set(this.id, this);
-    this.shouldUpdate = true;
   }
 
   get state() {
@@ -139,7 +74,6 @@ class Bond {
 
   set state(state: BondState) {
     this._state = state;
-    this.shouldUpdate = true;
   }
 
   public getPeer(rgroup: RGroup) {
@@ -173,4 +107,4 @@ class Bond {
   }
 }
 
-export {RGroup, Bond, BondState}
+export { RGroup, Bond, BondState };

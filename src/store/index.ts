@@ -1,14 +1,17 @@
 import Vue from "vue";
 import Vuex from "vuex";
-
+import history from "./history";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: { theme: "standard" },
   mutations: {
-    theme({ theme }, newTheme: string) {
-      theme = newTheme;
+    theme(state, newTheme: string) {
+      state.theme = newTheme;
     }
+  },
+  modules: {
+    history
   }
 });
 

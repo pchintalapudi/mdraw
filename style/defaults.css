@@ -42,20 +42,20 @@ aside>:first-child {
     background-color: lightgray;
 }
 
-.angle-calc > form, .angle-calc {
+#angle-calc > form, #angle-calc {
     flex-flow: column nowrap;
     align-items: center;
     overflow: hidden;
 }
 
-.angle-calc input {
+#angle-calc input {
     margin: 10px;
     padding: 5px;
     border-radius: 5px;
 }
 
-.angle-calc svg {
-    max-height: 40vh;
+#angle-calc svg {
+    height: 60%;
 }
 
 polygon {
@@ -64,6 +64,6 @@ polygon {
     fill: transparent;
 }
 
-.angle-calc text {
+#angle-calc text {
     font-size: 5px;
 }

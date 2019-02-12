@@ -6,9 +6,5 @@
 <script lang="ts">
 import Vue from "vue";
 import { RGroup } from "../../models";
-export default Vue.extend({
-    computed: {
-        
-    }
-});
+export default Vue.extend({});
 </script>
