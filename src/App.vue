@@ -1,5 +1,5 @@
 <template>
-    <router-view />
+  <router-view/>
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -11,3 +11,6 @@ export default Vue.extend({
   store: Store
 });
 </script>
+<style lang="scss">
+@import "../style/index.scss";
+</style>
