@@ -20,7 +20,7 @@ main {
 main>:first-child {
     width: 80vw;
     height: 100vh;
-    background-color: black;
+    background-color: darkgray;
 }
 
 main>:last-child {
@@ -40,4 +40,30 @@ aside>:first-child {
     height: 40vh;
     width: 100%;
     background-color: lightgray;
+}
+
+.angle-calc > form, .angle-calc {
+    flex-flow: column nowrap;
+    align-items: center;
+    overflow: hidden;
+}
+
+.angle-calc input {
+    margin: 10px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.angle-calc svg {
+    max-height: 40vh;
+}
+
+polygon {
+    stroke: black;
+    stroke-width: 0.5;
+    fill: transparent;
+}
+
+.angle-calc text {
+    font-size: 5px;
 }
