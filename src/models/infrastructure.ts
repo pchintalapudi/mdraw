@@ -1,7 +1,13 @@
 import { PeriodicTableElement } from "./element";
 
+interface Payload {
+  readonly name:string;
+  readonly abbrev:string;
+  readonly isElement:boolean;
+}
+
 class RGroup {
-  public payload: PeriodicTableElement;
+  public payload: Payload;
   public bonds = new Map<number, Bond>();
   public charge: number = 0;
   public x: number = 0;
@@ -9,7 +15,7 @@ class RGroup {
   public readonly id: number;
   private static idGen: number = 0;
 
-  constructor(payload: PeriodicTableElement) {
+  constructor(payload: Payload) {
     this.payload = payload;
     this.id = RGroup.idGen++;
   }
@@ -107,4 +113,4 @@ class Bond {
   }
 }
 
-export { RGroup, Bond, BondState };
+export { RGroup, Bond, BondState, Payload };

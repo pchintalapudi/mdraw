@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import history from "./history";
+import molecules from "./molecules";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -11,7 +12,8 @@ const store = new Vuex.Store({
     }
   },
   modules: {
-    history
+    history,
+    molecules
   }
 });
 

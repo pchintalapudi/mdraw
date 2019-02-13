@@ -3,6 +3,7 @@ import { RGroup, Bond } from "../models";
 
 let state = {
   rgroups: [] as RGroup[],
+  selected: [] as RGroup[],
   bonds: [] as Bond[]
 };
 
@@ -15,3 +16,5 @@ const module: Module<StateType, any> = {
   },
   actions: {}
 };
+
+export default module;

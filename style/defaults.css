@@ -1,6 +1,7 @@
 body *:not(script) {
     display: flex;
     flex-flow: row nowrap;
+    box-sizing: border-box;
 }
 
 html,
