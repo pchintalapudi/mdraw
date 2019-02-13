@@ -6,11 +6,7 @@
       <label for="sides">Sides in Polygon</label>
       <input type="number" name="sides" id="sides" v-model="sideCount" min="3" max="20">
     </form>
-    <svg
-      :style="'transform:rotate(' + realOffset + 'deg)'"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="XMidYMid"
-    >
+    <svg :style="'transform:rotate(' + realOffset + 'deg)'" viewBox="0 0 100 100">
       <polygon :points="points"></polygon>
       <text v-for="obj in annotations" :key="obj.style" :style="obj.style">{{obj.text}}</text>
     </svg>
@@ -51,8 +47,12 @@ export default Vue.extend({
             -this.realOffset +
             "deg);fill:white",
           text:
-            Number(((this.realOffset + i * 360 / this.sideCount + 360) % 360).toFixed(2)) +
-            ""
+            Number(
+              (
+                (this.realOffset + (i * 360) / this.sideCount + 360) %
+                360
+              ).toFixed(2)
+            ) + ""
         });
       }
       return texts;

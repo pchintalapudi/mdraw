@@ -1,9 +1,7 @@
-import { PeriodicTableElement } from "./element";
-
 interface Payload {
-  readonly name:string;
-  readonly abbrev:string;
-  readonly isElement:boolean;
+  readonly name: string;
+  readonly abbrev: string;
+  readonly isElement: boolean;
 }
 
 class RGroup {
@@ -36,7 +34,7 @@ enum BondState {
 class Bond {
   private _start: RGroup;
   private _end: RGroup;
-  private _state: BondState = BondState.SINGLE_LINEAR;
+  public state: BondState = BondState.SINGLE_LINEAR;
   public readonly id: number;
   private static idGen = 0;
 
@@ -74,14 +72,6 @@ class Bond {
     end.bonds.set(this.id, this);
   }
 
-  get state() {
-    return this._state;
-  }
-
-  set state(state: BondState) {
-    this._state = state;
-  }
-
   public getPeer(rgroup: RGroup) {
     return rgroup == this._start
       ? this._end
@@ -110,6 +100,24 @@ class Bond {
 
   public clone(): Bond {
     return new Bond(this._start, this._end, this.id);
+  }
+
+  get bondOrder(): number {
+    switch (this.state) {
+      case BondState.SINGLE_LINEAR:
+      case BondState.SINGLE_RECEDING:
+      case BondState.SINGLE_APPROACHING:
+        return 1;
+      case BondState.PARTIAL:
+        return 0;
+      case BondState.DOUBLE_LEFT:
+      case BondState.DOUBLE_LINEAR:
+      case BondState.DOUBLE_RIGHT:
+        return 2;
+      case BondState.TRIPLE_LINEAR:
+      case BondState.TRIPLE_SHORT:
+        return 3;
+    }
   }
 }
 

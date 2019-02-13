@@ -6,8 +6,9 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { RGroup } from "../../models/";
+import { RGroup, Bond } from "../../models/";
 import RGroupVue from "../molecules/RGroup.vue";
+import BondVue from "../molecules/Bond.vue";
 export default Vue.extend({
   components: {
     "rgroup-element": RGroupVue
@@ -16,8 +17,11 @@ export default Vue.extend({
     rgroups(): RGroup[] {
       return this.$store.state.molecules.rgroups;
     },
-    selected():RGroup[] {
+    selected(): RGroup[] {
       return this.$store.state.molecules.selected;
+    },
+    bonds(): Bond[] {
+      return this.$store.state.molecules.bonds;
     }
   }
 });
