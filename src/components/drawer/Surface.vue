@@ -23,6 +23,9 @@ export default Vue.extend({
     bonds(): Bond[] {
       return this.$store.state.molecules.bonds;
     }
+  },
+  mounted() {
+    this.$store.commit("molecules/setDrawPane", this.$el);
   }
 });
 </script>

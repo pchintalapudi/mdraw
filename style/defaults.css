@@ -4,6 +4,11 @@ body *:not(script) {
     box-sizing: border-box;
 }
 
+body svg *:not(script) {
+    display: inline;
+    flex-flow: initial;
+}
+
 html,
 body {
     height: 100vh;
@@ -43,7 +48,8 @@ aside>:first-child {
     background-color: lightgray;
 }
 
-#angle-calc > form, #angle-calc {
+#angle-calc>form,
+#angle-calc {
     flex-flow: column nowrap;
     align-items: center;
     overflow: hidden;
