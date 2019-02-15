@@ -5,6 +5,7 @@ let pointerState = {
   pointer: 0,
   startX: 0,
   startY: 0,
+  mouseDown: false,
   lock: false
 };
 

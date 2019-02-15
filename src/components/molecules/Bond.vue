@@ -72,6 +72,12 @@ export default Vue.extend({
         this.bond.state == BondState.DOUBLE_RIGHT ||
         this.bond.state == BondState.TRIPLE_SHORT
       );
+    },
+    classes(): string[] {
+      let clazzes = ["bond"];
+      if (this.bond == this.$store.state.molecules.stateMachine.adding)
+        clazzes.push("transparent");
+      return clazzes;
     }
   }
 });

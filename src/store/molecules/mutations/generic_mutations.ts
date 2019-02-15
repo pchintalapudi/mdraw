@@ -14,6 +14,12 @@ let genericMutations = {
   },
   unlockPointer({ pointerState }: StateType) {
     pointerState.lock = false;
+  },
+  startPress({ pointerState }: StateType) {
+    pointerState.mouseDown = true;
+  },
+  endPress({ pointerState }: StateType) {
+    pointerState.mouseDown = false;
   }
 };
 

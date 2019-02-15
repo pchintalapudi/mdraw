@@ -1,6 +1,6 @@
 <template>
   <svg
-    class="rgroup"
+    :class="classes"
     :x="x - radius"
     :y="y - radius"
     :viewBox="outerViewBox"
@@ -90,6 +90,12 @@ export default Vue.extend({
         " " +
         this.radius / 2
       );
+    },
+    classes(): string[] {
+      let clazzes = ["rgroup"];
+      if (this.rGroup == this.$store.state.molecules.stateMachine.placing)
+        clazzes.push("transparent");
+      return clazzes;
     }
   },
   methods: {
