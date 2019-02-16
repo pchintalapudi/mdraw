@@ -4,6 +4,8 @@
     :x="x - radius"
     :y="y - radius"
     :viewBox="outerViewBox"
+    :width="radius * 2"
+    :height="radius * 2"
     @onpointerdown="pointerDown"
     @onpointerup="pointerUp"
   >
@@ -28,7 +30,15 @@ export default Vue.extend({
     rGroup: RGroup
   },
   data: function() {
-    return { plock: 0 };
+    return {
+      plock: 0,
+      contentElement: undefined as SVGTextElement | undefined,
+      chargeElement: undefined as SVGTextElement | undefined
+    };
+  },
+  mounted: function() {
+    this.contentElement = this.$refs.content as SVGTextElement;
+    this.chargeElement = this.$refs.charge as SVGTextElement;
   },
   computed: {
     name(): string {
@@ -47,16 +57,16 @@ export default Vue.extend({
       return this.rGroup.charge;
     },
     contentWidth(): number {
-      return (this.$refs["content"] as SVGTextElement).getBBox().width;
+      return this.contentElement ? this.contentElement.getBBox().width : 0;
     },
     contentHeight(): number {
-      return (this.$refs["content"] as SVGTextElement).getBBox().height;
+      return this.contentElement ? this.contentElement.getBBox().height : 0;
     },
     chargeWidth(): number {
-      return (this.$refs["charge"] as SVGTextElement).getBBox().width;
+      return this.chargeElement ? this.chargeElement!.getBBox().width : 0;
     },
     chargeHeight(): number {
-      return (this.$refs["charge"] as SVGTextElement).getBBox().height;
+      return this.chargeElement ? this.chargeElement.getBBox().height : 0;
     },
     netWidth(): number {
       return this.contentWidth + (this.charge ? this.chargeWidth + 2 : 0);
@@ -82,13 +92,13 @@ export default Vue.extend({
     },
     outerViewBox(): string {
       return (
-        -this.radius / 2 +
+        -this.radius +
         " " +
-        -this.radius / 2 +
+        -this.radius +
         " " +
-        this.radius / 2 +
+        this.radius +
         " " +
-        this.radius / 2
+        this.radius
       );
     },
     classes(): string[] {
@@ -99,10 +109,8 @@ export default Vue.extend({
     }
   },
   methods: {
-    pointerDown(event: PointerEvent) {
-    },
-    pointerUp(event: PointerEvent) {
-    }
+    pointerDown(event: PointerEvent) {},
+    pointerUp(event: PointerEvent) {}
   }
 });
 </script>
