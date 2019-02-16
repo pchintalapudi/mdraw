@@ -100,10 +100,8 @@ export default Vue.extend({
   },
   methods: {
     pointerDown(event: PointerEvent) {
-      this.$el.setPointerCapture(this.plock);
     },
     pointerUp(event: PointerEvent) {
-      this.$el.releasePointerCapture(this.plock);
     }
   }
 });

@@ -7,11 +7,12 @@ let actions = {
       switch(store.state.stateMachine.state) {
           default:
           case DrawerState.IDLE:
-          return;
+          break;
           case DrawerState.PLACING_NEW_ATOM:
           store.commit("cancelRGroupCreation");
-          return;
+          break;
       }
+      store.state.stateMachine.state = DrawerState.IDLE;
   }
 };
 

@@ -1,14 +1,30 @@
-import { StateType, state } from "../state";
-import { RGroup, DrawerState } from ".././../../models";
+import { StateType } from "../state";
+import { RGroup, DrawerState, Bond, elements } from "../../../models";
 
 let moleculeMutations = {
-  createRGroup({ stateMachine }: StateType, rgroup: RGroup) {
+  createRGroup({ stateMachine, rgroups }: StateType, rgroup: RGroup) {
     stateMachine.placing = rgroup;
+    rgroups.push(rgroup);
     stateMachine.state = DrawerState.PLACING_NEW_ATOM;
   },
   cancelRGroupCreation({ rgroups, stateMachine }: StateType) {
-    rgroups.splice(rgroups.indexOf(stateMachine.placing!), 1);
+    rgroups.pop();
     stateMachine.placing = undefined;
+    stateMachine.state = DrawerState.IDLE;
+  },
+  createBond({ rgroups, bonds, stateMachine }: StateType, start: RGroup) {
+    let carbon = new RGroup(elements[6 - 1]);
+    stateMachine.placing = carbon;
+    rgroups.push(carbon);
+    let bond: Bond = new Bond(start, carbon);
+    stateMachine.adding = bond;
+    bonds.push(bond);
+    stateMachine.state = DrawerState.PLACING_NEW_ATOM_AND_BOND;
+  },
+  cancelBondCreation({ rgroups, bonds, stateMachine }: StateType) {
+    rgroups.pop();
+    bonds.pop();
+    stateMachine.adding = stateMachine.placing = undefined;
     stateMachine.state = DrawerState.IDLE;
   }
 };

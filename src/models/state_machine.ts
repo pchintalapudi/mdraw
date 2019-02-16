@@ -9,7 +9,6 @@ enum DrawerState {
 
 class StateMachine {
   state: DrawerState = DrawerState.IDLE;
-  selection: boolean = false;
   placing?: RGroup = undefined;
   adding?: Bond = undefined;
 }

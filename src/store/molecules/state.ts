@@ -11,7 +11,6 @@ let pointerState = {
 
 let state = {
   rgroups: [] as RGroup[],
-  selected: [] as RGroup[],
   bonds: [] as Bond[],
   pointerState,
   stateMachine: new StateMachine()
