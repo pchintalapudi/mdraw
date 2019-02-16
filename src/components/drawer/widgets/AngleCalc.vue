@@ -45,7 +45,7 @@ export default Vue.extend({
             this.calcY(i) +
             "px) rotate(" +
             -this.realOffset +
-            "deg);fill:white",
+            "deg)",
           text:
             Number(
               (

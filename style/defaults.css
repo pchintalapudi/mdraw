@@ -73,4 +73,15 @@ polygon {
 
 #angle-calc text {
     font-size: 5px;
+    fill: white;
+    cursor: default;
+}
+
+#angle-calc text:hover {
+    fill: blue;
+    cursor: pointer;
+}
+
+#angle-calc text:active {
+    fill: darkblue;
 }

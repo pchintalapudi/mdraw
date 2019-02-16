@@ -5,9 +5,6 @@ let genericMutations = {
   setDrawPane({ pointerState }: StateType, drawPane: SVGSVGElement) {
     pointerState._drawPane = drawPane;
   },
-  setState({ stateMachine }: StateType, state: DrawerState) {
-    stateMachine.state = state;
-  },
   lockPointer({ pointerState }: StateType, pevent: PointerEvent) {
     pointerState.pointer = pevent.pointerId;
     pointerState.lock = true;
