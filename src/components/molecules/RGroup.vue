@@ -1,26 +1,14 @@
 <template>
-  <svg
-    :class="classes"
-    :x="x - radius"
-    :y="y - radius"
-    :viewBox="outerViewBox"
-    :width="radius * 2"
-    :height="radius * 2"
-    @onpointerdown="pointerDown"
-    @onpointerup="pointerUp"
-  >
-    <circle :cx="radius" :cy="radius" :r="radius"></circle>
-    <svg :x="x - contentWidth / 2" :y="y - contentHeight" :viewBox="innerViewBox">
-      <text class="name" ref="content">{{name}}</text>
-      <text
-        class="charge"
-        v-if="charge"
-        ref="charge"
-        :x="x + contentWidth / 2 + 2"
-        :y="y - contentHeight / 2 - chargeHeight / 2"
-      >{{charge.toString()}}</text>
-    </svg>
-  </svg>
+  <g :class="classes" :transform="'translate(' + (x - contentWidth / 2) + ' ' + (y - contentHeight / 2) + ')'">
+    <text class="abbrev" ref="content">{{abbrev}}</text>
+    <text
+      class="charge"
+      v-if="charge"
+      ref="charge"
+      :x="x + contentWidth / 2 + 2"
+      :y="y - contentHeight / 2 - chargeHeight / 2"
+    >{{charge.toString()}}</text>
+  </g>
 </template>
 <script lang="ts">
 import Vue from "vue";
