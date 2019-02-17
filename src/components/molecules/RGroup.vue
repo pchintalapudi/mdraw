@@ -104,12 +104,18 @@ export default Vue.extend({
     }
   },
   methods: {
-    pointerDown(event: PointerEvent) {},
-    pointerUp(event: PointerEvent) {},
+    pointerDown(event: PointerEvent) {
+      this.$store.commit("molecules/startMove", this.rGroup);
+      event.stopPropagation();
+    },
+    pointerUp(event: PointerEvent) {
+      console.log(event);
+      //TODO
+    },
     pointerMove(event: PointerEvent) {
       this.$store.dispatch("molecules/moveEvent", {
-        x: event.offsetX,
-        y: event.offsetY,
+        x: this.x,
+        y: this.y,
         force: true
       });
     }

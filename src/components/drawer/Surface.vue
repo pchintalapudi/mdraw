@@ -1,7 +1,7 @@
 <template>
   <svg @pointerup="finishGesture()" @pointermove="move">
-    <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
     <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
+    <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
   </svg>
 </template>
 <script lang="ts">

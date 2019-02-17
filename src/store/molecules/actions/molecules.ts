@@ -1,6 +1,12 @@
-import { ActionContext } from "vuex";
+import { ActionContext, Action } from "vuex";
 import { StateType } from "../state";
-import { DrawerState, BondState, Bond } from "../../../models";
+import {
+  DrawerState,
+  BondState,
+  Bond,
+  RGroup,
+  StateMachine
+} from "../../../models";
 import calculateAngle from "./angles";
 
 let actions = {
@@ -10,7 +16,7 @@ let actions = {
       case DrawerState.IDLE:
         break;
       case DrawerState.MOVING_ATOM:
-        break;
+        commit("cancelMove");
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
         commit("cancelBondCreation");
         break;
@@ -21,46 +27,70 @@ let actions = {
     commit("clearStateMachine");
     commit("clearPointerState");
   },
-  finishGesture({ state, dispatch, commit }: ActionContext<StateType, any>) {
+  finishGesture(
+    { state, dispatch, commit, rootState }: ActionContext<StateType, any>,
+    obj?: { replace: RGroup }
+  ) {
+    let undo, redo;
     switch (state.stateMachine.state) {
       case DrawerState.IDLE:
       default:
-        break;
+        return;
       case DrawerState.PLACING_NEW_ATOM: {
-        let rgroup = state.stateMachine.placing!,
-          undo = () => {
-            dispatch("defaultCancel");
-            commit("popRGroup");
-          },
-          redo = () => {
-            dispatch("defaultCancel");
-            commit("pushRGroup", rgroup);
-          };
-        commit("history/logAction", { undo, redo }, { root: true });
-        commit("clearStateMachine");
-        commit("clearPointerState");
+        let rgroup = state.stateMachine.placing!;
+        undo = () => {
+          dispatch("defaultCancel");
+          commit("popRGroup");
+        };
+        redo = () => {
+          dispatch("defaultCancel");
+          commit("pushRGroup", rgroup);
+        };
         break;
       }
       case DrawerState.PLACING_NEW_ATOM_AND_BOND: {
         let rgroup = state.stateMachine.placing!,
-          bond = state.stateMachine.adding!,
+          bond = state.stateMachine.adding!;
+        undo = () => {
+          dispatch("defaultCancel");
+          commit("popRGroup");
+          commit("popBond");
+          bond.start.bonds.delete(bond.id);
+        };
+        redo = () => {
+          dispatch("defaultCancel");
+          commit("pushRGroup", rgroup);
+          commit("pushBond", bond);
+          bond.start.bonds.set(bond.id, bond);
+        };
+      }
+      case DrawerState.MOVING_ATOM: {
+        if (Date.now() - state.pointerState.initTime > rootState.clickTime) {
+          let rgroup = state.stateMachine.placing!,
+            start = state.pointerState.start!,
+            end = { x: rgroup.x, y: rgroup.y };
           undo = () => {
             dispatch("defaultCancel");
-            commit("popRGroup");
-            commit("popBond");
-            bond.start.bonds.delete(bond.id);
-          },
+            rgroup.x = start.x;
+            rgroup.y = start.y;
+          };
           redo = () => {
             dispatch("defaultCancel");
-            commit("pushRGroup", rgroup);
-            commit("pushBond", bond);
-            bond.start.bonds.set(bond.id, bond);
+            rgroup.x = end.x;
+            rgroup.y = end.y;
           };
-        commit("history/logAction", { undo, redo }, { root: true });
-        commit("clearStateMachine");
-        commit("clearPointerState");
+        } else {
+          commit("cancelMove");
+          let rgroup = state.stateMachine.placing!;
+          commit("clearStateMachine");
+          commit("createBond", rgroup);
+          return;
+        }
       }
     }
+    commit("history/logAction", { undo, redo }, { root: true });
+    commit("clearStateMachine");
+    commit("clearPointerState");
   },
   moveEvent(
     { state }: ActionContext<StateType, any>,
@@ -104,6 +134,31 @@ let actions = {
         redo = () => (bond.state = bondState);
       redo();
       commit("history/logAction", { undo, redo }, { root: true });
+    }
+  },
+  finishRGroupClick(
+    { state, commit, rootState }: ActionContext<StateType, any>,
+    rgroup: RGroup
+  ) {
+    if (Date.now() - state.pointerState.initTime > rootState.clickTime) {
+      switch (state.stateMachine.state) {
+        default:
+          return;
+        case DrawerState.MOVING_ATOM:
+          rgroup = state.stateMachine.placing!;
+          commit("cancelMove");
+        case DrawerState.IDLE:
+          commit("createBond", rgroup);
+          break;
+      }
+    } else {
+      switch (state.stateMachine.state) {
+        default:
+          return;
+        case DrawerState.IDLE:
+          commit("createBond", rgroup);
+          break;
+      }
     }
   }
 };

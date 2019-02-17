@@ -1,5 +1,10 @@
 <template>
-  <svg :x="bond.start.x" :y="bond.start.y" class="bond">
+  <g
+    :transform="'translate(' + bond.start.x + ' ' + bond.start.y + ')'"
+    class="bond"
+    @click="switchState(false)"
+    @dblclick="switchState(true)"
+  >
     <line
       v-if="isSingleBond || !bond.bondOrder"
       x1="0"
@@ -9,7 +14,7 @@
       :class="bond.bondOrder ? 'single' : 'partial'"
     ></line>
     <polygon v-else-if="bond.bondOrder == 1" :class="isApproachingBond ? 'solid' : 'patchy'"></polygon>
-    <svg v-else-if="bond.bondOrder == 2">
+    <g v-else-if="bond.bondOrder == 2">
       <line
         :y1="shortenRight ? 0 : 3.75"
         :y2="shortenRight ? 0 : 3.75"
@@ -22,8 +27,8 @@
         :x1="shortenRight ? dist / 7 : 0"
         :x2="shortenLeft ? dist * 6 / 7 : dist"
       ></line>
-    </svg>
-    <svg v-else-if="bond.bondOrder == 3">
+    </g>
+    <g v-else-if="bond.bondOrder == 3">
       <line y1="5" y2="5" :x1="shortenLeft ? dist / 7 : 0" :x2="shortenLeft ? dist * 6 / 7 : dist"></line>
       <line y1="0" y2="0" x1="0" :x2="dist"></line>
       <line
@@ -32,8 +37,8 @@
         :x1="shortenRight ? dist / 7 : 0"
         :x2="shortenRight ? dist * 6 / 7 : dist"
       ></line>
-    </svg>
-  </svg>
+    </g>
+  </g>
 </template>
 <script lang="ts">
 import Vue from "vue";
