@@ -5,18 +5,19 @@ let genericMutations = {
   setDrawPane({ pointerState }: StateType, drawPane: SVGSVGElement) {
     pointerState._drawPane = drawPane;
   },
-  lockPointer({ pointerState }: StateType, pevent: PointerEvent) {
-    pointerState.pointer = pevent.pointerId;
-    pointerState.lock = true;
-  },
-  unlockPointer({ pointerState }: StateType) {
-    pointerState.lock = false;
-  },
   startPress({ pointerState }: StateType) {
     pointerState.mouseDown = true;
   },
   endPress({ pointerState }: StateType) {
     pointerState.mouseDown = false;
+  },
+  clearPointerState({ pointerState }: StateType) {
+    pointerState.start = undefined;
+    pointerState.mouseDown = false;
+  },
+  clearStateMachine({ stateMachine }: StateType) {
+    stateMachine.state = DrawerState.IDLE;
+    stateMachine.placing = stateMachine.adding = undefined;
   }
 };
 

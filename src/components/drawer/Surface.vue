@@ -1,5 +1,5 @@
 <template>
-  <svg>
+  <svg @pointerup="finishGesture()">
     <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
     <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
   </svg>
@@ -24,6 +24,11 @@ export default Vue.extend({
   },
   mounted() {
     this.$store.commit("molecules/setDrawPane", this.$el);
+  },
+  methods: {
+    finishGesture() {
+      this.$store.dispatch("molecules/finishGesture");
+    }
   }
 });
 </script>

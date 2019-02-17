@@ -26,6 +26,18 @@ let moleculeMutations = {
     bonds.pop();
     stateMachine.adding = stateMachine.placing = undefined;
     stateMachine.state = DrawerState.IDLE;
+  },
+  pushRGroup({ rgroups }: StateType, rgroup: RGroup) {
+    rgroups.push(rgroup);
+  },
+  popRGroup({ rgroups }: StateType) {
+    rgroups.pop();
+  },
+  pushBond({ bonds }: StateType, bond: Bond) {
+    bonds.push(bond);
+  },
+  popBond({ bonds }: StateType) {
+    bonds.pop();
   }
 };
 
