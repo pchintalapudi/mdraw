@@ -33,7 +33,19 @@ export default Vue.extend({
   },
   mounted() {
     this.$store.commit("molecules/setDrawPane", this.$el);
+    document.onkeydown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key == "z") {
+        this.$store.commit("history/undo");
+      } else if (
+        (event.ctrlKey && (event.shiftKey && event.key == "Z")) ||
+        event.key == "y" ||
+        event.key == "Y"
+      ) {
+        this.$store.commit("history/redo");
+      }
+    };
   },
+  beforeDestroy() {},
   methods: {
     finishGesture() {
       this.$store.dispatch("molecules/finishGesture");

@@ -15,3 +15,13 @@
     stroke: black;
     stroke-width: 1;
 }
+
+line.partial {
+    stroke-dasharray: 5, 5
+}
+
+line.clickme {
+    stroke: transparent;
+    pointer-events: all;
+    stroke-width: 25;
+}

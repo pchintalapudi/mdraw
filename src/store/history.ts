@@ -30,14 +30,20 @@ const module: Module<StateType, any> = {
     },
     undo({ undoStack, redoStack }) {
       if (undoStack.length) {
-        redoStack.push(undoStack.pop()!);
-        redoStack[redoStack.length - 1].undo();
+        let func = undoStack.pop()!;
+        redoStack.push(func);
+        func.undo();
+        console.log("undo");
+        console.log(func);
       }
     },
     redo({ undoStack, redoStack }) {
       if (redoStack.length) {
-        undoStack.push(redoStack.pop()!);
-        undoStack[undoStack.length - 1].redo();
+        let func = redoStack.pop()!;
+        undoStack.push(func);
+        func.redo();
+        console.log("redo");
+        console.log(func);
       }
     }
   },

@@ -5,6 +5,7 @@
     @click="switchState(false)"
     @dblclick="switchState(true)"
   >
+    <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <line
       v-if="isSingleBond || !bond.bondOrder"
       x1="0"
@@ -18,24 +19,29 @@
       <line
         :y1="shortenRight ? 0 : 3.75"
         :y2="shortenRight ? 0 : 3.75"
-        :x1="shortenLeft ? dist / 7 : 0"
-        :x2="shortenLeft ? dist * 6 / 7 : dist"
+        :x1="shortenLeft ? dist * shorten : 0"
+        :x2="shortenLeft ? dist * (1-shorten) : dist"
       ></line>
       <line
         :y1="shortenLeft ? 0 : -3.75"
         :y2="shortenLeft ? 0 : -3.75"
-        :x1="shortenRight ? dist / 7 : 0"
-        :x2="shortenLeft ? dist * 6 / 7 : dist"
+        :x1="shortenRight ? dist * shorten : 0"
+        :x2="shortenRight ? dist * (1-shorten) : dist"
       ></line>
     </g>
     <g v-else-if="bond.bondOrder == 3">
-      <line y1="5" y2="5" :x1="shortenLeft ? dist / 7 : 0" :x2="shortenLeft ? dist * 6 / 7 : dist"></line>
+      <line
+        y1="5"
+        y2="5"
+        :x1="shortenLeft ? dist * shorten : 0"
+        :x2="shortenLeft ? dist * (1-shorten) : dist"
+      ></line>
       <line y1="0" y2="0" x1="0" :x2="dist"></line>
       <line
         y1="-5"
         y2="-5"
-        :x1="shortenRight ? dist / 7 : 0"
-        :x2="shortenRight ? dist * 6 / 7 : dist"
+        :x1="shortenRight ? dist * shorten : 0"
+        :x2="shortenRight ? dist * (1-shorten) : dist"
       ></line>
     </g>
   </g>
@@ -64,7 +70,8 @@ export default Vue.extend({
   },
   data: function() {
     return {
-      visualState: 0
+      visualState: 0,
+      shorten: 2 / 7
     };
   },
   computed: {

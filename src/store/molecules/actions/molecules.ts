@@ -1,12 +1,6 @@
 import { ActionContext, Action } from "vuex";
 import { StateType } from "../state";
-import {
-  DrawerState,
-  BondState,
-  Bond,
-  RGroup,
-  StateMachine
-} from "../../../models";
+import { DrawerState, BondState, Bond, RGroup } from "../../../models";
 import calculateAngle from "./angles";
 
 let actions = {
@@ -14,7 +8,7 @@ let actions = {
     switch (state.stateMachine.state) {
       default:
       case DrawerState.IDLE:
-        break;
+        return;
       case DrawerState.MOVING_ATOM:
         commit("cancelMove");
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
@@ -51,9 +45,12 @@ let actions = {
       case DrawerState.PLACING_NEW_ATOM_AND_BOND: {
         let rgroup = state.stateMachine.placing!,
           bond = state.stateMachine.adding!;
+        console.log("here");
         undo = () => {
           dispatch("defaultCancel");
+          console.log([...state.rgroups]);
           commit("popRGroup");
+          console.log([...state.rgroups]);
           commit("popBond");
           bond.start.bonds.delete(bond.id);
         };
@@ -63,6 +60,7 @@ let actions = {
           commit("pushBond", bond);
           bond.start.bonds.set(bond.id, bond);
         };
+        break;
       }
       case DrawerState.MOVING_ATOM: {
         if (Date.now() - state.pointerState.initTime > rootState.clickTime) {
@@ -84,6 +82,7 @@ let actions = {
           let rgroup = state.stateMachine.placing!;
           commit("clearStateMachine");
           commit("createBond", rgroup);
+          state.stateMachine.state = DrawerState.PLACING_NEW_ATOM_AND_BOND;
           return;
         }
       }
@@ -113,7 +112,10 @@ let actions = {
           let start = state.stateMachine.adding!.start,
             end = state.stateMachine.placing!,
             dist = rootState.defaultDist,
-            angle = calculateAngle(dist, 180 / Math.PI * Math.atan2(x - start.x, y - start.y) - 90);
+            angle = calculateAngle(
+              dist,
+              (180 / Math.PI) * Math.atan2(x - start.x, y - start.y) - 90
+            );
           end.x = start.x + dist * Math.cos(angle);
           end.y = start.y + dist * Math.sin(angle);
           break;
