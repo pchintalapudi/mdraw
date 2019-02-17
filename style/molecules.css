@@ -25,3 +25,7 @@ line.clickme {
     pointer-events: all;
     stroke-width: 25;
 }
+
+.transparent line.clickme {
+    pointer-events: none;
+}

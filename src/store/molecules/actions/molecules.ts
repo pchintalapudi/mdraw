@@ -103,8 +103,9 @@ let actions = {
       case DrawerState.IDLE:
       default:
         break;
-      case DrawerState.PLACING_NEW_ATOM:
       case DrawerState.MOVING_ATOM:
+      console.log(x + " " + y)
+      case DrawerState.PLACING_NEW_ATOM:
         state.stateMachine.placing!.x = x;
         state.stateMachine.placing!.y = y;
         break;

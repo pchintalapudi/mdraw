@@ -51,6 +51,7 @@ export default Vue.extend({
       this.$store.dispatch("molecules/finishGesture");
     },
     move(event: PointerEvent) {
+      console.log(event.target);
       this.$store.dispatch("molecules/moveEvent", {
         x: event.offsetX,
         y: event.offsetY

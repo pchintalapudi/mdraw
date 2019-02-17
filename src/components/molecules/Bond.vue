@@ -1,7 +1,7 @@
 <template>
   <g
     :transform="'translate(' + bond.start.x + ' ' + bond.start.y + ') rotate(' + angle + ')'"
-    class="bond"
+    :class="classes"
     @click="switchState(false)"
     @dblclick="switchState(true)"
   >
@@ -108,10 +108,12 @@ export default Vue.extend({
         this.bond.state == BondState.TRIPLE_SHORT
       );
     },
+    transparent(): boolean {
+      return !!this.$store.state.molecules.stateMachine.placing;
+    },
     classes(): string[] {
       let clazzes = ["bond"];
-      if (this.bond == this.$store.state.molecules.stateMachine.adding)
-        clazzes.push("transparent");
+      if (this.transparent) clazzes.push("transparent");
       return clazzes;
     }
   },

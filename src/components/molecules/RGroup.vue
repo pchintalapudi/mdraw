@@ -96,10 +96,12 @@ export default Vue.extend({
         this.radius
       );
     },
+    transparent(): boolean {
+      return this.rGroup == this.$store.state.molecules.stateMachine.placing;
+    },
     classes(): string[] {
       let clazzes = ["rgroup"];
-      if (this.rGroup == this.$store.state.molecules.stateMachine.placing)
-        clazzes.push("transparent");
+      if (this.transparent) clazzes.push("transparent");
       return clazzes;
     }
   },
@@ -113,11 +115,12 @@ export default Vue.extend({
       //TODO
     },
     pointerMove(event: PointerEvent) {
-      this.$store.dispatch("molecules/moveEvent", {
-        x: this.x,
-        y: this.y,
-        force: true
-      });
+      if (!this.transparent)
+        this.$store.dispatch("molecules/moveEvent", {
+          x: this.x,
+          y: this.y,
+          force: true
+        });
     }
   }
 });
