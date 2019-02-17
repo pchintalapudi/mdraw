@@ -15,6 +15,8 @@ let moleculeMutations = {
   createBond({ rgroups, bonds, stateMachine }: StateType, start: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
       let carbon = new RGroup(elements[6 - 1]);
+      carbon.x = 75 + start.x;
+      carbon.y = start.y;
       stateMachine.placing = carbon;
       rgroups.push(carbon);
       let bond: Bond = new Bond(start, carbon);

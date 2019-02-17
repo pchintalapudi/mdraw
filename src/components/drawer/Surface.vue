@@ -1,19 +1,21 @@
 <template>
   <svg @pointerup="finishGesture()" @pointermove="move">
+    <angler-assist v-if="assist"></angler-assist>
     <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
     <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
   </svg>
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { RGroup, Bond } from "../../models/";
+import { RGroup, Bond, DrawerState } from "../../models/";
 import RGroupVue from "../molecules/RGroup.vue";
 import BondVue from "../molecules/Bond.vue";
-import Angler from "./widgets/Angler.vue";
+import AnglerVue from "./widgets/Angler.vue";
 export default Vue.extend({
   components: {
     "rgroup-element": RGroupVue,
-    "bond-element": BondVue
+    "bond-element": BondVue,
+    "angler-assist": AnglerVue
   },
   computed: {
     rgroups(): RGroup[] {
@@ -21,6 +23,12 @@ export default Vue.extend({
     },
     bonds(): Bond[] {
       return this.$store.state.molecules.bonds;
+    },
+    assist(): boolean {
+      return (
+        this.$store.state.molecules.stateMachine.state ==
+        DrawerState.PLACING_NEW_ATOM_AND_BOND
+      );
     }
   },
   mounted() {

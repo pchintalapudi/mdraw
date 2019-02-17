@@ -53,7 +53,7 @@ polygon {
 #atomic-number+div::after {
     font-size: 0;
     padding: 0;
-    content: attr(data-title) ' (' attr(data-abbrev) ') is the ' attr(data-atomic-number) ' element.';
+    content: attr(data-title) ' ('attr(data-abbrev) ') is the 'attr(data-atomic-number) ' element.';
     transition: padding 200ms, font-size 200ms;
     transition-delay: 300ms;
     z-index: 2;
@@ -64,4 +64,14 @@ polygon {
 #atomic-number+div:hover::after {
     padding: 10px;
     font-size: initial;
+}
+
+#angler path {
+    fill: transparent;
+    stroke: black;
+    stroke-dasharray: 5, 5
+}
+
+#angler {
+    pointer-events: none;
 }
