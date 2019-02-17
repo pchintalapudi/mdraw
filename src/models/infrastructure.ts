@@ -1,3 +1,5 @@
+let idGen = 0;
+
 interface Payload {
   readonly name: string;
   readonly abbrev: string;
@@ -11,11 +13,10 @@ class RGroup {
   public x: number = 0;
   public y: number = 0;
   public readonly id: number;
-  private static idGen: number = 0;
 
-  constructor(payload: Payload) {
+  constructor(payload: Payload, id = idGen++) {
     this.payload = payload;
-    this.id = RGroup.idGen++;
+    this.id = id;
   }
 }
 
@@ -36,9 +37,8 @@ class Bond {
   private _end: RGroup;
   public state: BondState = BondState.SINGLE_LINEAR;
   public readonly id: number;
-  private static idGen = 0;
 
-  constructor(start: RGroup, end: RGroup, id = Bond.idGen++) {
+  constructor(start: RGroup, end: RGroup, id = idGen++) {
     this._start = start;
     this._end = end;
     this.id = id;

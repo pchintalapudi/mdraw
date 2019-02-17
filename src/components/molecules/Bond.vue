@@ -1,6 +1,6 @@
 <template>
   <g
-    :transform="'translate(' + bond.start.x + ' ' + bond.start.y + ')'"
+    :transform="'translate(' + bond.start.x + ' ' + bond.start.y + ') rotate(' + angle + ')'"
     class="bond"
     @click="switchState(false)"
     @dblclick="switchState(true)"
@@ -81,9 +81,12 @@ export default Vue.extend({
       );
     },
     angle(): number {
-      return Math.atan2(
-        this.bond.end.y - this.bond.start.y,
-        this.bond.end.x - this.bond.start.x
+      return (
+        (180 / Math.PI) *
+        Math.atan2(
+          this.bond.end.y - this.bond.start.y,
+          this.bond.end.x - this.bond.start.x
+        )
       );
     },
     shortenLeft(): boolean {

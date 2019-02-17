@@ -93,7 +93,7 @@ let actions = {
     commit("clearPointerState");
   },
   moveEvent(
-    { state }: ActionContext<StateType, any>,
+    { state, rootState }: ActionContext<StateType, any>,
     { x, y, force }: { x: number; y: number; force?: boolean }
   ) {
     switch (state.stateMachine.state) {
@@ -112,13 +112,10 @@ let actions = {
         } else {
           let start = state.stateMachine.adding!.start,
             end = state.stateMachine.placing!,
-            dist = Math.hypot(end.x - start.x, end.y - start.y),
-            angle = calculateAngle(
-              dist,
-              Math.atan2(end.x - start.x, end.y - start.y)
-            );
-          end.x = dist * Math.cos(angle);
-          end.y = dist * Math.sin(angle);
+            dist = rootState.defaultDist,
+            angle = calculateAngle(dist, 180 / Math.PI * Math.atan2(x - start.x, y - start.y) - 90);
+          end.x = start.x + dist * Math.cos(angle);
+          end.y = start.y + dist * Math.sin(angle);
           break;
         }
       }

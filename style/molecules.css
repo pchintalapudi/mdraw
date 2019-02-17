@@ -8,6 +8,11 @@
 }
 
 .rgroup>circle {
-    fill:transparent;
-    stroke:black;
+    fill: transparent;
+    stroke: black;
+}
+
+.bond line {
+    stroke: black;
+    stroke-width: 3;
 }

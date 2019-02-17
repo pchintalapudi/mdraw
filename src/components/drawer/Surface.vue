@@ -9,6 +9,7 @@ import Vue from "vue";
 import { RGroup, Bond } from "../../models/";
 import RGroupVue from "../molecules/RGroup.vue";
 import BondVue from "../molecules/Bond.vue";
+import Angler from "./widgets/Angler.vue";
 export default Vue.extend({
   components: {
     "rgroup-element": RGroupVue,
