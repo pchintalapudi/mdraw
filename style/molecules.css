@@ -1,3 +1,13 @@
 .transparent {
     pointer-events: none;
 }
+
+.rgroup text {
+    cursor: default;
+    user-select: none;
+}
+
+.rgroup>circle {
+    fill:transparent;
+    stroke:black;
+}

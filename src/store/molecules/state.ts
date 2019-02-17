@@ -4,7 +4,7 @@ let pointerState = {
   _drawPane: undefined as undefined | SVGSVGElement,
   pointer: 0,
   start: undefined as undefined | { x: number; y: number },
-  mouseDown: false
+  initTime: 0
 };
 
 let state = {

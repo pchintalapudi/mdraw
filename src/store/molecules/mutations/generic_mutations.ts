@@ -5,15 +5,9 @@ let genericMutations = {
   setDrawPane({ pointerState }: StateType, drawPane: SVGSVGElement) {
     pointerState._drawPane = drawPane;
   },
-  startPress({ pointerState }: StateType) {
-    pointerState.mouseDown = true;
-  },
-  endPress({ pointerState }: StateType) {
-    pointerState.mouseDown = false;
-  },
   clearPointerState({ pointerState }: StateType) {
     pointerState.start = undefined;
-    pointerState.mouseDown = false;
+    pointerState.initTime = 0;
   },
   clearStateMachine({ stateMachine }: StateType) {
     stateMachine.state = DrawerState.IDLE;

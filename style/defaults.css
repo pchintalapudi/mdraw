@@ -5,7 +5,7 @@ body *:not(script) {
 }
 
 body svg *:not(script) {
-    display: inline;
+    display: inline-block;
     flex-flow: initial;
 }
 

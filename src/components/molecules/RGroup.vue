@@ -1,5 +1,11 @@
 <template>
-  <g :class="classes" :transform="'translate(' + (x - contentWidth / 2) + ' ' + (y - contentHeight / 2) + ')'">
+  <g
+    :class="classes"
+    :transform="'translate(' + (x - contentWidth / 2) + ' ' + (y + contentHeight / 4) + ')'"
+    @pointerdown="pointerDown"
+    @pointerup="pointerUp"
+  >
+    <circle :r="abbrev.length == 1 ? 10 : 20" :cx="contentWidth / 2" :cy="-contentHeight / 4"></circle>
     <text class="abbrev" ref="content">{{abbrev}}</text>
     <text
       class="charge"
