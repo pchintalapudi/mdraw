@@ -1,22 +1,25 @@
 import { ActionContext } from "vuex";
 import { StateType } from "../state";
-import { DrawerState, BondState } from "../../../models";
+import { DrawerState, BondState, Bond } from "../../../models";
 import calculateAngle from "./angles";
 
 let actions = {
-  defaultCancel(store: ActionContext<StateType, any>) {
-    switch (store.state.stateMachine.state) {
+  defaultCancel({ state, commit }: ActionContext<StateType, any>) {
+    switch (state.stateMachine.state) {
       default:
       case DrawerState.IDLE:
         break;
+      case DrawerState.MOVING_ATOM:
+        break;
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
-        store.commit("cancelBondCreation");
+        commit("cancelBondCreation");
         break;
       case DrawerState.PLACING_NEW_ATOM:
-        store.commit("cancelRGroupCreation");
+        commit("cancelRGroupCreation");
         break;
     }
-    store.state.stateMachine.state = DrawerState.IDLE;
+    commit("clearStateMachine");
+    commit("clearPointerState");
   },
   finishGesture({ state, dispatch, commit }: ActionContext<StateType, any>) {
     switch (state.stateMachine.state) {
@@ -33,7 +36,7 @@ let actions = {
             dispatch("defaultCancel");
             commit("pushRGroup", rgroup);
           };
-        dispatch("history/logAction", { undo, redo }, { root: true });
+        commit("history/logAction", { undo, redo }, { root: true });
         commit("clearStateMachine");
         commit("clearPointerState");
         break;
@@ -53,7 +56,7 @@ let actions = {
             commit("pushBond", bond);
             bond.start.bonds.set(bond.id, bond);
           };
-        dispatch("history/logAction", { undo, redo }, { root: true });
+        commit("history/logAction", { undo, redo }, { root: true });
         commit("clearStateMachine");
         commit("clearPointerState");
       }
@@ -68,6 +71,7 @@ let actions = {
       default:
         break;
       case DrawerState.PLACING_NEW_ATOM:
+      case DrawerState.MOVING_ATOM:
         state.stateMachine.placing!.x = x;
         state.stateMachine.placing!.y = y;
         break;
@@ -88,6 +92,18 @@ let actions = {
           break;
         }
       }
+    }
+  },
+  changeBondState(
+    { state, commit }: ActionContext<StateType, any>,
+    { bond, bondState }: { bond: Bond; bondState: BondState }
+  ) {
+    if (state.stateMachine.state == DrawerState.IDLE) {
+      let prevState = bond.state,
+        undo = () => (bond.state = prevState),
+        redo = () => (bond.state = bondState);
+      redo();
+      commit("history/logAction", { undo, redo }, { root: true });
     }
   }
 };

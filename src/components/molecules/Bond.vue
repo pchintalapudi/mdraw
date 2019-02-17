@@ -38,9 +38,29 @@
 <script lang="ts">
 import Vue from "vue";
 import { Bond, BondState } from "../../models";
+const defaultTypes = [
+  BondState.PARTIAL,
+  BondState.SINGLE_LINEAR,
+  BondState.DOUBLE_LINEAR,
+  BondState.TRIPLE_LINEAR
+];
+const increments = [
+  [
+    BondState.SINGLE_LINEAR,
+    BondState.SINGLE_APPROACHING,
+    BondState.SINGLE_RECEDING
+  ],
+  [BondState.DOUBLE_LINEAR, BondState.DOUBLE_LEFT, BondState.DOUBLE_RIGHT],
+  [BondState.TRIPLE_LINEAR, BondState.TRIPLE_SHORT]
+];
 export default Vue.extend({
   props: {
     bond: Bond
+  },
+  data: function() {
+    return {
+      visualState: 0
+    };
   },
   computed: {
     isSingleBond(): boolean {
@@ -78,6 +98,45 @@ export default Vue.extend({
       if (this.bond == this.$store.state.molecules.stateMachine.adding)
         clazzes.push("transparent");
       return clazzes;
+    }
+  },
+  methods: {
+    async switchState(order: boolean) {
+      let bondState;
+      if (order) {
+        bondState =
+          defaultTypes[(this.bond.bondOrder + 1) % defaultTypes.length];
+      } else {
+        switch (this.bond.bondOrder) {
+          case 0:
+            return;
+          case 1:
+            bondState =
+              increments[0][
+                (this.bond.state - BondState.SINGLE_LINEAR + 1) %
+                  increments[0].length
+              ];
+            break;
+          case 2:
+            bondState =
+              increments[1][
+                (this.bond.state - BondState.DOUBLE_LINEAR + 1) %
+                  increments[1].length
+              ];
+            break;
+          case 3:
+            bondState =
+              increments[2][
+                (this.bond.state - BondState.TRIPLE_LINEAR + 1) %
+                  increments[2].length
+              ];
+            break;
+        }
+      }
+      this.$store.dispatch("molecules/changeBondState", {
+        bond: this.bond,
+        bondState
+      });
     }
   }
 });

@@ -9,8 +9,6 @@ let moleculeMutations = {
   },
   cancelRGroupCreation({ rgroups, stateMachine }: StateType) {
     rgroups.pop();
-    stateMachine.placing = undefined;
-    stateMachine.state = DrawerState.IDLE;
   },
   createBond({ rgroups, bonds, stateMachine }: StateType, start: RGroup) {
     let carbon = new RGroup(elements[6 - 1]);
@@ -24,8 +22,10 @@ let moleculeMutations = {
   cancelBondCreation({ rgroups, bonds, stateMachine }: StateType) {
     rgroups.pop();
     bonds.pop();
-    stateMachine.adding = stateMachine.placing = undefined;
-    stateMachine.state = DrawerState.IDLE;
+  },
+  cancelMove({ stateMachine, pointerState }: StateType) {
+    stateMachine.placing!.x = pointerState.start!.x;
+    stateMachine.placing!.y = pointerState.start!.y;
   },
   pushRGroup({ rgroups }: StateType, rgroup: RGroup) {
     rgroups.push(rgroup);

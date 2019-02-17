@@ -52,9 +52,9 @@ const angles: number[] = [
 ];
 const lockDist = 10;
 
-function calculateAngle(dist:number, raw:number): number {
+function calculateAngle(dist:number, raw:number, offset=0): number {
   for (let angle of angles) {
-    let chord = dist * Math.sin(raw - angle);
+    let chord = dist * Math.sin(raw - angle - offset);
     if (chord < lockDist) return angle;
   }
   return raw;

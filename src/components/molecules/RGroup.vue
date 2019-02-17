@@ -4,6 +4,7 @@
     :transform="'translate(' + (x - contentWidth / 2) + ' ' + (y + contentHeight / 4) + ')'"
     @pointerdown="pointerDown"
     @pointerup="pointerUp"
+    @pointermove="pointerMove"
   >
     <circle :r="abbrev.length == 1 ? 10 : 20" :cx="contentWidth / 2" :cy="-contentHeight / 4"></circle>
     <text class="abbrev" ref="content">{{abbrev}}</text>
@@ -104,7 +105,14 @@ export default Vue.extend({
   },
   methods: {
     pointerDown(event: PointerEvent) {},
-    pointerUp(event: PointerEvent) {}
+    pointerUp(event: PointerEvent) {},
+    pointerMove(event: PointerEvent) {
+      this.$store.dispatch("molecules/moveEvent", {
+        x: event.offsetX,
+        y: event.offsetY,
+        force: true
+      });
+    }
   }
 });
 </script>
