@@ -48,9 +48,7 @@ let actions = {
         console.log("here");
         undo = () => {
           dispatch("defaultCancel");
-          console.log([...state.rgroups]);
           commit("popRGroup");
-          console.log([...state.rgroups]);
           commit("popBond");
           bond.start.bonds.delete(bond.id);
         };
@@ -63,7 +61,20 @@ let actions = {
         break;
       }
       case DrawerState.MOVING_ATOM: {
-        if (Date.now() - state.pointerState.initTime > rootState.clickTime) {
+        if (
+          Date.now() - state.pointerState.initTime < rootState.clickTime &&
+          Math.hypot(
+            state.pointerState.start!.x - state.stateMachine.placing!.x,
+            state.pointerState.start!.y - state.stateMachine.placing!.y
+          ) < rootState.minShift
+        ) {
+          commit("cancelMove");
+          let rgroup = state.stateMachine.placing!;
+          commit("clearStateMachine");
+          commit("createBond", rgroup);
+          state.stateMachine.state = DrawerState.PLACING_NEW_ATOM_AND_BOND;
+          return;
+        } else {
           let rgroup = state.stateMachine.placing!,
             start = state.pointerState.start!,
             end = { x: rgroup.x, y: rgroup.y };
@@ -77,13 +88,6 @@ let actions = {
             rgroup.x = end.x;
             rgroup.y = end.y;
           };
-        } else {
-          commit("cancelMove");
-          let rgroup = state.stateMachine.placing!;
-          commit("clearStateMachine");
-          commit("createBond", rgroup);
-          state.stateMachine.state = DrawerState.PLACING_NEW_ATOM_AND_BOND;
-          return;
         }
       }
     }
