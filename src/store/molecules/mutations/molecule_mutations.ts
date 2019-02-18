@@ -24,6 +24,8 @@ let moleculeMutations = {
       stateMachine.adding = bond;
       bonds.push(bond);
       stateMachine.state = DrawerState.PLACING_NEW_ATOM_AND_BOND;
+      start.bonds.set(bond.id, bond);
+      carbon.bonds.set(bond.id, bond);
     }
   },
   cancelBondCreation({ rgroups, bonds }: StateType) {
@@ -66,6 +68,9 @@ let moleculeMutations = {
   swapBond(_: StateType, { rgroup, bond }: { rgroup: RGroup; bond: Bond }) {
     rgroup.bonds.set(bond.id, bond);
     bond.end = rgroup;
+  },
+  omit(state: StateType, omit: boolean) {
+    state.omitting = omit;
   }
 };
 

@@ -1,8 +1,8 @@
 <template>
-  <svg @pointerup="finishGesture" @pointermove="move">
+  <svg @pointerup="finishGesture" @pointermove="move" :class="classes">
     <defs>
       <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
-        <line stroke="black" stroke-width="4px" y2="10"/>
+        <line stroke="black" stroke-width="4px" y2="10"></line>
       </pattern>
     </defs>
     <angler-assist v-if="assist"></angler-assist>
@@ -37,6 +37,11 @@ export default Vue.extend({
         this.$store.state.molecules.stateMachine.state ==
         DrawerState.PLACING_NEW_ATOM_AND_BOND
       );
+    },
+    classes(): string[] {
+      let clazzes = [] as string[];
+      if (this.$store.state.molecules.omitting) clazzes.push("omit");
+      return clazzes;
     }
   },
   mounted() {
@@ -52,6 +57,8 @@ export default Vue.extend({
         this.$store.commit("history/redo");
       } else if (event.key == "Escape") {
         this.$store.dispatch("molecules/defaultCancel");
+      } else if (event.key == "o") {
+        this.$store.commit("molecules/omit", !this.$store.state.molecules.omitting)
       }
     };
   },

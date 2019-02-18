@@ -10,7 +10,8 @@ let state = {
   rgroups: [] as RGroup[],
   bonds: [] as Bond[],
   pointerState,
-  stateMachine: new StateMachine()
+  stateMachine: new StateMachine(),
+  omitting: false
 };
 
 type StateType = { [P in keyof typeof state]: (typeof state)[P] };

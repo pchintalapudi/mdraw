@@ -20,6 +20,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { RGroup } from "../../models";
+import { elements } from "../../models";
 export default Vue.extend({
   props: {
     rGroup: RGroup
@@ -99,9 +100,21 @@ export default Vue.extend({
     transparent(): boolean {
       return this.rGroup == this.$store.state.molecules.stateMachine.placing;
     },
+    omittable(): boolean {
+      return (
+        this.rGroup.payload == elements[6 - 1] ||
+        (this.rGroup.payload == elements[1 - 1] &&
+          this.rGroup.bonds.size == 1 &&
+          this.rGroup.bonds
+            .values()
+            .next()
+            .value.getPeer(this.rGroup)!.payload == elements[6 - 1])
+      );
+    },
     classes(): string[] {
       let clazzes = ["rgroup"];
       if (this.transparent) clazzes.push("transparent");
+      if (this.omittable) clazzes.push("omittable");
       return clazzes;
     }
   },

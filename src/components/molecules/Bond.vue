@@ -53,6 +53,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Bond, BondState } from "../../models";
+import { elements } from "../../models";
 const defaultTypes = [
   BondState.PARTIAL,
   BondState.SINGLE_LINEAR,
@@ -118,6 +119,17 @@ export default Vue.extend({
     classes(): string[] {
       let clazzes = ["bond"];
       if (this.transparent) clazzes.push("transparent");
+      let start = this.bond.start,
+        end = this.bond.end;
+      if (start.payload == elements[1 - 1]) {
+        if (end.payload == elements[6 - 1]) {
+          clazzes.push("omittable");
+        }
+      } else if (start.payload == elements[6 - 1]) {
+        if (end.payload == elements[1 - 1]) {
+          clazzes.push("omittable");
+        }
+      }
       return clazzes;
     },
     points(): string {

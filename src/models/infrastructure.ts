@@ -76,7 +76,7 @@ class Bond {
     return rgroup == this._start
       ? this._end
       : rgroup == this._end
-      ? this._end
+      ? this._start
       : null;
   }
 

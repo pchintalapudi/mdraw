@@ -29,3 +29,11 @@ line.clickme {
 .transparent line.clickme {
     pointer-events: none;
 }
+
+svg.omit>.omittable text {
+    display: none;
+}
+
+svg.omit>.omittable circle {
+    fill: transparent;
+}
