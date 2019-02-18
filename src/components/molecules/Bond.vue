@@ -14,7 +14,11 @@
       y2="0"
       :class="bond.bondOrder ? 'single' : 'partial'"
     ></line>
-    <polygon v-else-if="bond.bondOrder == 1" :class="isApproachingBond ? 'solid' : 'patchy'"></polygon>
+    <polygon
+      v-else-if="bond.bondOrder == 1"
+      :style="'fill:' + (isApproachingBond ? 'black' : 'url(#patchy)') + ';stroke:transparent'"
+      :points="points"
+    ></polygon>
     <g v-else-if="bond.bondOrder == 2">
       <line
         :y1="shortenRight ? 0 : 3.75"
@@ -115,6 +119,12 @@ export default Vue.extend({
       let clazzes = ["bond"];
       if (this.transparent) clazzes.push("transparent");
       return clazzes;
+    },
+    points(): string {
+      let pts = [0 + "," + 0];
+      pts.push(this.dist - 10 + "," + 5);
+      pts.push(this.dist - 10 + "," + -5);
+      return pts.join(" ");
     }
   },
   methods: {
