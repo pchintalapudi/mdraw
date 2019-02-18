@@ -1,5 +1,5 @@
 <template>
-  <svg @pointerup="finishGesture()" @pointermove="move">
+  <svg @pointerup="finishGesture" @pointermove="move">
     <angler-assist v-if="assist"></angler-assist>
     <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
     <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
@@ -47,11 +47,10 @@ export default Vue.extend({
   },
   beforeDestroy() {},
   methods: {
-    finishGesture() {
-      this.$store.dispatch("molecules/finishGesture");
+    finishGesture(event: PointerEvent) {
+      if (!event.button) this.$store.dispatch("molecules/finishGesture");
     },
     move(event: PointerEvent) {
-      console.log(event.target);
       this.$store.dispatch("molecules/moveEvent", {
         x: event.offsetX,
         y: event.offsetY

@@ -107,20 +107,26 @@ export default Vue.extend({
   },
   methods: {
     pointerDown(event: PointerEvent) {
-      this.$store.commit("molecules/startMove", this.rGroup);
-      event.stopPropagation();
+      if (!event.button) {
+        this.$store.commit("molecules/startMove", this.rGroup);
+        event.stopPropagation();
+      }
     },
     pointerUp(event: PointerEvent) {
-      console.log(event);
-      //TODO
+      if (!event.button) {
+        this.$store.dispatch("molecules/rgroupEnd", this.rGroup);
+        event.stopPropagation();
+      }
     },
     pointerMove(event: PointerEvent) {
-      if (!this.transparent)
+      if (!this.transparent) {
         this.$store.dispatch("molecules/moveEvent", {
           x: this.x,
           y: this.y,
           force: true
         });
+        event.stopPropagation();
+      }
     }
   }
 });

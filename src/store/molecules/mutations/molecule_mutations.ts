@@ -1,5 +1,5 @@
 import { StateType } from "../state";
-import { RGroup, DrawerState, Bond, elements } from "../../../models";
+import { RGroup, DrawerState, Bond, elements, Payload } from "../../../models";
 
 let moleculeMutations = {
   createRGroup({ stateMachine, rgroups }: StateType, rgroup: RGroup) {
@@ -55,6 +55,9 @@ let moleculeMutations = {
   },
   popBond({ bonds }: StateType) {
     bonds.pop();
+  },
+  swapPayload(_: StateType, { rgroup, payload }: { rgroup: RGroup; payload:Payload }) {
+    rgroup.payload = payload;
   }
 };
 

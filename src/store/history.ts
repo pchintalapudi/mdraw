@@ -33,8 +33,6 @@ const module: Module<StateType, any> = {
         let func = undoStack.pop()!;
         redoStack.push(func);
         func.undo();
-        console.log("undo");
-        console.log(func);
       }
     },
     redo({ undoStack, redoStack }) {
@@ -42,8 +40,6 @@ const module: Module<StateType, any> = {
         let func = redoStack.pop()!;
         undoStack.push(func);
         func.redo();
-        console.log("redo");
-        console.log(func);
       }
     }
   },

@@ -16,16 +16,16 @@ class StateMachine {
   set state(state: DrawerState) {
     switch (state) {
       case DrawerState.IDLE:
-        console.log("idle");
+        // console.log("idle");
         break;
       case DrawerState.MOVING_ATOM:
-        console.log("moving");
+        // console.log("moving");
         break;
       case DrawerState.PLACING_NEW_ATOM:
-        console.log("atom");
+        // console.log("atom");
         break;
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
-        console.log("bond");
+        // console.log("bond");
         break;
     }
     this._state = state;

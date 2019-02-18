@@ -84,13 +84,9 @@ class Bond {
     return rgroup == this._start || rgroup == this._end;
   }
 
-  public replace(old: RGroup, repl: RGroup, clean = true) {
-    if (this._start == old)
-      if (clean) this.start = repl;
-      else this._start = repl;
-    else if (this._end == old)
-      if (clean) this.end = repl;
-      else this._end = repl;
+  public replace(old: RGroup, repl: RGroup) {
+    if (this._start == old) this._start = repl;
+    else if (this._end == old) this._end = repl;
   }
 
   public enforce() {
