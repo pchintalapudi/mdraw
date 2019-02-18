@@ -31,7 +31,7 @@ line.clickme {
 }
 
 svg.omit>.omittable text {
-    display: none;
+    opacity: 0;
 }
 
 svg.omit>.omittable circle {

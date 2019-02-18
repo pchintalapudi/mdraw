@@ -1,5 +1,5 @@
 <template>
-  <svg @pointerup="finishGesture" @pointermove="move" :class="classes">
+  <svg @pointerup="finishGesture" @pointermove="move" :class="classes" tabindex="0">
     <defs>
       <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
         <line stroke="black" stroke-width="4px" y2="10"></line>
@@ -47,18 +47,37 @@ export default Vue.extend({
   mounted() {
     this.$store.commit("molecules/setDrawPane", this.$el);
     document.onkeydown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key == "z") {
-        this.$store.commit("history/undo");
-      } else if (
-        (event.ctrlKey && (event.shiftKey && event.key == "Z")) ||
-        event.key == "y" ||
-        event.key == "Y"
-      ) {
-        this.$store.commit("history/redo");
-      } else if (event.key == "Escape") {
-        this.$store.dispatch("molecules/defaultCancel");
-      } else if (event.key == "o") {
-        this.$store.commit("molecules/omit", !this.$store.state.molecules.omitting)
+      if (this.$el.contains(document.activeElement)) {
+        switch (event.key) {
+          case "z":
+            if (event.ctrlKey) this.$store.commit("history/undo");
+            else return;
+            break;
+          case "Z":
+            if (!event.shiftKey || !event.ctrlKey) return;
+          case "y":
+          case "Y":
+            if (event.ctrlKey) this.$store.commit("history/redo");
+            else return;
+            break;
+          case "Escape":
+            this.$store.dispatch("molecules/defaultCancel");
+            break;
+          case "o":
+            if (!event.ctrlKey)
+              this.$store.commit(
+                "molecules/omit",
+                !this.$store.state.molecules.omitting
+              );
+            else {
+              let str = window.prompt("Enter a molecule");
+              if (str) this.$store.dispatch("molecules/load", str);
+            }
+            break;
+          case "s":
+            if (event.ctrlKey)
+              this.$store.dispatch("molecules/save").then(s => console.log(s));
+        }
       }
     };
   },

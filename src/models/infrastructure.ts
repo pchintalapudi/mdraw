@@ -1,9 +1,20 @@
+import { PeriodicTableElement } from "./element";
+
 let idGen = 0;
 
 interface Payload {
   readonly name: string;
   readonly abbrev: string;
   readonly isElement: boolean;
+}
+
+interface RGroupSerialized {
+  atomicNumber?: number;
+  payload?: Payload;
+  charge: number;
+  x: number;
+  y: number;
+  id: number;
 }
 
 class RGroup {
@@ -17,6 +28,21 @@ class RGroup {
   constructor(payload: Payload, id = idGen++) {
     this.payload = payload;
     this.id = id;
+  }
+
+  toJSON() {
+    let obj = {
+      atomicNumber: undefined as number | undefined,
+      payload: undefined as Payload | undefined,
+      charge: this.charge,
+      x: this.x,
+      y: this.y,
+      id: this.id
+    };
+    if (this.payload.isElement)
+      obj.atomicNumber = (this.payload as PeriodicTableElement).atomicNumber;
+    else obj.payload = this.payload;
+    return obj;
   }
 }
 
@@ -32,70 +58,34 @@ enum BondState {
   TRIPLE_SHORT
 }
 
+interface BondSerialized {
+  start: number;
+  end: number;
+  state: BondState;
+}
+
 class Bond {
-  private _start: RGroup;
-  private _end: RGroup;
+  public start: RGroup;
+  public end: RGroup;
   public state: BondState = BondState.SINGLE_LINEAR;
   public readonly id: number;
 
   constructor(start: RGroup, end: RGroup, id = idGen++) {
-    this._start = start;
-    this._end = end;
+    this.start = start;
+    this.end = end;
     this.id = id;
   }
 
-  get start() {
-    return this._start;
-  }
-
-  set start(start: RGroup) {
-    this.setStart(start);
-  }
-
-  setStart(start: RGroup, clean = true) {
-    if (clean && this._start) this._start.bonds.delete(this.id);
-    this._start = start;
-    start.bonds.set(this.id, this);
-  }
-
-  get end() {
-    return this._end;
-  }
-
-  set end(end: RGroup) {
-    this.setEnd(end);
-  }
-
-  setEnd(end: RGroup, clean = true) {
-    if (clean && this._end) this._end.bonds.delete(this.id);
-    this._end = end;
-    end.bonds.set(this.id, this);
-  }
-
   public getPeer(rgroup: RGroup) {
-    return rgroup == this._start
-      ? this._end
-      : rgroup == this._end
-      ? this._start
+    return rgroup == this.start
+      ? this.end
+      : rgroup == this.end
+      ? this.start
       : null;
   }
 
-  public contains(rgroup: RGroup) {
-    return rgroup == this._start || rgroup == this._end;
-  }
-
-  public replace(old: RGroup, repl: RGroup) {
-    if (this._start == old) this._start = repl;
-    else if (this._end == old) this._end = repl;
-  }
-
-  public enforce() {
-    if (this._start) this._start.bonds.set(this.id, this);
-    if (this._end) this._end.bonds.set(this.id, this);
-  }
-
   public clone(): Bond {
-    return new Bond(this._start, this._end, this.id);
+    return new Bond(this.start, this.end, this.id);
   }
 
   get bondOrder(): number {
@@ -115,6 +105,14 @@ class Bond {
         return 3;
     }
   }
+
+  toJSON() {
+    return {
+      start: this.start.id,
+      end: this.end.id,
+      state: this.state
+    };
+  }
 }
 
-export { RGroup, Bond, BondState, Payload };
+export { RGroup, Bond, BondState, Payload, BondSerialized, RGroupSerialized };
