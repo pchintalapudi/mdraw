@@ -43,7 +43,7 @@ export default Vue.extend({
         " " +
         defaultBondDist +
         ", 0," +
-        ((this.angle as any) < 180 ? " 0, 0," : " 1, 0,") +
+        ((this.angle as any) < 180 ? " 0, 0," : " 0, 1,") +
         " " +
         (this.bond as any).end.x +
         " " +
@@ -55,7 +55,11 @@ export default Vue.extend({
       );
     },
     description() {
-      return Number((this.angle as any).toFixed(3)) + "°";
+      return (
+        ((this.angle as any) > 180
+          ? Number(((this.angle as any) - 360).toFixed(3))
+          : Number((this.angle as any).toFixed(3))) + "°"
+      );
     }
   }
 });

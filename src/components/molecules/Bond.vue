@@ -2,8 +2,8 @@
   <g
     :transform="'translate(' + bond.start.x + ' ' + bond.start.y + ') rotate(' + angle + ')'"
     :class="classes"
-    @click="switchState(false)"
-    @dblclick="switchState(true)"
+    @click="click"
+    @dblclick="dblclick"
   >
     <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <line
@@ -118,6 +118,18 @@ export default Vue.extend({
     }
   },
   methods: {
+    click(event: MouseEvent) {
+      if (!event.button) {
+        this.switchState(false);
+        event.stopPropagation();
+      }
+    },
+    dblclick(event: MouseEvent) {
+      if (!event.button) {
+        this.switchState(true);
+        event.stopPropagation();
+      }
+    },
     async switchState(order: boolean) {
       let bondState;
       if (order) {

@@ -17,6 +17,9 @@ export default Vue.extend({
     "bond-element": BondVue,
     "angler-assist": AnglerVue
   },
+  data: function() {
+    return { keydown: undefined as any };
+  },
   computed: {
     rgroups(): RGroup[] {
       return this.$store.state.molecules.rgroups;
@@ -42,10 +45,14 @@ export default Vue.extend({
         event.key == "Y"
       ) {
         this.$store.commit("history/redo");
+      } else if (event.key == "Escape") {
+        this.$store.dispatch("molecules/defaultCancel");
       }
     };
   },
-  beforeDestroy() {},
+  beforeDestroy() {
+    document.onkeydown = null;
+  },
   methods: {
     finishGesture(event: PointerEvent) {
       if (!event.button) this.$store.dispatch("molecules/finishGesture");

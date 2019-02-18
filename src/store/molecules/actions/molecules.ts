@@ -157,8 +157,9 @@ let actions = {
         break;
       case DrawerState.PLACING_NEW_ATOM: {
         let payload = state.stateMachine.placing!.payload,
-          oldPayload = rgroup.payload,
-          undo = () => {
+          oldPayload = rgroup.payload;
+        if (payload == oldPayload) break;
+        let undo = () => {
             dispatch("defaultCancel");
             commit("swapPayload", { rgroup, payload: oldPayload });
           },
