@@ -1,5 +1,6 @@
 import { StateType } from "../state";
 import { RGroup, DrawerState, Bond, elements, Payload } from "../../../models";
+import { defaultBondDist } from "../../../constants";
 
 let moleculeMutations = {
   createRGroup({ stateMachine, rgroups }: StateType, rgroup: RGroup) {
@@ -15,7 +16,7 @@ let moleculeMutations = {
   createBond({ rgroups, bonds, stateMachine }: StateType, start: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
       let carbon = new RGroup(elements[6 - 1]);
-      carbon.x = 75 + start.x;
+      carbon.x = defaultBondDist + start.x;
       carbon.y = start.y;
       stateMachine.placing = carbon;
       rgroups.push(carbon);

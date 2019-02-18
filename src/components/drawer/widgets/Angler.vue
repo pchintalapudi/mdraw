@@ -7,13 +7,14 @@
 <script lang="ts">
 import Vue from "vue";
 import { Bond } from "../../../models";
+import { defaultBondDist } from "../../../constants";
 export default Vue.extend({
+  data: function() {
+    return { dist: defaultBondDist };
+  },
   computed: {
     bond(): Bond {
       return this.$store.state.molecules.stateMachine.adding!;
-    },
-    dist(): number {
-      return this.$store.state.defaultDist;
     },
     angle(): number {
       return (
@@ -36,11 +37,11 @@ export default Vue.extend({
         " " +
         (this.bond as any).start.y +
         " h " +
-        this.dist +
+        defaultBondDist +
         " A " +
-        this.dist +
+        defaultBondDist +
         " " +
-        this.dist +
+        defaultBondDist +
         ", 0," +
         ((this.angle as any) < 180 ? " 0, 0," : " 1, 0,") +
         " " +

@@ -2,6 +2,7 @@ import { ActionContext } from "vuex";
 import { StateType } from "../state";
 import { DrawerState, BondState, Bond, RGroup } from "../../../models";
 import calculateAngle from "./angles";
+import { defaultBondDist, minShift } from "../../../constants";
 
 let actions = {
   defaultCancel({ state, commit }: ActionContext<StateType, any>) {
@@ -68,7 +69,7 @@ let actions = {
           Math.hypot(
             state.pointerState.start!.x - state.stateMachine.placing!.x,
             state.pointerState.start!.y - state.stateMachine.placing!.y
-          ) < rootState.minShift
+          ) < minShift
         ) {
           commit("cancelMove");
           let rgroup = state.stateMachine.placing!;
@@ -117,30 +118,29 @@ let actions = {
         } else {
           let start = state.stateMachine.adding!.start,
             end = state.stateMachine.placing!,
-            dist = rootState.defaultDist,
             angle = calculateAngle(
-              dist,
+              defaultBondDist,
               (180 / Math.PI) * Math.atan2(x - start.x, y - start.y) - 90
             );
-          end.x = start.x + dist * Math.cos(angle);
-          end.y = start.y + dist * Math.sin(angle);
+          end.x = start.x + defaultBondDist * Math.cos(angle);
+          end.y = start.y + defaultBondDist * Math.sin(angle);
           break;
         }
       }
     }
   },
   changeBondState(
-    { state, commit }: ActionContext<StateType, any>,
+    { state, commit, dispatch }: ActionContext<StateType, any>,
     { bond, bondState }: { bond: Bond; bondState: BondState }
   ) {
     if (state.stateMachine.state == DrawerState.IDLE) {
       let prevState = bond.state,
         undo = () => {
-          commit("defaultCancel");
+          dispatch("defaultCancel");
           bond.state = prevState;
         },
         redo = () => {
-          commit("defaultCancel");
+          dispatch("defaultCancel");
           bond.state = bondState;
         };
       redo();
