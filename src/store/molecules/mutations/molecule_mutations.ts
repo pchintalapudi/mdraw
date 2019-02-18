@@ -56,8 +56,15 @@ let moleculeMutations = {
   popBond({ bonds }: StateType) {
     bonds.pop();
   },
-  swapPayload(_: StateType, { rgroup, payload }: { rgroup: RGroup; payload:Payload }) {
+  swapPayload(
+    _: StateType,
+    { rgroup, payload }: { rgroup: RGroup; payload: Payload }
+  ) {
     rgroup.payload = payload;
+  },
+  swapBond(_: StateType, { rgroup, bond }: { rgroup: RGroup; bond: Bond }) {
+    rgroup.bonds.set(bond.id, bond);
+    bond.end = rgroup;
   }
 };
 

@@ -106,7 +106,6 @@ let actions = {
       default:
         break;
       case DrawerState.MOVING_ATOM:
-        console.log(x + " " + y);
       case DrawerState.PLACING_NEW_ATOM:
         state.stateMachine.placing!.x = x;
         state.stateMachine.placing!.y = y;
@@ -148,12 +147,15 @@ let actions = {
       commit("history/logAction", { undo, redo }, { root: true });
     }
   },
-  rgroupEnd({ state, commit, dispatch }: ActionContext<StateType, any>, rgroup: RGroup) {
+  rgroupEnd(
+    { state, commit, dispatch }: ActionContext<StateType, any>,
+    rgroup: RGroup
+  ) {
     switch (state.stateMachine.state) {
       case DrawerState.IDLE:
       default:
         break;
-      case DrawerState.PLACING_NEW_ATOM:
+      case DrawerState.PLACING_NEW_ATOM: {
         let payload = state.stateMachine.placing!.payload,
           oldPayload = rgroup.payload,
           undo = () => {
@@ -167,10 +169,27 @@ let actions = {
         commit("history/logAction", { undo, redo }, { root: true });
         commit("swapPayload", { rgroup, payload });
         commit("popRGroup");
-        commit("clearStateMachine");
-        commit("clearPointerState");
         break;
+      }
+      case DrawerState.PLACING_NEW_ATOM_AND_BOND: {
+        let bond = state.stateMachine.adding!,
+          undo = () => {
+            dispatch("defaultCancel");
+            rgroup.bonds.delete(bond.id);
+            commit("popBond");
+          },
+          redo = () => {
+            dispatch("defaultCancel");
+            commit("pushBond", bond);
+            commit("swapBond", { rgroup, bond });
+          };
+        commit("history/logAction", { undo, redo }, { root: true });
+        commit("swapBond", { rgroup, bond });
+        commit("popRGroup");
+      }
     }
+    commit("clearStateMachine");
+    commit("clearPointerState");
   }
 };
 
