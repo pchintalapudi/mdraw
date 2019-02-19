@@ -8,7 +8,6 @@ let moleculeMutations = {
   },
   createRGroup({ stateMachine, rgroups }: StateType, rgroup: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
-      stateMachine.selected.length = 0;
       stateMachine.creating = rgroup;
       rgroups.push(rgroup);
       stateMachine.state = DrawerState.PLACING_NEW_ATOM;
@@ -19,7 +18,6 @@ let moleculeMutations = {
   },
   createBond({ rgroups, bonds, stateMachine }: StateType, start: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
-      stateMachine.selected.length = 0;
       let carbon = new RGroup(elements[6 - 1]);
       carbon.x = defaultBondDist + start.x;
       carbon.y = start.y;
@@ -40,7 +38,7 @@ let moleculeMutations = {
   startMove({ pointerState, stateMachine }: StateType, rgroup: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
       pointerState.initTime = Date.now();
-      stateMachine.state = DrawerState.MOVING_SELECTED;
+      stateMachine.state = DrawerState.MOVING;
       stateMachine.creating = rgroup;
       pointerState.start = { x: rgroup.x, y: rgroup.y };
     }
@@ -49,12 +47,17 @@ let moleculeMutations = {
     pointerState.start = init;
   },
   cancelMove({ stateMachine, pointerState }: StateType) {
-    let dx = stateMachine.creating!.x - pointerState.start!.x,
-      dy = stateMachine.creating!.y - pointerState.start!.y;
-    stateMachine.selected.forEach(r => {
-      r.x -= dx;
-      r.y -= dy;
-    });
+    if (stateMachine.selected.indexOf(stateMachine.creating!) !== -1) {
+      let dx = stateMachine.creating!.x - pointerState.start!.x,
+        dy = stateMachine.creating!.y - pointerState.start!.y;
+      stateMachine.selected.forEach(r => {
+        r.x -= dx;
+        r.y -= dy;
+      });
+    } else {
+      stateMachine.creating!.x = pointerState.start!.x;
+      stateMachine.creating!.y = pointerState.start!.y;
+    }
     stateMachine.selected.length = 0;
   },
   pushRGroup({ rgroups }: StateType, rgroup: RGroup) {

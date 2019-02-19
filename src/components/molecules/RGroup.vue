@@ -6,7 +6,12 @@
     @pointerup="pointerUp"
     @pointermove="pointerMove"
   >
-    <circle :r="abbrev.length == 1 ? 20 : 30" :cx="contentWidth / 2" :cy="-contentHeight / 4" style="fill:transparent"/>
+    <circle
+      :r="abbrev.length == 1 ? 20 : 30"
+      :cx="contentWidth / 2"
+      :cy="-contentHeight / 4"
+      style="fill:transparent"
+    />
     <circle :r="abbrev.length == 1 ? 10 : 20" :cx="contentWidth / 2" :cy="-contentHeight / 4"></circle>
     <text class="abbrev" ref="content">{{abbrev}}</text>
     <text
@@ -99,7 +104,7 @@ export default Vue.extend({
       );
     },
     transparent(): boolean {
-      return this.rGroup == this.$store.state.molecules.stateMachine.placing;
+      return this.rGroup == this.$store.state.molecules.stateMachine.creating;
     },
     omittable(): boolean {
       return (

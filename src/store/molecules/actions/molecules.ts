@@ -16,7 +16,7 @@ let actions = {
       default:
       case DrawerState.IDLE:
         return;
-      case DrawerState.MOVING_SELECTED:
+      case DrawerState.MOVING:
         commit("cancelMove");
         break;
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
@@ -44,11 +44,16 @@ let actions = {
       case DrawerState.IDLE:
       default:
         break;
-      case DrawerState.MOVING_SELECTED:
-        state.stateMachine.selected.forEach(r => {
-          r.x = x;
-          r.y = y;
-        });
+      case DrawerState.MOVING:
+        if (state.stateMachine.isSelected)
+          state.stateMachine.selected.forEach(r => {
+            r.x = x;
+            r.y = y;
+          });
+        else {
+          state.stateMachine.creating!.x = x;
+          state.stateMachine.creating!.y = y;
+        }
         break;
       case DrawerState.PLACING_NEW_ATOM:
         state.stateMachine.creating!.x = x;

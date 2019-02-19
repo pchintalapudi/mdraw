@@ -2,7 +2,7 @@ import { RGroup, Bond } from "./infrastructure";
 enum DrawerState {
   PLACING_NEW_ATOM,
   PLACING_NEW_ATOM_AND_BOND,
-  MOVING_SELECTED,
+  MOVING,
   SELECTED,
   IDLE
 }
@@ -12,6 +12,8 @@ class StateMachine {
   selected: RGroup[] = [];
   private _creating?: RGroup = undefined;
   adding?: Bond = undefined;
+  private select: boolean = false;
+  private valid: boolean = false;
 
   get creating() {
     return this._creating;
@@ -19,8 +21,14 @@ class StateMachine {
 
   set creating(rgroup: RGroup | undefined) {
     this._creating = rgroup;
-    if (rgroup && this.selected.indexOf(rgroup) !== -1)
-      this.selected.push(rgroup);
+    this.valid = false;
+  }
+
+  get isSelected() {
+    if (this.valid) return this.select;
+    else
+      return (this.valid =
+        true && (this.select = this.selected.indexOf(this._creating!) !== -1));
   }
 
   get state() {
@@ -31,7 +39,7 @@ class StateMachine {
       case DrawerState.IDLE:
         // console.log("idle");
         break;
-      case DrawerState.MOVING_SELECTED:
+      case DrawerState.MOVING:
         // console.log("moving");
         break;
       case DrawerState.PLACING_NEW_ATOM:
@@ -42,9 +50,6 @@ class StateMachine {
         break;
       case DrawerState.SELECTED:
         // console.log("selected");
-        break;
-      case DrawerState.MOVING_SELECTED:
-        // console.log("moving_selected");
         break;
     }
     this._state = state;

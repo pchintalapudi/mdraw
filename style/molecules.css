@@ -1,10 +1,14 @@
+::selection {
+    background-color: transparent;
+    color: inherit;
+}
+
 .transparent {
     pointer-events: none;
 }
 
 .rgroup text {
     cursor: default;
-    user-select: none;
 }
 
 .rgroup>circle {

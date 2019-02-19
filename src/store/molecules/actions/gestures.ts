@@ -2,7 +2,6 @@ import { ActionContext } from "vuex";
 import { StateType } from "../state";
 import { DrawerState, RGroup } from "../../../models";
 import { minShift } from "../../../constants";
-import { delay } from "q";
 
 let mGestures = {
   finishGesture({
@@ -48,7 +47,7 @@ let mGestures = {
         commit("createBond", rgroup);
         return;
       }
-      case DrawerState.MOVING_SELECTED: {
+      case DrawerState.MOVING: {
         if (
           Date.now() - state.pointerState.initTime < rootState.clickTime &&
           Math.hypot(
@@ -58,28 +57,48 @@ let mGestures = {
         ) {
           commit("cancelMove");
           let rgroup = state.stateMachine.creating!;
-          commit("clearStateMachine");
+          commit("clearStateMachine", false);
           commit("createBond", rgroup);
           state.stateMachine.state = DrawerState.PLACING_NEW_ATOM_AND_BOND;
           return;
         } else {
-          let rgroups = [...state.stateMachine.selected],
-          dx = state.stateMachine.creating!.x - state.pointerState.start!.x,
-          dy = state.stateMachine.creating!.y - state.pointerState.start!.y;
-          undo = () => {
-            dispatch("defaultCancel");
-            for (let rgroup of rgroups) {
-              rgroup.x -= dx;
-              rgroup.y -= dy;
-            }
-          };
-          redo = () => {
-            dispatch("defaultCancel");
-            for (let rgroup of rgroups) {
-              rgroup.x += dx;
-              rgroup.y += dy;
-            }
-          };
+          if (
+            state.stateMachine.selected.indexOf(
+              state.stateMachine.creating!
+            ) !== -1
+          ) {
+            let rgroups = [...state.stateMachine.selected],
+              dx = state.stateMachine.creating!.x - state.pointerState.start!.x,
+              dy = state.stateMachine.creating!.y - state.pointerState.start!.y;
+            undo = () => {
+              dispatch("defaultCancel");
+              for (let rgroup of rgroups) {
+                rgroup.x -= dx;
+                rgroup.y -= dy;
+              }
+            };
+            redo = () => {
+              dispatch("defaultCancel");
+              for (let rgroup of rgroups) {
+                rgroup.x += dx;
+                rgroup.y += dy;
+              }
+            };
+          } else {
+            let rgroup = state.stateMachine.creating!,
+              start = state.pointerState.start!,
+              end = { x: rgroup.x, y: rgroup.y };
+            undo = () => {
+              dispatch("defaultCancel");
+              rgroup.x = start.x;
+              rgroup.y = start.y;
+            };
+            redo = () => {
+              dispatch("defaultCancel");
+              rgroup.x = end.x;
+              rgroup.y = end.y;
+            };
+          }
         }
       }
     }

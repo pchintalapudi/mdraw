@@ -114,7 +114,7 @@ export default Vue.extend({
       );
     },
     transparent(): boolean {
-      return !!this.$store.state.molecules.stateMachine.placing;
+      return !!this.$store.state.molecules.stateMachine.creating;
     },
     classes(): string[] {
       let clazzes = ["bond"];
