@@ -3,6 +3,7 @@ import { RGroup, Bond, StateMachine } from "../../models";
 let pointerState = {
   _drawPane: undefined as undefined | SVGSVGElement,
   start: undefined as undefined | { x: number; y: number },
+  end: undefined as undefined | { x: number; y: number },
   initTime: 0
 };
 

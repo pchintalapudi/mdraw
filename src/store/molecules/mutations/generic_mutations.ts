@@ -6,7 +6,7 @@ let genericMutations = {
     pointerState._drawPane = drawPane;
   },
   clearPointerState({ pointerState }: StateType) {
-    pointerState.start = undefined;
+    pointerState.start = pointerState.end = undefined;
     pointerState.initTime = 0;
   },
   clearStateMachine({ stateMachine }: StateType, clearSelected = true) {

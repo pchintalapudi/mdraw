@@ -1,5 +1,5 @@
 import { StateType } from "../state";
-import { RGroup } from "../../../models";
+import { RGroup, DrawerState } from "../../../models";
 
 let selectionMutations = {
   select({ stateMachine }: StateType, rgroup: RGroup) {
@@ -24,6 +24,20 @@ let selectionMutations = {
   },
   clearSelected({ stateMachine }: StateType) {
     stateMachine.selected.length = 0;
+  },
+  requestSelect(
+    { stateMachine, pointerState }: StateType,
+    obj: { x: number; y: number }
+  ) {
+    if (stateMachine.state === DrawerState.IDLE) {
+      stateMachine.state = DrawerState.SELECTING;
+      pointerState.start = obj;
+      pointerState.end = obj;
+      pointerState.initTime = Date.now();
+    }
+  },
+  cancelSelecting({ stateMachine }: StateType) {
+    stateMachine.state = DrawerState.IDLE;
   }
 };
 

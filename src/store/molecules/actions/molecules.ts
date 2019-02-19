@@ -15,6 +15,7 @@ let actions = {
     switch (state.stateMachine.state) {
       default:
       case DrawerState.IDLE:
+      case DrawerState.SELECTING:
         return;
       case DrawerState.MOVING:
         commit("cancelMove");
@@ -25,9 +26,8 @@ let actions = {
       case DrawerState.PLACING_NEW_ATOM:
         commit("cancelRGroupCreation");
         break;
-      case DrawerState.SELECTED:
-        commit("clearSelection");
-        break;
+      case DrawerState.SELECTING:
+        commit("cancelSelecting");
     }
     commit("clearStateMachine");
     commit("clearPointerState");

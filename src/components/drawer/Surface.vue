@@ -1,5 +1,11 @@
 <template>
-  <svg @pointerup="finishGesture" @pointermove="move" :class="classes" tabindex="0">
+  <svg
+    @pointerup="finishGesture"
+    @pointermove="move"
+    @pointerdown="requestSelect"
+    :class="classes"
+    tabindex="0"
+  >
     <defs>
       <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
         <line stroke="black" stroke-width="4px" y2="10"></line>
@@ -8,6 +14,7 @@
     <angler-assist v-if="assist"></angler-assist>
     <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
     <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
+    <selection-box v-if="selecting"></selection-box>
   </svg>
 </template>
 <script lang="ts">
@@ -16,11 +23,13 @@ import { RGroup, Bond, DrawerState } from "../../models/";
 import RGroupVue from "../molecules/RGroup.vue";
 import BondVue from "../molecules/Bond.vue";
 import AnglerVue from "./widgets/Angler.vue";
+import SelectionVue from "./Selection.vue";
 export default Vue.extend({
   components: {
     "rgroup-element": RGroupVue,
     "bond-element": BondVue,
-    "angler-assist": AnglerVue
+    "angler-assist": AnglerVue,
+    "selection-box": SelectionVue
   },
   data: function() {
     return { keydown: undefined as any };
@@ -42,6 +51,9 @@ export default Vue.extend({
       let clazzes = [] as string[];
       if (this.$store.state.molecules.omitting) clazzes.push("omit");
       return clazzes;
+    },
+    selecting(): boolean {
+      return this.$store.state.molecules.stateMachine.state === DrawerState.SELECTING;
     }
   },
   mounted() {
@@ -70,8 +82,6 @@ export default Vue.extend({
                 !this.$store.state.molecules.omitting
               );
             else {
-              // let str = window.prompt("Enter a molecule");
-              // if (str) this.$store.dispatch("molecules/load", str);
               this.$store.commit("files/openLoad");
             }
             break;
@@ -103,6 +113,9 @@ export default Vue.extend({
         x: event.offsetX,
         y: event.offsetY
       });
+    },
+    requestSelect(event: PointerEvent) {
+      this.$store.commit("molecules/requestSelect");
     }
   }
 });

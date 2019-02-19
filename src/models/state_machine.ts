@@ -3,7 +3,7 @@ enum DrawerState {
   PLACING_NEW_ATOM,
   PLACING_NEW_ATOM_AND_BOND,
   MOVING,
-  SELECTED,
+  SELECTING,
   IDLE
 }
 
@@ -48,7 +48,7 @@ class StateMachine {
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
         // console.log("bond");
         break;
-      case DrawerState.SELECTED:
+      case DrawerState.SELECTING:
         // console.log("selected");
         break;
     }

@@ -43,7 +43,7 @@ let mGestures = {
           bond.start.bonds.set(bond.id, bond);
         };
         commit("history/logAction", { undo, redo }, { root: true });
-        commit("clearStateMachine");
+        commit("clearStateMachine", false);
         commit("createBond", rgroup);
         return;
       }
@@ -103,7 +103,7 @@ let mGestures = {
       }
     }
     commit("history/logAction", { undo, redo }, { root: true });
-    commit("clearStateMachine");
+    commit("clearStateMachine", false);
     commit("clearPointerState");
   },
   rgroupEnd(
@@ -129,7 +129,7 @@ let mGestures = {
         commit("history/logAction", { undo, redo }, { root: true });
         commit("swapPayload", { rgroup, payload });
         commit("popRGroup");
-        commit("clearStateMachine");
+        commit("clearStateMachine", false);
         dispatch("createAtom");
         return;
       }
@@ -150,7 +150,7 @@ let mGestures = {
         commit("popRGroup");
       }
     }
-    commit("clearStateMachine");
+    commit("clearStateMachine", false);
     commit("clearPointerState");
   }
 };
