@@ -53,7 +53,9 @@ export default Vue.extend({
       return clazzes;
     },
     selecting(): boolean {
-      return this.$store.state.molecules.stateMachine.state === DrawerState.SELECTING;
+      return (
+        this.$store.state.molecules.stateMachine.state === DrawerState.SELECTING
+      );
     }
   },
   mounted() {
@@ -115,7 +117,10 @@ export default Vue.extend({
       });
     },
     requestSelect(event: PointerEvent) {
-      this.$store.commit("molecules/requestSelect");
+      this.$store.commit("molecules/requestSelect", {
+        x: event.offsetX,
+        y: event.offsetY
+      });
     }
   }
 });

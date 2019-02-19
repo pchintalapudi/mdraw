@@ -10,11 +10,8 @@ let selectionMutations = {
     let index = stateMachine.selected.indexOf(rgroup);
     if (index !== -1) stateMachine.selected.splice(index, 1);
   },
-  selectAll({ stateMachine }: StateType, rgroups: RGroup[]) {
-    for (let rgroup of rgroups) {
-      if (stateMachine.selected.indexOf(rgroup) === -1)
-        stateMachine.selected.push(rgroup);
-    }
+  selectAllUnsafe({ stateMachine }: StateType, rgroups: RGroup[]) {
+    stateMachine.selected.push(...rgroups);
   },
   deselectAll({ stateMachine }: StateType, rgroups: RGroup[]) {
     for (let rgroup of rgroups) {
@@ -30,10 +27,10 @@ let selectionMutations = {
     obj: { x: number; y: number }
   ) {
     if (stateMachine.state === DrawerState.IDLE) {
-      stateMachine.state = DrawerState.SELECTING;
       pointerState.start = obj;
       pointerState.end = obj;
       pointerState.initTime = Date.now();
+      stateMachine.state = DrawerState.SELECTING;
     }
   },
   cancelSelecting({ stateMachine }: StateType) {

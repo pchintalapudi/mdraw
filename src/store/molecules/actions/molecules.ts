@@ -37,7 +37,7 @@ let actions = {
       commit("createRGroup", new RGroup(elements[state.atomicNumber - 1]));
   },
   moveEvent(
-    { state }: ActionContext<StateType, any>,
+    { state, commit }: ActionContext<StateType, any>,
     { x, y, force }: { x: number; y: number; force?: boolean }
   ) {
     switch (state.stateMachine.state) {
@@ -75,6 +75,20 @@ let actions = {
           break;
         }
       }
+      case DrawerState.SELECTING:
+        commit("updateEnd", { x, y });
+        let start = state.pointerState.start!,
+          end = state.pointerState.end!,
+          sx = Math.min(start.x, end.x),
+          sy = Math.min(start.y, end.y),
+          ex = Math.max(start.x, end.x),
+          ey = Math.max(start.y, end.y),
+          selected = state.rgroups.filter(
+            r => sx < r.x && r.x < ex && sy < r.y && r.y < ey
+          );
+        commit("clearSelected");
+        commit("selectAllUnsafe", selected);
+        break;
     }
   },
   changeBondState(

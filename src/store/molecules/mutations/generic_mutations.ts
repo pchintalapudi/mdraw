@@ -13,6 +13,9 @@ let genericMutations = {
     stateMachine.state = DrawerState.IDLE;
     stateMachine.creating = stateMachine.adding = undefined;
     if (clearSelected) stateMachine.selected.length = 0;
+  },
+  updateEnd({ pointerState }: StateType, obj: { x: number; y: number }) {
+    pointerState.end = obj;
   }
 };
 

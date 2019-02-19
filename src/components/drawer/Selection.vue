@@ -1,5 +1,5 @@
 <template>
-  <rect :x="x" :y="y" :width="width" :height="height" class="selectionBox"/>
+  <rect :x="x" :y="y" :width="width" :height="height" class="selection-box"/>
 </template>
 <script lang="ts">
 import Vue from "vue";
