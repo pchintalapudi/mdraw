@@ -11,7 +11,8 @@ let state = {
   bonds: [] as Bond[],
   pointerState,
   stateMachine: new StateMachine(),
-  omitting: false
+  omitting: false,
+  atomicNumber: 6
 };
 
 type StateType = { [P in keyof typeof state]: (typeof state)[P] };

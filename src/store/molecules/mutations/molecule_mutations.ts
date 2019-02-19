@@ -3,11 +3,15 @@ import { RGroup, DrawerState, Bond, elements, Payload } from "../../../models";
 import { defaultBondDist } from "../../../constants";
 
 let moleculeMutations = {
+  setAtomicNumber(state: StateType, number: number) {
+    state.atomicNumber = number;
+  },
   createRGroup({ stateMachine, rgroups }: StateType, rgroup: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
       stateMachine.placing = rgroup;
       rgroups.push(rgroup);
       stateMachine.state = DrawerState.PLACING_NEW_ATOM;
+      console.log([...rgroups]);
     }
   },
   cancelRGroupCreation({ rgroups }: StateType) {

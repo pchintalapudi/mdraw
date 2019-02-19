@@ -82,7 +82,7 @@ export default Vue.extend({
             }
             return;
           case " ":
-            this.$store.commit("molecules/createAtom");
+            this.$store.dispatch("molecules/createAtom");
             break;
           default:
             return;

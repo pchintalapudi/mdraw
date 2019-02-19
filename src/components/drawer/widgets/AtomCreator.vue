@@ -24,9 +24,17 @@ import Vue from "vue";
 import { elements, PeriodicTableElement, RGroup } from "../../../models";
 export default Vue.extend({
   data: function() {
-    return { atomicNumber: 6, max: elements.length + 1 };
+    return { max: elements.length + 1 };
   },
   computed: {
+    atomicNumber: {
+      get(): number {
+        return this.$store.state.molecules.atomicNumber;
+      },
+      set(atomicNumber: number) {
+        this.$store.commit("molecules/setAtomicNumber", atomicNumber);
+      }
+    },
     element(): PeriodicTableElement {
       return elements[this.atomicNumber - 1];
     },
@@ -48,7 +56,7 @@ export default Vue.extend({
   },
   methods: {
     submit() {
-      this.$store.commit("molecules/createRGroup", new RGroup(this.element));
+      this.$store.dispatch("molecules/createAtom");
     }
   }
 });

@@ -31,6 +31,10 @@ let actions = {
     commit("clearStateMachine");
     commit("clearPointerState");
   },
+  createAtom({ state, commit }: ActionContext<StateType, any>) {
+    if (state.atomicNumber > 0 && state.atomicNumber <= elements.length)
+      commit("createRGroup", new RGroup(elements[state.atomicNumber - 1]));
+  },
   finishGesture({
     state,
     dispatch,
@@ -178,7 +182,9 @@ let actions = {
         commit("history/logAction", { undo, redo }, { root: true });
         commit("swapPayload", { rgroup, payload });
         commit("popRGroup");
-        break;
+        commit("clearStateMachine");
+        dispatch("createAtom");
+        return;
       }
       case DrawerState.PLACING_NEW_ATOM_AND_BOND: {
         let bond = state.stateMachine.adding!,
