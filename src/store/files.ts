@@ -31,6 +31,7 @@ let module: Module<StateType, any> = {
   state,
   mutations: {
     doSave({ fileNames }, { name, data }: { name: string; data: string }) {
+      console.log(data);
       if (!~fileNames.indexOf(name)) {
         let placed = false;
         for (let i = 0; i < fileNames.length; i++) {
@@ -78,6 +79,9 @@ let module: Module<StateType, any> = {
         return state.fileNames;
       }
       return [];
+    },
+    load(_, fileName: string) {
+      return localStorage.getItem("files/" + fileName);
     }
   }
 };

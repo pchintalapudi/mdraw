@@ -232,6 +232,8 @@ let actions = {
     { state, dispatch, commit }: ActionContext<StateType, any>,
     model: string
   ) {
+    console.log("here");
+    console.log(model);
     let deserialized = JSON.parse(model),
       rgroupShades: RGroupSerialized[] = deserialized[0],
       bondShades: BondSerialized[] = deserialized[1],

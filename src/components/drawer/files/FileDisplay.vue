@@ -3,14 +3,22 @@
     <h3>{{save ? 'Save Molecule' : 'Load Molecule'}}</h3>
     <div>
       <article
-        v-for="file in visibleFiles"
+        v-for="file in fileNames"
         :key="file"
         :class="selected === file ? 'file selected' : 'file'"
+        @click="select(file)"
+        @dblclick="action"
       >{{file}}</article>
       <article v-for="(_, i) in 15 - visibleFiles.length" :key="i" class="file-fake"></article>
     </div>
     <form @submit.prevent.stop>
-      <input type="search" name="file-input" id="file-input" v-model="fileInput" @keydown.enter="action">
+      <input
+        type="search"
+        name="file-input"
+        id="file-input"
+        v-model="fileInput"
+        @keydown.enter="action"
+      >
       <button
         type="button"
         :disabled="(!inputValid && !save) || (save && !fileInput)"
@@ -27,7 +35,6 @@ export default Vue.extend({
   data: function() {
     return {
       fileNames: [] as string[],
-      selected: "",
       fileInput: ""
     };
   },
@@ -44,6 +51,11 @@ export default Vue.extend({
       return this.save
         ? this.fileNames.indexOf(this.fileInput) != -1
         : this.visibleFiles.length != 0 || this.fileNames.length == 0;
+    },
+    selected(): string {
+      return this.visibleFiles.indexOf(this.fileInput) != -1
+        ? this.fileInput
+        : "";
     }
   },
   async mounted() {
@@ -60,7 +72,16 @@ export default Vue.extend({
           data: await this.$store.dispatch("molecules/save")
         });
         this.$store.commit("files/close");
+      } else if (this.selected) {
+        this.$store.dispatch(
+          "molecules/load",
+          await this.$store.dispatch("files/load", this.fileInput)
+        );
+        this.$store.commit("files/close");
       }
+    },
+    select(file: string) {
+      this.fileInput = file;
     }
   }
 });

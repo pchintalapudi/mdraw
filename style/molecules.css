@@ -30,10 +30,6 @@ line.clickme {
     pointer-events: none;
 }
 
-svg.omit>.omittable text {
+svg.omit>.omittable {
     opacity: 0;
-}
-
-svg.omit>.omittable circle {
-    fill: transparent;
 }
