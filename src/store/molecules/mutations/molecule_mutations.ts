@@ -8,10 +8,10 @@ let moleculeMutations = {
   },
   createRGroup({ stateMachine, rgroups }: StateType, rgroup: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
-      stateMachine.placing = rgroup;
+      stateMachine.selected.length = 0;
+      stateMachine.creating = rgroup;
       rgroups.push(rgroup);
       stateMachine.state = DrawerState.PLACING_NEW_ATOM;
-      console.log([...rgroups]);
     }
   },
   cancelRGroupCreation({ rgroups }: StateType) {
@@ -19,10 +19,11 @@ let moleculeMutations = {
   },
   createBond({ rgroups, bonds, stateMachine }: StateType, start: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
+      stateMachine.selected.length = 0;
       let carbon = new RGroup(elements[6 - 1]);
       carbon.x = defaultBondDist + start.x;
       carbon.y = start.y;
-      stateMachine.placing = carbon;
+      stateMachine.creating = carbon;
       rgroups.push(carbon);
       let bond: Bond = new Bond(start, carbon);
       stateMachine.adding = bond;
@@ -39,8 +40,8 @@ let moleculeMutations = {
   startMove({ pointerState, stateMachine }: StateType, rgroup: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
       pointerState.initTime = Date.now();
-      stateMachine.state = DrawerState.MOVING_ATOM;
-      stateMachine.placing = rgroup;
+      stateMachine.state = DrawerState.MOVING_SELECTED;
+      stateMachine.creating = rgroup;
       pointerState.start = { x: rgroup.x, y: rgroup.y };
     }
   },
@@ -48,8 +49,13 @@ let moleculeMutations = {
     pointerState.start = init;
   },
   cancelMove({ stateMachine, pointerState }: StateType) {
-    stateMachine.placing!.x = pointerState.start!.x;
-    stateMachine.placing!.y = pointerState.start!.y;
+    let dx = stateMachine.creating!.x - pointerState.start!.x,
+      dy = stateMachine.creating!.y - pointerState.start!.y;
+    stateMachine.selected.forEach(r => {
+      r.x -= dx;
+      r.y -= dy;
+    });
+    stateMachine.selected.length = 0;
   },
   pushRGroup({ rgroups }: StateType, rgroup: RGroup) {
     rgroups.push(rgroup);

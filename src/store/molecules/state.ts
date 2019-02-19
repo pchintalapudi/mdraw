@@ -9,7 +9,6 @@ let pointerState = {
 let state = {
   rgroups: [] as RGroup[],
   bonds: [] as Bond[],
-  selected: [] as RGroup[],
   pointerState,
   stateMachine: new StateMachine(),
   omitting: false,

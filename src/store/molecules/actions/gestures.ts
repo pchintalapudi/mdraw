@@ -2,6 +2,7 @@ import { ActionContext } from "vuex";
 import { StateType } from "../state";
 import { DrawerState, RGroup } from "../../../models";
 import { minShift } from "../../../constants";
+import { delay } from "q";
 
 let mGestures = {
   finishGesture({
@@ -16,7 +17,7 @@ let mGestures = {
       default:
         return;
       case DrawerState.PLACING_NEW_ATOM: {
-        let rgroup = state.stateMachine.placing!;
+        let rgroup = state.stateMachine.creating!;
         undo = () => {
           dispatch("defaultCancel");
           commit("popRGroup");
@@ -28,7 +29,7 @@ let mGestures = {
         break;
       }
       case DrawerState.PLACING_NEW_ATOM_AND_BOND: {
-        let rgroup = state.stateMachine.placing!,
+        let rgroup = state.stateMachine.creating!,
           bond = state.stateMachine.adding!;
         undo = () => {
           dispatch("defaultCancel");
@@ -47,33 +48,37 @@ let mGestures = {
         commit("createBond", rgroup);
         return;
       }
-      case DrawerState.MOVING_ATOM: {
+      case DrawerState.MOVING_SELECTED: {
         if (
           Date.now() - state.pointerState.initTime < rootState.clickTime &&
           Math.hypot(
-            state.pointerState.start!.x - state.stateMachine.placing!.x,
-            state.pointerState.start!.y - state.stateMachine.placing!.y
+            state.pointerState.start!.x - state.stateMachine.creating!.x,
+            state.pointerState.start!.y - state.stateMachine.creating!.y
           ) < minShift
         ) {
           commit("cancelMove");
-          let rgroup = state.stateMachine.placing!;
+          let rgroup = state.stateMachine.creating!;
           commit("clearStateMachine");
           commit("createBond", rgroup);
           state.stateMachine.state = DrawerState.PLACING_NEW_ATOM_AND_BOND;
           return;
         } else {
-          let rgroup = state.stateMachine.placing!,
-            start = state.pointerState.start!,
-            end = { x: rgroup.x, y: rgroup.y };
+          let rgroups = [...state.stateMachine.selected],
+          dx = state.stateMachine.creating!.x - state.pointerState.start!.x,
+          dy = state.stateMachine.creating!.y - state.pointerState.start!.y;
           undo = () => {
             dispatch("defaultCancel");
-            rgroup.x = start.x;
-            rgroup.y = start.y;
+            for (let rgroup of rgroups) {
+              rgroup.x -= dx;
+              rgroup.y -= dy;
+            }
           };
           redo = () => {
             dispatch("defaultCancel");
-            rgroup.x = end.x;
-            rgroup.y = end.y;
+            for (let rgroup of rgroups) {
+              rgroup.x += dx;
+              rgroup.y += dy;
+            }
           };
         }
       }
@@ -91,7 +96,7 @@ let mGestures = {
       default:
         break;
       case DrawerState.PLACING_NEW_ATOM: {
-        let payload = state.stateMachine.placing!.payload,
+        let payload = state.stateMachine.creating!.payload,
           oldPayload = rgroup.payload;
         if (payload == oldPayload) break;
         let undo = () => {

@@ -2,24 +2,28 @@ import { StateType } from "../state";
 import { RGroup } from "../../../models";
 
 let selectionMutations = {
-  select({ selected }: StateType, rgroup: RGroup) {
-    selected.push(rgroup);
+  select({ stateMachine }: StateType, rgroup: RGroup) {
+    if (stateMachine.selected.indexOf(rgroup) === -1)
+      stateMachine.selected.push(rgroup);
   },
-  deselect({ selected }: StateType, rgroup: RGroup) {
-    let index;
-    while ((index = selected.indexOf(rgroup))) selected.splice(index, 1);
+  deselect({ stateMachine }: StateType, rgroup: RGroup) {
+    let index = stateMachine.selected.indexOf(rgroup);
+    if (index !== -1) stateMachine.selected.splice(index, 1);
   },
-  selectAll({ selected }: StateType, rgroups: RGroup[]) {
-    selected.push(...rgroups);
-  },
-  deselectAll({ selected }: StateType, rgroups: RGroup[]) {
-    for (let i = selected.length; i-- > 0; ) {
-      let index = rgroups.indexOf(selected[i]);
-      if (index != -1) selected.splice(i, 1);
+  selectAll({ stateMachine }: StateType, rgroups: RGroup[]) {
+    for (let rgroup of rgroups) {
+      if (stateMachine.selected.indexOf(rgroup) === -1)
+        stateMachine.selected.push(rgroup);
     }
   },
-  clearSelected({ selected }: StateType) {
-    selected.length = 0;
+  deselectAll({ stateMachine }: StateType, rgroups: RGroup[]) {
+    for (let rgroup of rgroups) {
+      let index = stateMachine.selected.indexOf(rgroup);
+      if (index !== -1) stateMachine.selected.splice(index, 1);
+    }
+  },
+  clearSelected({ stateMachine }: StateType) {
+    stateMachine.selected.length = 0;
   }
 };
 

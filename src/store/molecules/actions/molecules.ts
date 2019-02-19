@@ -16,7 +16,7 @@ let actions = {
       default:
       case DrawerState.IDLE:
         return;
-      case DrawerState.MOVING_ATOM:
+      case DrawerState.MOVING_SELECTED:
         commit("cancelMove");
         break;
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
@@ -44,18 +44,23 @@ let actions = {
       case DrawerState.IDLE:
       default:
         break;
-      case DrawerState.MOVING_ATOM:
+      case DrawerState.MOVING_SELECTED:
+        state.stateMachine.selected.forEach(r => {
+          r.x = x;
+          r.y = y;
+        });
+        break;
       case DrawerState.PLACING_NEW_ATOM:
-        state.stateMachine.placing!.x = x;
-        state.stateMachine.placing!.y = y;
+        state.stateMachine.creating!.x = x;
+        state.stateMachine.creating!.y = y;
         break;
       case DrawerState.PLACING_NEW_ATOM_AND_BOND: {
         if (force) {
-          state.stateMachine.placing!.x = x;
-          state.stateMachine.placing!.y = y;
+          state.stateMachine.creating!.x = x;
+          state.stateMachine.creating!.y = y;
         } else {
           let start = state.stateMachine.adding!.start,
-            end = state.stateMachine.placing!,
+            end = state.stateMachine.creating!,
             angle = calculateAngle(
               defaultBondDist,
               (180 / Math.PI) * Math.atan2(x - start.x, y - start.y) - 90
