@@ -73,7 +73,10 @@ let actions = {
           commit("pushBond", bond);
           bond.start.bonds.set(bond.id, bond);
         };
-        break;
+        commit("history/logAction", { undo, redo }, { root: true });
+        commit("clearStateMachine");
+        commit("createBond", rgroup);
+        return;
       }
       case DrawerState.MOVING_ATOM: {
         if (
@@ -232,8 +235,6 @@ let actions = {
     { state, dispatch, commit }: ActionContext<StateType, any>,
     model: string
   ) {
-    console.log("here");
-    console.log(model);
     let deserialized = JSON.parse(model),
       rgroupShades: RGroupSerialized[] = deserialized[0],
       bondShades: BondSerialized[] = deserialized[1],
@@ -256,6 +257,7 @@ let actions = {
       );
       bond.start.bonds.set(bond.id, bond);
       bond.end.bonds.set(bond.id, bond);
+      bond.state = b.state;
       return bond;
     });
     let undo = () => {

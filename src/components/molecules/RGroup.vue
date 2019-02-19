@@ -6,6 +6,7 @@
     @pointerup="pointerUp"
     @pointermove="pointerMove"
   >
+    <circle :r="abbrev.length == 1 ? 20 : 30" :cx="contentWidth / 2" :cy="-contentHeight / 4" style="fill:transparent"/>
     <circle :r="abbrev.length == 1 ? 10 : 20" :cx="contentWidth / 2" :cy="-contentHeight / 4"></circle>
     <text class="abbrev" ref="content">{{abbrev}}</text>
     <text

@@ -1,13 +1,14 @@
 <template>
   <section class="filechooser">
     <h3>{{save ? 'Save Molecule' : 'Load Molecule'}}</h3>
-    <div>
+    <div @keydown.delete="deleteFile">
       <article
         v-for="file in fileNames"
         :key="file"
         :class="selected === file ? 'file selected' : 'file'"
         @click="select(file)"
         @dblclick="action"
+        tabindex="0"
       >{{file}}</article>
       <article v-for="(_, i) in 15 - visibleFiles.length" :key="i" class="file-fake"></article>
     </div>
@@ -34,11 +35,13 @@ import Vue from "vue";
 export default Vue.extend({
   data: function() {
     return {
-      fileNames: [] as string[],
       fileInput: ""
     };
   },
   computed: {
+    fileNames(): string[] {
+      return this.$store.state.files.fileNames;
+    },
     save(): boolean {
       return this.$store.state.files.save;
     },
@@ -58,8 +61,8 @@ export default Vue.extend({
         : "";
     }
   },
-  async mounted() {
-    this.fileNames = await this.$store.dispatch("files/getNames");
+  mounted() {
+    this.$store.commit("files/refreshFileNames");
   },
   methods: {
     cancel() {
@@ -82,6 +85,9 @@ export default Vue.extend({
     },
     select(file: string) {
       this.fileInput = file;
+    },
+    deleteFile() {
+      if (this.selected) this.$store.commit("files/deleteFile", this.selected);
     }
   }
 });

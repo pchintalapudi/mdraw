@@ -1,7 +1,9 @@
 <template>
   <main>
     <surface-area></surface-area>
-    <dialog-wrapper v-if="dialogOpen"></dialog-wrapper>
+    <transition name="fade">
+      <dialog-wrapper v-if="dialogOpen"></dialog-wrapper>
+    </transition>
     <aside-menu></aside-menu>
   </main>
 </template>

@@ -66,6 +66,14 @@ let module: Module<StateType, any> = {
     },
     refreshFileNames(state) {
       state.fileNames = loadFiles(state.localStoragePresent);
+    },
+    deleteFile({ fileNames }, fileName: string) {
+      let index = fileNames.indexOf(fileName);
+      if (index != -1) {
+        fileNames.splice(index, 1);
+        localStorage.removeItem("files/" + fileName);
+        localStorage.setItem("fileNames", JSON.stringify(state.fileNames));
+      }
     }
   },
   actions: {
