@@ -41,3 +41,34 @@ aside>:first-child {
     flex-flow: column nowrap;
     background-color: gray;
 }
+
+.dialog-back {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-area>* {
+    width: 50vw;
+    height: 50vh;
+}
+
+.dialog-back,
+.dialog-area {
+    justify-content: center;
+    align-items: center;
+}
+
+.error>polygon {
+    stroke: transparent;
+    fill: red;
+}
+
+.error>text {
+    font-size: .25pt;
+}
+
+.error>text:first-of-type {
+    font-size: 2pt;
+}

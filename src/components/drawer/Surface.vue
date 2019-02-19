@@ -77,7 +77,10 @@ export default Vue.extend({
           case "s":
             if (event.ctrlKey)
               this.$store.dispatch("molecules/save").then(s => console.log(s));
+          default:
+            return;
         }
+        event.preventDefault();
       }
     };
   },

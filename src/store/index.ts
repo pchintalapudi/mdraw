@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import history from "./history";
 import molecules from "./molecules";
+import files from "./files";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -13,7 +14,8 @@ const store = new Vuex.Store({
   },
   modules: {
     history,
-    molecules
+    molecules,
+    files
   }
 });
 

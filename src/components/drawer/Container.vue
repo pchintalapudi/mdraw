@@ -1,6 +1,7 @@
 <template>
   <main>
     <surface-area></surface-area>
+    <dialog-wrapper v-if="dialogOpen"></dialog-wrapper>
     <aside-menu></aside-menu>
   </main>
 </template>
@@ -8,7 +9,17 @@
 import Vue from "vue";
 import Menu from "./Menu.vue";
 import Surface from "./Surface.vue";
+import DialogWrapperVue from "./files/DialogWrapper.vue";
 export default Vue.extend({
-  components: { "aside-menu": Menu, "surface-area": Surface }
+  components: {
+    "aside-menu": Menu,
+    "surface-area": Surface,
+    "dialog-wrapper": DialogWrapperVue
+  },
+  computed: {
+    dialogOpen(): boolean {
+      return this.$store.state.files.open;
+    }
+  }
 });
 </script>
