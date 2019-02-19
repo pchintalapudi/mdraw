@@ -57,7 +57,6 @@ let actions = {
       case DrawerState.PLACING_NEW_ATOM_AND_BOND: {
         let rgroup = state.stateMachine.placing!,
           bond = state.stateMachine.adding!;
-        console.log("here");
         undo = () => {
           dispatch("defaultCancel");
           commit("popRGroup");

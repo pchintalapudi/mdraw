@@ -6,6 +6,7 @@ function localStoragePresent(): boolean {
     localStorage.removeItem("presence");
     return true;
   } catch (err) {
+    console.error(err);
     return false;
   }
 }

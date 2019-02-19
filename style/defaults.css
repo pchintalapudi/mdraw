@@ -35,6 +35,17 @@ main>:last-child {
     flex-flow: column nowrap;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+    padding: 0;
+}
+
 aside>:first-child {
     height: 60vh;
     width: 100%;
@@ -42,16 +53,53 @@ aside>:first-child {
     background-color: gray;
 }
 
+button {
+    background-color: transparent;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 5px;
+    border-color: #0088ff;
+    cursor: pointer;
+    transition: background-color 200ms;
+}
+
+button:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    background-color: darkgray;
+}
+
+button.cancel {
+    border-color: #ff2200;
+}
+
+button:hover {
+    background-color: #0088ff44;
+}
+
+button.cancel:hover {
+    background-color: #ff220044;
+}
+
+button:active {
+    background-color: #0088ff88;
+}
+
+button.cancel:active {
+    background-color: #ff220044;
+}
+
 .dialog-back {
     position: fixed;
     height: 100vh;
     width: 100vw;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #00000088;
 }
 
 .dialog-area>* {
-    width: 50vw;
-    height: 50vh;
+    width: 75vw;
+    height: 75vh;
+    border-radius: 1.25vmin;
 }
 
 .dialog-back,
@@ -60,15 +108,88 @@ aside>:first-child {
     align-items: center;
 }
 
-.error>polygon {
+.error {
+    flex-flow: column nowrap;
+}
+
+.error>*>polygon {
     stroke: transparent;
     fill: red;
 }
 
-.error>text {
-    font-size: .25pt;
+.error>*>text {
+    font-size: 1.5pt;
 }
 
-.error>text:first-of-type {
-    font-size: 2pt;
+.error>:last-child {
+    color: white;
+    font-size: 2em;
+    margin-top: -2em;
+    text-align: center;
+}
+
+.filechooser {
+    flex-flow: column nowrap;
+    background-color: white;
+}
+
+.filechooser>h3 {
+    font-weight: normal;
+    font-size: 1.5em;
+    padding: 10px;
+}
+
+.filechooser>:nth-child(2) {
+    flex: 1;
+    flex-flow: column nowrap;
+    overflow: auto;
+}
+
+.filechooser>:last-child {
+    padding: 10px;
+    background-color: lightgrey;
+    border-bottom-left-radius: 1.25vmin;
+    border-bottom-right-radius: 1.25vmin;
+}
+
+.filechooser>:last-child>* {
+    padding: 5px;
+    margin: 5px;
+}
+
+.filechooser>*>input {
+    flex: 1;
+    border-radius: 5px;
+}
+
+.filechooser>*>button {
+    width: 75px;
+    justify-content: center;
+}
+
+.file,
+.file-fake {
+    height: 6.66%;
+}
+
+.file:nth-child(odd),
+.file-fake:nth-child(odd) {
+    background-color: #00000011;
+}
+
+.file:nth-child(even),
+.file-fake:nth-child(even) {
+    background-color: white;
+}
+
+.file.selected {
+    background-color: #0088ff88;
+}
+
+.file:hover {
+    background-color: #0088ff44;
+}
+
+.file.selected:hover {
+    background-color: #0088ffbb;
 }

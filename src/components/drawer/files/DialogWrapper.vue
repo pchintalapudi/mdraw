@@ -1,6 +1,6 @@
 <template>
-  <div class="dialog-back" @click="escape">
-    <section class="dialog-area" @click="capture">
+  <div class="dialog-back" @click="escape" @keydown.escape="escape">
+    <section class="dialog-area" @click="capture" tabindex="0">
       <error-dialog v-if="error"/>
       <file-dialog v-else></file-dialog>
     </section>
@@ -16,19 +16,19 @@ export default Vue.extend({
     "file-dialog": FileDialogVue
   },
   data: function() {
-    return { error: false };
+    return { error: true };
   },
   async mounted() {
-    this.error = await this.$store.dispatch("files/canIO");
+    this.error = !await this.$store.dispatch("files/canIO");
+    (this.$el.children.item(0) as any).focus();
   },
   methods: {
     escape() {
-      console.log("escape");
       this.$store.commit("files/close");
+      this.$store.state.molecules.pointerState._drawPane.focus();
     },
     capture(event: Event) {
-      console.log("capture");
-      event.preventDefault();
+      event.stopPropagation();
     }
   }
 });

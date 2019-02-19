@@ -70,13 +70,20 @@ export default Vue.extend({
                 !this.$store.state.molecules.omitting
               );
             else {
-              let str = window.prompt("Enter a molecule");
-              if (str) this.$store.dispatch("molecules/load", str);
+              // let str = window.prompt("Enter a molecule");
+              // if (str) this.$store.dispatch("molecules/load", str);
+              this.$store.commit("files/openLoad");
             }
             break;
           case "s":
-            if (event.ctrlKey)
-              this.$store.dispatch("molecules/save").then(s => console.log(s));
+            if (event.ctrlKey) {
+              this.$store.commit("files/openSave");
+              break;
+            }
+            return;
+          case " ":
+            this.$store.commit("molecules/createAtom");
+            break;
           default:
             return;
         }
