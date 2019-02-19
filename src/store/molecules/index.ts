@@ -1,6 +1,10 @@
 import { Module } from "vuex";
 import { state, StateType } from "./state";
-import { genericMutations, moleculeMutations } from "./mutations";
+import {
+  genericMutations,
+  moleculeMutations,
+  selectionMutations
+} from "./mutations";
 import { moleculeActions } from "./actions";
 
 const module: Module<StateType, any> = {
@@ -8,7 +12,8 @@ const module: Module<StateType, any> = {
   state,
   mutations: {
     ...genericMutations,
-    ...moleculeMutations
+    ...moleculeMutations,
+    ...selectionMutations
   },
   actions: {
     ...moleculeActions
