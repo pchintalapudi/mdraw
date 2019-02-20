@@ -11,7 +11,15 @@
     cursor: default;
 }
 
-.rgroup>circle {
+.rgroup>circle:first-of-type {
+    fill: transparent;
+}
+
+.rgroup.selected>circle:first-of-type {
+    stroke: #0088ff88;
+}
+
+.rgroup>circle:last-of-type {
     fill: white;
 }
 

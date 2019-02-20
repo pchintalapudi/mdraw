@@ -41,6 +41,7 @@ let moleculeMutations = {
       stateMachine.state = DrawerState.MOVING;
       stateMachine.creating = rgroup;
       pointerState.start = { x: rgroup.x, y: rgroup.y };
+      pointerState.end = { x: rgroup.x, y: rgroup.y };
     }
   },
   logInitPoint({ pointerState }: StateType, init: { x: number; y: number }) {

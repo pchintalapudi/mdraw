@@ -10,7 +10,6 @@
       :r="abbrev.length == 1 ? 20 : 30"
       :cx="contentWidth / 2"
       :cy="-contentHeight / 4"
-      style="fill:transparent"
     />
     <circle :r="abbrev.length == 1 ? 10 : 20" :cx="contentWidth / 2" :cy="-contentHeight / 4"></circle>
     <text class="abbrev" ref="content">{{abbrev}}</text>
@@ -117,10 +116,18 @@ export default Vue.extend({
             .value.getPeer(this.rGroup)!.payload == elements[6 - 1])
       );
     },
+    selected(): boolean {
+      return (
+        this.$store.state.molecules.stateMachine.selected.indexOf(
+          this.rGroup
+        ) !== -1
+      );
+    },
     classes(): string[] {
       let clazzes = ["rgroup"];
       if (this.transparent) clazzes.push("transparent");
       if (this.omittable) clazzes.push("omittable");
+      if (this.selected) clazzes.push("selected");
       return clazzes;
     }
   },

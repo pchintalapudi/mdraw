@@ -1,4 +1,4 @@
-import { StateType, state } from "../state";
+import { StateType } from "../state";
 import { DrawerState } from "../../../models";
 
 let genericMutations = {

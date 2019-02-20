@@ -16,6 +16,7 @@ let actions = {
       default:
       case DrawerState.IDLE:
       case DrawerState.SELECTING:
+        commit("clearSelected");
         return;
       case DrawerState.MOVING:
         commit("cancelMove");
@@ -26,8 +27,6 @@ let actions = {
       case DrawerState.PLACING_NEW_ATOM:
         commit("cancelRGroupCreation");
         break;
-      case DrawerState.SELECTING:
-        commit("cancelSelecting");
     }
     commit("clearStateMachine");
     commit("clearPointerState");
@@ -45,12 +44,15 @@ let actions = {
       default:
         break;
       case DrawerState.MOVING:
-        if (state.stateMachine.isSelected)
+        if (state.stateMachine.isSelected) {
+          let dx = x - state.pointerState.end!.x,
+            dy = y - state.pointerState.end!.y;
           state.stateMachine.selected.forEach(r => {
-            r.x = x;
-            r.y = y;
+            r.x += dx;
+            r.y += dy;
           });
-        else {
+          commit("updateEnd", { x, y });
+        } else {
           state.stateMachine.creating!.x = x;
           state.stateMachine.creating!.y = y;
         }
@@ -63,6 +65,7 @@ let actions = {
         if (force) {
           state.stateMachine.creating!.x = x;
           state.stateMachine.creating!.y = y;
+          break;
         } else {
           let start = state.stateMachine.adding!.start,
             end = state.stateMachine.creating!,

@@ -16,8 +16,9 @@ let mGestures = {
       default:
         return;
       case DrawerState.SELECTING:
-      commit("clearStateMachine", false);
-      commit("clearPointerState");
+        commit("clearStateMachine", false);
+        commit("clearPointerState");
+        return;
       case DrawerState.PLACING_NEW_ATOM: {
         let rgroup = state.stateMachine.creating!;
         undo = () => {
