@@ -37,19 +37,19 @@ class StateMachine {
   set state(state: DrawerState) {
     switch (state) {
       case DrawerState.IDLE:
-        // console.log("idle");
+        console.log("idle");
         break;
       case DrawerState.MOVING:
-        // console.log("moving");
+        console.log("moving");
         break;
       case DrawerState.PLACING_NEW_ATOM:
-        // console.log("atom");
+        console.log("atom");
         break;
       case DrawerState.PLACING_NEW_ATOM_AND_BOND:
-        // console.log("bond");
+        console.log("bond");
         break;
       case DrawerState.SELECTING:
-        // console.log("selected");
+        console.log("selected");
         break;
     }
     this._state = state;

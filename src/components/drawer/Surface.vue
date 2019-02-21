@@ -96,6 +96,8 @@ export default Vue.extend({
           case " ":
             this.$store.dispatch("molecules/createAtom");
             break;
+          case "Delete":
+            this.$store.dispatch("molecules/delete");
           default:
             return;
         }
@@ -117,10 +119,11 @@ export default Vue.extend({
       });
     },
     requestSelect(event: PointerEvent) {
-      this.$store.commit("molecules/requestSelect", {
-        x: event.offsetX,
-        y: event.offsetY
-      });
+      if (!event.button)
+        this.$store.commit("molecules/requestSelect", {
+          x: event.offsetX,
+          y: event.offsetY
+        });
     }
   }
 });

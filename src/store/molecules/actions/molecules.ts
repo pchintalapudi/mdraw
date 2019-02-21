@@ -28,7 +28,7 @@ let actions = {
         commit("cancelRGroupCreation");
         break;
     }
-    commit("clearStateMachine");
+    commit("clearStateMachine", true);
     commit("clearPointerState");
   },
   createAtom({ state, commit }: ActionContext<StateType, any>) {
@@ -110,6 +110,55 @@ let actions = {
         };
       redo();
       commit("history/logAction", { undo, redo }, { root: true });
+    }
+  },
+  flipBond({ commit }: ActionContext<StateType, any>, bond: Bond) {
+    let swap = () => {
+      let temp = bond.start;
+      bond.start = bond.end;
+      bond.end = temp;
+    };
+    swap();
+    commit("history/logAction", { undo: swap, redo: swap }, { root: true });
+  },
+  delete({ state, commit, dispatch }: ActionContext<StateType, any>) {
+    if (state.stateMachine.selected.length) {
+      let rgroupCopy = [...state.rgroups],
+        bondCopy = [...state.bonds],
+        deletedRGroupSet = new Set([...state.stateMachine.selected]),
+        deletedBondSet = new Set();
+      deletedRGroupSet.forEach(r =>
+        r.bonds.forEach(b => deletedBondSet.add(b))
+      );
+      let rgroupCleaned = rgroupCopy.filter(r => !deletedRGroupSet.has(r)),
+        bondsCleaned = bondCopy.filter(b => !deletedBondSet.has(b)),
+        undo = () => {
+          dispatch("defaultCancel");
+          commit("swapRGroups", rgroupCopy);
+          commit("swapBonds", bondCopy);
+          bondCopy.forEach(b => {
+            if (!deletedRGroupSet.has(b.start)) {
+              b.start.bonds.set(b.id, b);
+            } else if (!deletedRGroupSet.has(b.end)) {
+              b.end.bonds.set(b.id, b);
+            }
+          });
+        },
+        redo = () => {
+          dispatch("defaultCancel");
+          commit("swapRGroups", rgroupCleaned);
+          commit("swapBonds", bondsCleaned);
+          bondCopy.forEach(b => {
+            if (!deletedRGroupSet.has(b.start)) {
+              b.start.bonds.delete(b.id);
+            } else if (!deletedRGroupSet.has(b.end)) {
+              b.end.bonds.delete(b.id);
+            }
+          });
+        };
+      commit("history/logAction", { undo, redo }, { root: true });
+      commit("clearSelected");
+      redo();
     }
   }
 };

@@ -2,8 +2,10 @@
   <g
     :transform="'translate(' + bond.start.x + ' ' + bond.start.y + ') rotate(' + angle + ')'"
     :class="classes"
+    @pointerdown.stop
     @click="click"
     @dblclick="dblclick"
+    @contextmenu.prevent="swapBond"
   >
     <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <line
@@ -114,7 +116,10 @@ export default Vue.extend({
       );
     },
     transparent(): boolean {
-      return !!this.$store.state.molecules.stateMachine.creating;
+      return (
+        !!this.$store.state.molecules.stateMachine.creating ||
+        this.$store.state.molecules.pointerState.end
+      );
     },
     classes(): string[] {
       let clazzes = ["bond"];
@@ -151,6 +156,9 @@ export default Vue.extend({
         this.switchState(true);
         event.stopPropagation();
       }
+    },
+    swapBond() {
+      this.$store.dispatch("molecules/flipBond", this.bond);
     },
     async switchState(order: boolean) {
       let bondState;

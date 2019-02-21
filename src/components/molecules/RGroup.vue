@@ -7,7 +7,7 @@
     @pointermove="pointerMove"
   >
     <circle
-      :r="abbrev.length == 1 ? 20 : 30"
+      :r="abbrev.length == 1 ? 15 : 25"
       :cx="contentWidth / 2"
       :cy="-contentHeight / 4"
     />

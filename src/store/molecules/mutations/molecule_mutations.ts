@@ -85,6 +85,14 @@ let moleculeMutations = {
   },
   omit(state: StateType, omit: boolean) {
     state.omitting = omit;
+  },
+  swapRGroups({ rgroups }: StateType, replace: RGroup[]) {
+    rgroups.length = 0;
+    rgroups.push(...replace);
+  },
+  swapBonds({ bonds }: StateType, replace: Bond[]) {
+    bonds.length = 0;
+    bonds.push(...replace);
   }
 };
 
