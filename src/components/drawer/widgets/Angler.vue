@@ -21,15 +21,22 @@ export default Vue.extend({
     },
     angle(): number {
       return (
-        (630 -
-          ((((Math.atan2(
+        360 -
+        ((360 +
+          (Math.atan2(
             this.bond.end.y - this.bond.start.y,
             this.bond.end.x - this.bond.start.x
-          )) *
+          ) *
             180) /
-            Math.PI +
-            270) %
-            360)) %
+            Math.PI) %
+          360)
+      );
+    },
+    raw() {
+      return (
+        ((this.angle as any) +
+          ((this.lastAngle as any) * 180) / Math.PI +
+          360) %
         360
       );
     },
@@ -39,29 +46,37 @@ export default Vue.extend({
         (this.bond as any).start.x +
         " " +
         (this.bond as any).start.y +
-        " h " +
-        defaultBondDist +
-        " A " +
-        defaultBondDist +
+        "L" +
+        ((this.bond as any).start.x + Math.cos(this.lastAngle as any) * defaultBondDist) +
         " " +
+        ((this.bond as any).start.y + Math.sin(this.lastAngle as any) * defaultBondDist) +
+        ' ' +
+        'A' +
+        ' ' +
         defaultBondDist +
-        ", 0," +
-        ((this.angle as any) < 180 ? " 0, 0," : " 0, 1,") +
-        " " +
+        ' ' +
+        defaultBondDist +
+        ' ' +
+        0 +
+        ' ' +
+        0 +
+        ' '+
+        (this.raw as any > 180 ? 1 : 0) +
+        ' ' +
         (this.bond as any).end.x +
-        " " +
-        (this.bond as any).end.y +
-        " L " +
-        (this.bond as any).start.x +
-        " " +
-        (this.bond as any).start.y
+        ' ' +
+        (this.bond as any).end.y
       );
     },
     description() {
+      let raw =
+        ((this.angle as any) +
+          ((this.lastAngle as any) * 180) / Math.PI +
+          360) %
+        360;
       return (
-        ((this.angle as any) > 180
-          ? Number(((this.angle as any) - 360).toFixed(3))
-          : Number((this.angle as any).toFixed(3))) + "°"
+        (raw > 180 ? Number((raw - 360).toFixed(3)) : Number(raw.toFixed(3))) +
+        "°"
       );
     },
     rotate(): string {

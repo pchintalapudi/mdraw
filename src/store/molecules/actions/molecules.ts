@@ -71,7 +71,8 @@ let actions = {
             end = state.stateMachine.creating!,
             angle = calculateAngle(
               defaultBondDist,
-              (180 / Math.PI) * Math.atan2(x - start.x, y - start.y) - 90
+              (180 / Math.PI) * Math.atan2(x - start.x, y - start.y) - 90,
+              state.stateMachine.lastAngle * 180 / Math.PI
             );
           end.x = start.x + defaultBondDist * Math.cos(angle);
           end.y = start.y + defaultBondDist * Math.sin(angle);

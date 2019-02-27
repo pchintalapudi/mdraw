@@ -55,9 +55,9 @@ const lockDist = 6;
 function calculateAngle(dist: number, raw: number, offset = 0): number {
   for (let angle of angles) {
     let chord = Math.abs(
-      dist * 2 * Math.sin((Math.PI / 180 / 2) * (raw - angle - offset))
+      dist * 2 * Math.sin((Math.PI / 180 / 2) * (raw - angle + offset))
     );
-    if (chord < lockDist) return (((-angle + 360) % 360) * Math.PI) / 180;
+    if (chord < lockDist) return (((-angle + offset + 360) % 360) * Math.PI) / 180;
   }
   return (((-raw + 360) % 360) * Math.PI) / 180;
 }
