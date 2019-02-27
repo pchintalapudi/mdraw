@@ -48,6 +48,10 @@ let mGestures = {
         };
         commit("history/logAction", { undo, redo }, { root: true });
         commit("clearStateMachine", false);
+        commit(
+          "setAngle",
+          Math.atan2(bond.end.y - bond.start.y, bond.end.x - bond.start.x)
+        );
         commit("createBond", rgroup);
         return;
       }

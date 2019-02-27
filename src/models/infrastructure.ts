@@ -44,6 +44,12 @@ class RGroup {
     else obj.payload = this.payload;
     return obj;
   }
+
+  contains(other:RGroup):boolean {
+    let contains = false;
+    this.bonds.forEach(b => contains = contains || !!b.getPeer(other));
+    return contains;
+  }
 }
 
 enum BondState {

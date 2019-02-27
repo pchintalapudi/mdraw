@@ -6,11 +6,7 @@
     @pointerup="pointerUp"
     @pointermove="pointerMove"
   >
-    <circle
-      :r="abbrev.length == 1 ? 15 : 25"
-      :cx="contentWidth / 2"
-      :cy="-contentHeight / 4"
-    />
+    <circle :r="abbrev.length == 1 ? 15 : 25" :cx="contentWidth / 2" :cy="-contentHeight / 4"/>
     <circle :r="abbrev.length == 1 ? 10 : 20" :cx="contentWidth / 2" :cy="-contentHeight / 4"></circle>
     <text class="abbrev" ref="content">{{abbrev}}</text>
     <text
@@ -24,8 +20,7 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { RGroup } from "../../models";
-import { elements } from "../../models";
+import { RGroup, elements } from "../../models";
 export default Vue.extend({
   props: {
     rGroup: RGroup
@@ -103,7 +98,13 @@ export default Vue.extend({
       );
     },
     transparent(): boolean {
-      return this.rGroup == this.$store.state.molecules.stateMachine.creating;
+      return (
+        this.rGroup == this.$store.state.molecules.stateMachine.creating ||
+        (this.$store.state.molecules.stateMachine.creating &&
+          this.$store.state.molecules.stateMachine.creating.contains(
+            this.rGroup
+          ))
+      );
     },
     omittable(): boolean {
       return (
@@ -134,7 +135,11 @@ export default Vue.extend({
   methods: {
     pointerDown(event: PointerEvent) {
       if (!event.button) {
-        this.$store.commit("molecules/startMove", this.rGroup);
+        if (!event.shiftKey) {
+          this.$store.commit("molecules/startMove", this.rGroup);
+        } else {
+          this.$store.commit("molecules/select", this.rGroup);
+        }
         event.stopPropagation();
       }
     },

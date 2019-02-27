@@ -12,6 +12,8 @@ class StateMachine {
   selected: RGroup[] = [];
   private _creating?: RGroup = undefined;
   adding?: Bond = undefined;
+  bound: RGroup[] = [];
+  lastAngle: number = 0;
   private select: boolean = false;
   private valid: boolean = false;
 
@@ -21,6 +23,11 @@ class StateMachine {
 
   set creating(rgroup: RGroup | undefined) {
     this._creating = rgroup;
+    this.bound.length = 0;
+    if (rgroup) {
+      rgroup.bonds.forEach(b => this.bound.push(b.getPeer(rgroup)!));
+      this.bound.push(rgroup);
+    }
     this.valid = false;
   }
 

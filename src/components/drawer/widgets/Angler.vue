@@ -16,13 +16,16 @@ export default Vue.extend({
     bond(): Bond {
       return this.$store.state.molecules.stateMachine.adding!;
     },
+    lastAngle(): number {
+      return this.$store.state.molecules.stateMachine.lastAngle;
+    },
     angle(): number {
       return (
         (630 -
-          (((Math.atan2(
+          ((((Math.atan2(
             this.bond.end.y - this.bond.start.y,
             this.bond.end.x - this.bond.start.x
-          ) *
+          )) *
             180) /
             Math.PI +
             270) %
@@ -60,6 +63,9 @@ export default Vue.extend({
           ? Number(((this.angle as any) - 360).toFixed(3))
           : Number((this.angle as any).toFixed(3))) + "°"
       );
+    },
+    rotate(): string {
+      return "rotate(" + (this.lastAngle * 180) / Math.PI + ")";
     }
   }
 });

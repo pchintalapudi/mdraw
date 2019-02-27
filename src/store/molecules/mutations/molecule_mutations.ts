@@ -6,8 +6,9 @@ let moleculeMutations = {
   setAtomicNumber(state: StateType, number: number) {
     state.atomicNumber = number;
   },
-  createRGroup({ stateMachine, rgroups }: StateType, rgroup: RGroup) {
+  createRGroup({ stateMachine, rgroups, pointerState }: StateType, rgroup: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
+      pointerState._drawPane!.focus();
       stateMachine.creating = rgroup;
       rgroups.push(rgroup);
       stateMachine.state = DrawerState.PLACING_NEW_ATOM;
