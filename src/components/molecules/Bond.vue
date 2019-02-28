@@ -9,12 +9,12 @@
   >
     <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <line
-      v-if="isSingleBond || !bond.bondOrder"
+      v-if="isSingleBond || !bond.bondOrder || isThicc"
       x1="0"
       y1="0"
       :x2="dist"
       y2="0"
-      :class="bond.bondOrder ? 'single' : 'partial'"
+      :class="bond.bondOrder ? isThicc ? 'thonk' : 'single' : 'partial'"
     ></line>
     <polygon
       v-else-if="bond.bondOrder == 1"
@@ -66,7 +66,8 @@ const increments = [
   [
     BondState.SINGLE_LINEAR,
     BondState.SINGLE_APPROACHING,
-    BondState.SINGLE_RECEDING
+    BondState.SINGLE_RECEDING,
+    BondState.SINGLE_THICK
   ],
   [BondState.DOUBLE_LINEAR, BondState.DOUBLE_LEFT, BondState.DOUBLE_RIGHT],
   [BondState.TRIPLE_LINEAR, BondState.TRIPLE_SHORT]
@@ -84,6 +85,9 @@ export default Vue.extend({
   computed: {
     isSingleBond(): boolean {
       return this.bond.state == BondState.SINGLE_LINEAR;
+    },
+    isThicc(): boolean {
+      return this.bond.state == BondState.SINGLE_THICK;
     },
     isApproachingBond(): boolean {
       return this.bond.state == BondState.SINGLE_APPROACHING;

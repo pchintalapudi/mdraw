@@ -45,9 +45,9 @@ class RGroup {
     return obj;
   }
 
-  contains(other:RGroup):boolean {
+  contains(other: RGroup): boolean {
     let contains = false;
-    this.bonds.forEach(b => contains = contains || !!b.getPeer(other));
+    this.bonds.forEach(b => (contains = contains || !!b.getPeer(other)));
     return contains;
   }
 }
@@ -57,6 +57,7 @@ enum BondState {
   SINGLE_LINEAR,
   SINGLE_APPROACHING,
   SINGLE_RECEDING,
+  SINGLE_THICK,
   DOUBLE_LINEAR,
   DOUBLE_LEFT,
   DOUBLE_RIGHT,
@@ -96,9 +97,7 @@ class Bond {
 
   get bondOrder(): number {
     switch (this.state) {
-      case BondState.SINGLE_LINEAR:
-      case BondState.SINGLE_RECEDING:
-      case BondState.SINGLE_APPROACHING:
+      default:
         return 1;
       case BondState.PARTIAL:
         return 0;

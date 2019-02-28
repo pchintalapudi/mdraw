@@ -6,7 +6,10 @@ let moleculeMutations = {
   setAtomicNumber(state: StateType, number: number) {
     state.atomicNumber = number;
   },
-  createRGroup({ stateMachine, rgroups, pointerState }: StateType, rgroup: RGroup) {
+  createRGroup(
+    { stateMachine, rgroups, pointerState }: StateType,
+    rgroup: RGroup
+  ) {
     if (stateMachine.state == DrawerState.IDLE) {
       pointerState._drawPane!.focus();
       stateMachine.creating = rgroup;
@@ -94,6 +97,21 @@ let moleculeMutations = {
   swapBonds({ bonds }: StateType, replace: Bond[]) {
     bonds.length = 0;
     bonds.push(...replace);
+  },
+  deleteRGroup({ rgroups }: StateType, idx: number) {
+    rgroups.splice(idx, 1);
+  },
+  insertRGroup(
+    { rgroups }: StateType,
+    { idx, rgroup }: { idx: number; rgroup: RGroup }
+  ) {
+    rgroups.splice(idx, 0, rgroup);
+  },
+  deleteBond({ bonds }: StateType, idx: number) {
+    bonds.splice(idx, 1);
+  },
+  insertBond({ bonds }: StateType, { idx, bond }: { idx: number; bond: Bond }) {
+    bonds.splice(idx, 0, bond);
   }
 };
 

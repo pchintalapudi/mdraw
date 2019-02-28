@@ -28,6 +28,10 @@
     stroke-width: 1;
 }
 
+line.thonk {
+    stroke-width: 10;
+}
+
 line.partial {
     stroke-dasharray: 5, 5
 }
