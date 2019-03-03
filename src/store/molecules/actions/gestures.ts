@@ -167,37 +167,25 @@ let mGestures = {
         //First we swap the payload and delete the currently moving atom.
         //Watch for the edge case of the two joined atoms being bonded together
         //Then we need to log the positions of all the selected atoms and calculate their backwards positions
-        let deleteMe = state.stateMachine.creating!;
-        let oldPayload = rgroup.payload;
-        let dx = rgroup.x - state.pointerState.start!.x,
-          dy = rgroup.y - state.pointerState.start!.y;
-        let idx = state.rgroups.indexOf(deleteMe);
-        let shifted = new Set(state.stateMachine.selected);
-        let swappedBonds: Bond[] = [];
-        let success: Bond | null = null;
-        deleteMe.bonds.forEach(b => {
-          if (
-            b.start == rgroup ||
-            b.end == rgroup
-          ) {
-            success = b;
-          }
-          swappedBonds.push(b);
-        });
-        let oldBonds = [...state.bonds];
-        let newBondSet = new Set(state.bonds);
+        let deleteMe = state.stateMachine.creating!,
+          oldPayload = rgroup.payload,
+          dx = rgroup.x - state.pointerState.start!.x,
+          dy = rgroup.y - state.pointerState.start!.y,
+          idx = state.rgroups.indexOf(deleteMe),
+          shifted = new Set(state.stateMachine.selected),
+          swappedBonds: Bond[] = Array.from(deleteMe.bonds.values()),
+          oldBonds = [...state.bonds],
+          newBondSet = new Set(state.bonds);
         swappedBonds.forEach(b => newBondSet.delete(b));
-        if (success) {
-        } else {
-          let clonedBonds: Bond[] = swappedBonds.map(b => {
+        let clonedBonds = swappedBonds.map(b => {
             let bond = b.clone();
             if (bond.start == deleteMe) bond.start = rgroup;
             else bond.end = rgroup;
             return bond;
-          });
-          let newBonds = Array.from(newBondSet);
-          clonedBonds.forEach(b => newBonds.push(b));
-          let undo = () => {
+          }),
+          newBonds = Array.from(newBondSet);
+        clonedBonds.forEach(b => newBonds.push(b));
+        let undo = () => {
             dispatch("defaultCancel");
             commit("insertRGroup", { idx, rgroup: deleteMe });
             commit("swapPayload", { rgroup, payload: oldPayload });
@@ -210,8 +198,8 @@ let mGestures = {
               b.getPeer(deleteMe)!.bonds.set(b.id, b);
             });
             commit("swapBonds", oldBonds);
-          };
-          let redo = () => {
+          },
+          redo = () => {
             dispatch("defaultCancel");
             commit("deleteRGroup", idx);
             commit("swapPayload", { rgroup, payload: deleteMe.payload });
@@ -225,13 +213,12 @@ let mGestures = {
             });
             commit("swapBonds", newBonds);
           };
-          clonedBonds.forEach(b => {
-            rgroup.bonds.set(b.id, b);
-            b.getPeer(rgroup)!.bonds.set(b.id, b);
-          });
-          commit("swapBonds", newBonds);
-          commit("history/logAction", { undo, redo }, { root: true });
-        }
+        clonedBonds.forEach(b => {
+          rgroup.bonds.set(b.id, b);
+          b.getPeer(rgroup)!.bonds.set(b.id, b);
+        });
+        commit("swapBonds", newBonds);
+        commit("history/logAction", { undo, redo }, { root: true });
         commit("deleteRGroup", idx);
         commit("swapPayload", { rgroup, payload: deleteMe.payload });
         break;

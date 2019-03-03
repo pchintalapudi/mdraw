@@ -98,6 +98,25 @@ export default Vue.extend({
             break;
           case "Delete":
             this.$store.dispatch("molecules/delete");
+            break;
+          case "x":
+            if (event.ctrlKey) {
+              this.$store.dispatch("molecules/cut");
+              break;
+            }
+            return;
+          case "c":
+            if (event.ctrlKey) {
+              this.$store.dispatch("molecules/copy");
+              break;
+            }
+            return;
+          case "v":
+            if (event.ctrlKey) {
+              this.$store.dispatch("molecules/paste");
+              break;
+            }
+            return;
           default:
             return;
         }

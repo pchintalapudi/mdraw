@@ -50,6 +50,19 @@ class RGroup {
     this.bonds.forEach(b => (contains = contains || !!b.getPeer(other)));
     return contains;
   }
+
+  filteredClone(bondSet: Set<Bond>) {
+    let newBonds = new Map<number, Bond>();
+    this.bonds.forEach(b => {
+      if (bondSet.has(b)) newBonds.set(b.id, b);
+    });
+    let rgroup = new RGroup(this.payload, this.id);
+    rgroup.x = this.x;
+    rgroup.y = this.y;
+    rgroup.charge = this.charge;
+    rgroup.bonds = newBonds;
+    return rgroup;
+  }
 }
 
 enum BondState {
