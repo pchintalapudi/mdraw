@@ -138,11 +138,16 @@ export default Vue.extend({
       });
     },
     requestSelect(event: PointerEvent) {
-      if (!event.button)
+      if (!event.button) {
         this.$store.commit("molecules/requestSelect", {
           x: event.offsetX,
           y: event.offsetY
         });
+        this.$store.dispatch("molecules/moveEvent", {
+          x: event.offsetX,
+          y: event.offsetY
+        });
+      }
     }
   }
 });
