@@ -1,5 +1,5 @@
 <template>
-  <aside>
+  <aside class="touch-bar">
     <div>
       <button type="button"></button>
       <div>
@@ -12,8 +12,12 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import PeriodicTableVue from "../periodic_table/PeriodicTable.vue";
 import { PeriodicTableElement, elements } from "../../models";
 export default Vue.extend({
+  components: {
+    "periodic-table": PeriodicTableVue
+  },
   computed: {
     atomicNumber: {
       get(): number {
@@ -29,3 +33,5 @@ export default Vue.extend({
   }
 });
 </script>
+<style scoped>
+</style>

@@ -3450,38 +3450,6 @@ export default {
                 18, 
                 8
             ]
-        },
-        {
-            "name": "Ununennium",
-            "appearance": null,
-            "atomic_mass": 315,
-            "boil": 630,
-            "category": "unknown, but predicted to be an alkali metal",
-            "color": null,
-            "density": 3,
-            "discovered_by": "GSI Helmholtz Centre for Heavy Ion Research",
-            "melt": null,
-            "molar_heat": null,
-            "named_by": null,
-            "number": 119,
-            "period": 8,
-            "phase": "Solid",
-            "source": "https://en.wikipedia.org/wiki/Ununennium",
-            "spectral_img": null,
-            "summary": "Ununennium, also known as eka-francium or simply element 119, is the hypothetical chemical element with symbol Uue and atomic number 119. Ununennium and Uue are the temporary systematic IUPAC name and symbol respectively, until a permanent name is decided upon. In the periodic table of the elements, it is expected to be an s-block element, an alkali metal, and the first element in the eighth period.",
-            "symbol": "Uue",
-            "xpos": 1,
-            "ypos": 8,
-            "shells": [
-                2,
-                8,
-                18,
-                32,
-                32,
-                18,
-                8,
-                1
-            ]
         }
     ]
 }

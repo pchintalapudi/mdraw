@@ -52,43 +52,6 @@ aside>:first-child {
     flex-flow: column nowrap;
     background-color: gray;
 }
-
-button {
-    background-color: transparent;
-    border-style: solid;
-    border-radius: 5px;
-    padding: 5px;
-    border-color: #0088ff;
-    cursor: pointer;
-    transition: background-color 200ms;
-}
-
-button:disabled {
-    pointer-events: none;
-    opacity: 0.5;
-    background-color: darkgray;
-}
-
-button.cancel {
-    border-color: #ff2200;
-}
-
-button:hover {
-    background-color: #0088ff44;
-}
-
-button.cancel:hover {
-    background-color: #ff220044;
-}
-
-button:active {
-    background-color: #0088ff88;
-}
-
-button.cancel:active {
-    background-color: #ff220044;
-}
-
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity .5s;

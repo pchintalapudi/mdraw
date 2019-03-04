@@ -1,21 +1,24 @@
 <template>
-  <svg
-    @pointerup="finishGesture"
-    @pointermove="move"
-    @pointerdown="requestSelect"
-    :class="classes"
-    tabindex="0"
-  >
-    <defs>
-      <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
-        <line stroke="black" stroke-width="4px" y2="10"></line>
-      </pattern>
-    </defs>
-    <angler-assist v-if="assist"></angler-assist>
-    <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
-    <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
-    <selection-box v-if="selecting"></selection-box>
-  </svg>
+  <div>
+    <svg
+      @pointerup="finishGesture"
+      @pointermove="move"
+      @pointerdown="requestSelect"
+      :class="classes"
+      tabindex="0"
+    >
+      <defs>
+        <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
+          <line stroke="black" stroke-width="4px" y2="10"></line>
+        </pattern>
+      </defs>
+      <angler-assist v-if="assist"></angler-assist>
+      <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
+      <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
+      <selection-box v-if="selecting"></selection-box>
+    </svg>
+    <touch-bar></touch-bar>
+  </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -24,12 +27,14 @@ import RGroupVue from "../molecules/RGroup.vue";
 import BondVue from "../molecules/Bond.vue";
 import AnglerVue from "./widgets/Angler.vue";
 import SelectionVue from "./Selection.vue";
+import TouchBarVue from "../touchbar/TouchBar.vue";
 export default Vue.extend({
   components: {
     "rgroup-element": RGroupVue,
     "bond-element": BondVue,
     "angler-assist": AnglerVue,
-    "selection-box": SelectionVue
+    "selection-box": SelectionVue,
+    "touch-bar": TouchBarVue
   },
   data: function() {
     return { keydown: undefined as any };

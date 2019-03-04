@@ -1,6 +1,19 @@
 <template>
-  <article>
-    <section></section>
+  <article class="periodic-table">
+    <section v-for="(period, index) of mainTable" :key="index + ' period'" class="period">
+      <component
+        v-for="el of period"
+        :key="el ? el.atomicNumber : 0"
+        :is="el ? 'element-button' : 'empty-box'"
+        :element="el"
+      ></component>
+    </section>
+    <div style="height: 1em"></div>
+    <section v-for="(period, index) of fblock" :key="index + 'f'" class="period">
+      <empty-box></empty-box>
+      <empty-box></empty-box>
+      <element-button v-for="el of period" :key="el.atomicNumber" :element="el"></element-button>
+    </section>
   </article>
 </template>
 <script lang="ts">
@@ -13,13 +26,23 @@ export default Vue.extend({
     "empty-box": EmptyElementVue,
     "element-button": ElementVue
   },
+  data: function() {
+    return { elements };
+  },
   computed: {
-    mainTable() {
+    mainTable(): PeriodicTableElement[][] {
       return [
-        elements.slice(0, 2).reverse(),
-        elements.slice(2, 10).reverse(),
-        elements.slice(10, 18).reverse()
+        this.leftPad(this.elements.slice(0, 2)),
+        this.leftPad(this.elements.slice(2, 10)),
+        this.leftPad(this.elements.slice(10, 18)),
+        this.elements.slice(18, 36),
+        this.elements.slice(36, 54),
+        [...this.elements.slice(54, 57), ...this.elements.slice(71, 86)],
+        [...this.elements.slice(86, 89), ...this.elements.slice(103)]
       ];
+    },
+    fblock(): PeriodicTableElement[][] {
+      return [this.elements.slice(57, 71), this.elements.slice(89, 103)];
     }
   },
   methods: {
@@ -27,12 +50,27 @@ export default Vue.extend({
     leftPad(pad: PeriodicTableElement[]) {
       let ret = [];
       while (pad.length) {
-        let el = pad.pop()!;
+        let el = pad.shift()!;
+        let length = el.group - ret.length - 1;
+        console.log(el.name);
+        console.log(length);
         ret.push(...Array(el.group - ret.length - 1).fill(undefined));
         ret.push(el);
       }
+      console.log(ret);
       return ret;
     }
   }
 });
 </script>
+<style scoped>
+.periodic-table {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.period {
+  display: flex;
+  flex-flow: row nowrap;
+}
+</style>
+
