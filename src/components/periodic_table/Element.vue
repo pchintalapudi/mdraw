@@ -1,5 +1,5 @@
 <template>
-  <button class="root" :title="element.name" :data-group="element.group" @click>
+  <button class="root" :title="element.name" :data-group="element.group" @click="createAtom">
     <p class="atomic-number">{{atomicNumber}}</p>
     <p class="abbrev">{{abbrev}}</p>
     <!-- <p class="mass">{{mass}}</p> -->
@@ -25,7 +25,15 @@ export default Vue.extend({
       return this.element.atomicNumber;
     }
   },
-  methods: {}
+  methods: {
+    createAtom() {
+      this.$store.commit(
+        "molecules/setAtomicNumber",
+        this.element.atomicNumber
+      );
+      this.$store.dispatch("molecules/createAtom");
+    }
+  }
 });
 </script>
 <style scoped>
