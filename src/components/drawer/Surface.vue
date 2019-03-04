@@ -152,3 +152,13 @@ export default Vue.extend({
   }
 });
 </script>
+<style scoped>
+.selection-box {
+  fill: #0088ff44;
+  stroke: #0088ff88;
+  pointer-events: none;
+}
+.omit > .omittable {
+  opacity: 0;
+}
+</style>

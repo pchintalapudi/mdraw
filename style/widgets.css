@@ -2,12 +2,6 @@
     padding: 10px;
 }
 
-#minimap {
-    height: 40vh;
-    width: 100%;
-    background-color: lightgray;
-}
-
 #angle-calc>form,
 #angle-calc {
     flex-flow: column nowrap;

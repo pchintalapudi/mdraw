@@ -6,8 +6,18 @@
     @pointerup="pointerUp"
     @pointermove="pointerMove"
   >
-    <circle :r="abbrev.length == 1 ? 15 : 25" :cx="contentWidth / 2" :cy="-contentHeight / 4"/>
-    <circle :r="abbrev.length == 1 ? 10 : 20" :cx="contentWidth / 2" :cy="-contentHeight / 4"></circle>
+    <circle
+      :r="abbrev.length == 1 ? 15 : 25"
+      :cx="contentWidth / 2"
+      :cy="-contentHeight / 4"
+      class="clickme"
+    />
+    <circle
+      :r="abbrev.length == 1 ? 10 : 20"
+      :cx="contentWidth / 2"
+      :cy="-contentHeight / 4"
+      class="backing"
+    />
     <text class="abbrev" ref="content">{{abbrev}}</text>
     <text
       class="charge"
@@ -125,7 +135,7 @@ export default Vue.extend({
       );
     },
     classes(): string[] {
-      let clazzes = ["rgroup"];
+      let clazzes: string[] = [];
       if (this.transparent) clazzes.push("transparent");
       if (this.omittable) clazzes.push("omittable");
       if (this.selected) clazzes.push("selected");
@@ -162,3 +172,30 @@ export default Vue.extend({
   }
 });
 </script>
+<style scoped>
+::selection {
+  background-color: transparent;
+  color: inherit;
+}
+
+.transparent {
+  pointer-events: none;
+}
+
+.abbrev,
+.charge {
+  cursor: default;
+}
+
+.clickme {
+  fill: transparent;
+}
+
+.selected > :first-child {
+  fill: #0088ff44;
+}
+
+.backing {
+  fill: white;
+}
+</style>

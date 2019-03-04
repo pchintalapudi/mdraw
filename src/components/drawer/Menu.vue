@@ -1,17 +1,15 @@
 <template>
   <aside>
     <section id="tabs">
-      <div></div>
       <keep-alive>
         <component :is="widgetType"/>
       </keep-alive>
+      <div></div>
     </section>
-    <minimap></minimap>
   </aside>
 </template>
 <script lang="ts">
 import Vue from "vue";
-import Minimap from "./widgets/Minimap.vue";
 import AngleCalc from "./widgets/AngleCalc.vue";
 import AtomCreator from "./widgets/AtomCreator.vue";
 
@@ -24,7 +22,6 @@ const tabs = Object.keys(Tab).map(k => Tab[k as any]);
 
 export default Vue.extend({
   components: {
-    minimap: Minimap,
     "angle-calc": AngleCalc,
     "create-atom": AtomCreator
   },

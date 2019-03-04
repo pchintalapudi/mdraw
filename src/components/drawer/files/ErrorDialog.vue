@@ -13,3 +13,24 @@
 import Vue from "vue";
 export default Vue.extend({});
 </script>
+<style>
+.error {
+  flex-flow: column nowrap;
+}
+
+.error > * > polygon {
+  stroke: transparent;
+  fill: red;
+}
+
+.error > * > text {
+  font-size: 1.5pt;
+}
+
+.error > :last-child {
+  color: white;
+  font-size: 2em;
+  margin-top: -2em;
+  text-align: center;
+}
+</style>

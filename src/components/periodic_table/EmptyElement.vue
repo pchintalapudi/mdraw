@@ -1,5 +1,5 @@
 <template>
-  <section id="minimap"></section>
+  <button disabled></button>
 </template>
 <script lang="ts">
 import Vue from "vue";

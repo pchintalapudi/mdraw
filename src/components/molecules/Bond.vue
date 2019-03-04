@@ -14,8 +14,8 @@
       y1="0"
       :x2="dist"
       y2="0"
-      :class="bond.bondOrder ? isThicc ? 'thonk' : 'single' : 'partial'"
-    ></line>
+      :class="(bond.bondOrder ? isThicc ? 'thonk' : 'single' : 'partial') + ' ' + 'bond'"
+    />
     <polygon
       v-else-if="bond.bondOrder == 1"
       :style="'fill:' + (isApproachingBond ? 'black' : 'url(#patchy)') + ';stroke:transparent'"
@@ -27,13 +27,15 @@
         :y2="shortenRight ? 0 : 3.75"
         :x1="shortenLeft ? dist * shorten : 0"
         :x2="shortenLeft ? dist * (1-shorten) : dist"
-      ></line>
+        class="bond"
+      />
       <line
         :y1="shortenLeft ? 0 : -3.75"
         :y2="shortenLeft ? 0 : -3.75"
         :x1="shortenRight ? dist * shorten : 0"
         :x2="shortenRight ? dist * (1-shorten) : dist"
-      ></line>
+        class="bond"
+      />
     </g>
     <g v-else-if="bond.bondOrder == 3">
       <line
@@ -41,14 +43,16 @@
         y2="5"
         :x1="shortenLeft ? dist * shorten : 0"
         :x2="shortenLeft ? dist * (1-shorten) : dist"
-      ></line>
-      <line y1="0" y2="0" x1="0" :x2="dist"></line>
+        class="bond"
+      />
+      <line y1="0" y2="0" x1="0" :x2="dist" class="bond"/>
       <line
         y1="-5"
         y2="-5"
         :x1="shortenRight ? dist * shorten : 0"
         :x2="shortenRight ? dist * (1-shorten) : dist"
-      ></line>
+        class="bond"
+      />
     </g>
   </g>
 </template>
@@ -204,3 +208,27 @@ export default Vue.extend({
   }
 });
 </script>
+<style scoped>
+.bond {
+  stroke: black;
+  stroke-width: 1;
+}
+
+.thonk {
+  stroke-width: 10;
+}
+
+.partial {
+  stroke-dasharray: 5 5;
+}
+
+.clickme {
+  stroke: transparent;
+  stroke-width: 25;
+  pointer-events: all;
+}
+
+.transparent .clickme {
+  pointer-events: none;
+}
+</style>
