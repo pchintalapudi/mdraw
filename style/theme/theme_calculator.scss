@@ -1,0 +1,21 @@
+:root {
+    --primary-bg-fallback: white;
+    --primary-bg: $primary-background;
+    --primary-bg-low: transparentize($primary-background, 0.25);
+
+    --contrast-bg-fallback: black;
+    --contrast-bg: $contrast-background;
+    --contrast-bg-low: transparentize($primary-background, 0.25);
+    
+    --primary-focus: $primary-focus;
+    --primary-hov: transparentize($primary-focus, 0.25);
+    --primary-sel: transparentize($primary-focus, 0.2);
+    --primary-hov-sel: transparentize($primary-focus, 0.375);
+    --primary-active: transparentize($primary-focus, 0.5);
+
+    --contrast-focus: $primary-focus;
+    --contrast-hov: transparentize($contrast-focus, 0.25);
+    --contrast-sel: transparentize($contrast-focus, 0.2);
+    --contrast-hov-sel: transparentize($contrast-focus, 0.375);
+    --contrast-active: transparentize($contrast-focus, 0.5);
+}

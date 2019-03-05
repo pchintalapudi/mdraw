@@ -29,12 +29,6 @@ main>:first-child {
     background-color: white;
 }
 
-main>:last-child {
-    width: 20vw;
-    height: 100vh;
-    flex-flow: column nowrap;
-}
-
 h1,
 h2,
 h3,
@@ -46,12 +40,6 @@ p {
     padding: 0;
 }
 
-aside>:first-child {
-    height: 60vh;
-    width: 100%;
-    flex-flow: column nowrap;
-    background-color: gray;
-}
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity .5s;

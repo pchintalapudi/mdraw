@@ -34,4 +34,26 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
+.touch-bar {
+  position: fixed;
+  z-index: 1;
+  left: 12.5vw;
+  right: 12.5vw;
+  bottom: 12.5vh;
+  top: 75vh;
+  background-color: var(--contrast-bg-low);
+  justify-content: center;
+  align-items: center;
+}
+[type='button'] {
+  background-color: transparent;
+  transition: background-color 200ms;
+  border: var(--primary-focus);
+}
+[type='button']:hover {
+  background-color: var(--primary-hov);
+}
+[type='button']:active {
+  background-color: var(--primary-active);
+}
 </style>
