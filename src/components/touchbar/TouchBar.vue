@@ -1,11 +1,11 @@
 <template>
   <aside class="touch-bar">
-    <div>
+    <button type="button" @click="createAtom">
+      <div class="circle">C</div>
+    </button>
+    <div class="col">
+      <button type="button">Summon Periodic Table</button>
       <button type="button"></button>
-      <div>
-          <button type="button"></button>
-          <button type="button"></button>
-      </div>
     </div>
     <button type="button"></button>
   </aside>
@@ -30,6 +30,11 @@ export default Vue.extend({
     element(): PeriodicTableElement {
       return elements[this.atomicNumber - 1];
     }
+  },
+  methods: {
+    createAtom() {
+      this.$store.dispatch("molecules/createAtom");
+    }
   }
 });
 </script>
@@ -41,19 +46,35 @@ export default Vue.extend({
   right: 12.5vw;
   bottom: 12.5vh;
   top: 75vh;
-  background-color: var(--contrast-bg-low);
+  background-color: var(--contrast-bg-light);
   justify-content: center;
   align-items: center;
+  display: flex;
 }
-[type='button'] {
+.col {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+}
+[type="button"] {
+  padding: 10px;
   background-color: transparent;
   transition: background-color 200ms;
   border: var(--primary-focus);
 }
-[type='button']:hover {
-  background-color: var(--primary-hov);
+[type="button"]:hover {
+  background-color: var(--primary-focus-hov);
 }
-[type='button']:active {
-  background-color: var(--primary-active);
+[type="button"]:active {
+  background-color: var(--primary-focus-active);
+}
+.circle {
+  border-radius: 50%;
+  height: 2em;
+  width: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-style: solid;
 }
 </style>

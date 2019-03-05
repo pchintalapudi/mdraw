@@ -1,6 +1,6 @@
 <template>
-  <g id="angler">
-    <path :d="path"/>
+  <g class="angler">
+    <path class="path" :d="path"/>
     <text :x="bond.start.x + dist" :y="bond.start.y - dist">{{description}}</text>
   </g>
 </template>
@@ -47,24 +47,26 @@ export default Vue.extend({
         " " +
         (this.bond as any).start.y +
         "L" +
-        ((this.bond as any).start.x + Math.cos(this.lastAngle as any) * defaultBondDist) +
+        ((this.bond as any).start.x +
+          Math.cos(this.lastAngle as any) * defaultBondDist) +
         " " +
-        ((this.bond as any).start.y + Math.sin(this.lastAngle as any) * defaultBondDist) +
-        ' ' +
-        'A' +
-        ' ' +
+        ((this.bond as any).start.y +
+          Math.sin(this.lastAngle as any) * defaultBondDist) +
+        " " +
+        "A" +
+        " " +
         defaultBondDist +
-        ' ' +
+        " " +
         defaultBondDist +
-        ' ' +
+        " " +
         0 +
-        ' ' +
+        " " +
         0 +
-        ' '+
-        (this.raw as any > 180 ? 1 : 0) +
-        ' ' +
+        " " +
+        ((this.raw as any) > 180 ? 1 : 0) +
+        " " +
         (this.bond as any).end.x +
-        ' ' +
+        " " +
         (this.bond as any).end.y
       );
     },
@@ -85,3 +87,14 @@ export default Vue.extend({
   }
 });
 </script>
+<style>
+.path {
+  fill: transparent;
+  stroke: black;
+  stroke-dasharray: 5, 5;
+}
+
+.angler {
+  pointer-events: none;
+}
+</style>

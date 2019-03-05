@@ -1,9 +1,0 @@
-#angler path {
-    fill: transparent;
-    stroke: black;
-    stroke-dasharray: 5, 5
-}
-
-#angler {
-    pointer-events: none;
-}

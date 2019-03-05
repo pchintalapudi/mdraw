@@ -25,3 +25,26 @@ export default Vue.extend({
   }
 });
 </script>
+<style>
+:root {
+  /* --primary-bg: white;
+    --contrast-bg: black;
+    --primary-focus: #0088ff;
+    --contrast-focus: #ff2222; */
+  --primary-bg-red: 255;
+  --primary-bg-green: 255;
+  --primary-bg-blue: 255;
+
+  --contrast-bg-red: 0;
+  --contrast-bg-green: 0;
+  --contrast-bg-blue: 0;
+
+  --primary-focus-red: 0;
+  --primary-focus-green: 127;
+  --primary-focus-blue: 255;
+
+  --contrast-focus-red: 255;
+  --contrast-focus-green: 32;
+  --contrast-focus-blue: 32;
+}
+</style>
