@@ -70,7 +70,7 @@ export default Vue.extend({
       this.last = this.atomicNumber;
       this.raw = this.last.toString();
       this.valid = true;
-      this.inp!.focus();
+      this.$nextTick(() => this.inp!.focus());
     },
     updateAtomicNumber() {
       try {
@@ -95,5 +95,63 @@ export default Vue.extend({
 <style scoped>
 .root {
   display: flex;
+}
+[type="button"] {
+    padding: 0;
+  background-color: transparent;
+  transition: background-color 200ms;
+  border: var(--primary-focus);
+}
+[type="button"]:hover {
+  background-color: var(--primary-focus-hov);
+}
+[type="button"]:active {
+  background-color: var(--primary-focus-active);
+}
+.circle {
+  border-radius: 50%;
+  height: 2em;
+  width: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-style: solid;
+}
+.invalid {
+  border-style: solid;
+  border-color: var(--contrast-focus-active);
+}
+#atomic-number-input,
+.pt-button,
+.pt-num {
+  min-width: 3em;
+  max-width: 3em;
+  flex: 1;
+  margin: 0;
+  border-style: none;
+}
+.pt-num {
+    text-align: center;
+}
+.pt-button {
+  display: flex;
+  align-items: flex-end;
+}
+.pt-icon,
+.pt-icon-before,
+.pt-icon-after {
+  display: inline-block;
+  height: 1.5em;
+  background-color: var(--contrast-bg-light);
+}
+.pt-icon {
+  height: 1em;
+  width: 1.5em;
+}
+.pt-icon-before {
+  width: 0.5em;
+}
+.pt-icon-after {
+  width: 1em;
 }
 </style>
