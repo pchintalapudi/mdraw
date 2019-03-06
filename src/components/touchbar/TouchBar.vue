@@ -1,44 +1,19 @@
 <template>
-  <aside class="touch-bar">
-    <button type="button" @click="createAtom">
-      <div class="circle">C</div>
-    </button>
-    <div class="col">
-      <button type="button">Summon Periodic Table</button>
-      <button type="button"></button>
-    </div>
+  <aside class="touch-bar" @click.stop.prevent>
+    <atom-creator/>
     <button type="button"></button>
   </aside>
 </template>
 <script lang="ts">
 import Vue from "vue";
-import PeriodicTableVue from "../periodic_table/PeriodicTable.vue";
-import { PeriodicTableElement, elements } from "../../models";
+import AtomCreatorVue from "./AtomCreator.vue";
 export default Vue.extend({
   components: {
-    "periodic-table": PeriodicTableVue
-  },
-  computed: {
-    atomicNumber: {
-      get(): number {
-        return this.$store.state.molecules.atomicNumber;
-      },
-      set(atomicNumber: number) {
-        this.$store.commit("molecules/setAtomicNumber", atomicNumber);
-      }
-    },
-    element(): PeriodicTableElement {
-      return elements[this.atomicNumber - 1];
-    }
-  },
-  methods: {
-    createAtom() {
-      this.$store.dispatch("molecules/createAtom");
-    }
+    "atom-creator": AtomCreatorVue
   }
 });
 </script>
-<style scoped>
+<style>
 .touch-bar {
   position: fixed;
   z-index: 1;
@@ -76,5 +51,39 @@ export default Vue.extend({
   justify-content: center;
   align-items: center;
   border-style: solid;
+}
+.invalid {
+  border-style: solid;
+  border-color: var(--contrast-focus-active);
+}
+#atomic-number-input,
+.pt-button,
+.pt-num {
+  min-width: 3em;
+  max-width: 3em;
+  flex: 1;
+  margin: 0;
+  border-style: none;
+}
+.pt-button {
+  display: flex;
+  align-items: flex-end;
+}
+.pt-icon,
+.pt-icon-before,
+.pt-icon-after {
+  display: inline-block;
+  height: 1.5em;
+  background-color: var(--contrast-bg-light);
+}
+.pt-icon {
+  height: 1em;
+  width: 1.5em;
+}
+.pt-icon-before {
+  width: 0.5em;
+}
+.pt-icon-after {
+  width: 1em;
 }
 </style>

@@ -11,10 +11,10 @@
         <line stroke="black" stroke-width="4px" y2="10"></line>
       </pattern>
     </defs>
-    <angler-assist v-if="assist"></angler-assist>
     <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
     <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
     <selection-box v-if="selecting"></selection-box>
+    <angler-assist v-if="assist"></angler-assist>
   </svg>
 </template>
 <script lang="ts">

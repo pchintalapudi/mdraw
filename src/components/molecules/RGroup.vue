@@ -37,7 +37,6 @@ export default Vue.extend({
   },
   data: function() {
     return {
-      plock: 0,
       contentElement: undefined as SVGTextElement | undefined,
       chargeElement: undefined as SVGTextElement | undefined
     };
@@ -193,6 +192,10 @@ export default Vue.extend({
 
 .selected > :first-child {
   fill: #0088ff44;
+}
+
+.selected {
+  opacity: 1 !important;
 }
 
 .backing {

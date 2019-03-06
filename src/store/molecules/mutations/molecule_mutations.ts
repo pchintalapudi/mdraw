@@ -37,7 +37,8 @@ let moleculeMutations = {
   },
   cancelBondCreation({ rgroups, bonds }: StateType) {
     rgroups.pop();
-    bonds.pop();
+    let bond = bonds.pop()!;
+    bond.start.bonds.delete(bond.id);
   },
   startMove({ pointerState, stateMachine }: StateType, rgroup: RGroup) {
     if (stateMachine.state == DrawerState.IDLE) {
