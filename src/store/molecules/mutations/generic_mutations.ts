@@ -9,11 +9,21 @@ let genericMutations = {
     pointerState.start = pointerState.end = undefined;
     pointerState.initTime = 0;
   },
-  clearStateMachine({ stateMachine }: StateType, clearSelected = true) {
+  clearStateMachine(
+    { stateMachine, rgroups }: StateType,
+    clearSelected = true
+  ) {
     stateMachine.state = DrawerState.IDLE;
     stateMachine.creating = stateMachine.adding = undefined;
     if (clearSelected) stateMachine.selected.length = 0;
     stateMachine.lastAngle = 0;
+    if (stateMachine.inits) {
+      for (let i = 0; i < stateMachine.inits!.length; i++) {
+        rgroups[i].x = stateMachine.inits![i].x;
+        rgroups[i].y = stateMachine.inits![i].y;
+      }
+      stateMachine.inits = undefined;
+    }
   },
   updateEnd({ pointerState }: StateType, obj: { x: number; y: number }) {
     pointerState.end = obj;

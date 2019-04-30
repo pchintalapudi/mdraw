@@ -26,9 +26,4 @@ export default Vue.extend({
   align-items: center;
   display: flex;
 }
-.col {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-}
 </style>

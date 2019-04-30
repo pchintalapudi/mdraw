@@ -7,7 +7,7 @@ import {
   RGroup,
   elements
 } from "../../../models";
-import calculateAngle from "./angles";
+import { calculateAngle, rotate, getCenter } from "./angles";
 import { defaultBondDist } from "../../../constants";
 
 let actions = {
@@ -34,6 +34,44 @@ let actions = {
   createAtom({ state, commit }: ActionContext<StateType, any>) {
     if (state.atomicNumber > 0 && state.atomicNumber <= elements.length)
       commit("createRGroup", new RGroup(elements[state.atomicNumber - 1]));
+  },
+  async finishRotate({
+    state,
+    commit,
+    dispatch
+  }: ActionContext<StateType, any>) {
+    if (state.stateMachine.selected.length) {
+      let inits = state.stateMachine.inits!;
+      state.stateMachine.inits = undefined;
+      let final = state.stateMachine.selected.map(r => {
+        return { x: r.x, y: r.y };
+      });
+      let selected = [...state.stateMachine.selected];
+      let maps = new Map<
+        RGroup,
+        { i: { x: number; y: number }; f: { x: number; y: number } }
+      >();
+      for (let i = 0; i < selected.length; i++) {
+        maps.set(selected[i], { i: inits[i], f: final[i] });
+      }
+      let undo = () => {
+        dispatch("defaultCancel");
+        maps.forEach(({ i }, r) => {
+          r.x = i.x;
+          r.y = i.y;
+        });
+      };
+      let redo = () => {
+        dispatch("defaultCancel");
+        maps.forEach(({ f }, r) => {
+          r.x = f.x;
+          r.y = f.y;
+        });
+      };
+      commit("history/logAction", { undo, redo }, { root: true });
+      commit("clearStateMachine");
+      commit("clearPointerState");
+    }
   },
   moveEvent(
     { state, commit }: ActionContext<StateType, any>,
@@ -72,7 +110,7 @@ let actions = {
             angle = calculateAngle(
               defaultBondDist,
               (180 / Math.PI) * Math.atan2(x - start.x, y - start.y) - 90,
-              state.stateMachine.lastAngle * 180 / Math.PI
+              (state.stateMachine.lastAngle * 180) / Math.PI
             );
           end.x = start.x + defaultBondDist * Math.cos(angle);
           end.y = start.y + defaultBondDist * Math.sin(angle);

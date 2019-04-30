@@ -10,6 +10,7 @@ enum DrawerState {
 class StateMachine {
   private _state: DrawerState = DrawerState.IDLE;
   selected: RGroup[] = [];
+  inits?: { x: number; y: number }[];
   private _creating?: RGroup = undefined;
   adding?: Bond = undefined;
   bound: RGroup[] = [];

@@ -1,3 +1,5 @@
+import { RGroup } from "../../../models";
+
 const angles: number[] = [
   0.0,
   90.0,
@@ -57,9 +59,50 @@ function calculateAngle(dist: number, raw: number, offset = 0): number {
     let chord = Math.abs(
       dist * 2 * Math.sin((Math.PI / 180 / 2) * (raw - angle + offset))
     );
-    if (chord < lockDist) return (((-angle + offset + 360) % 360) * Math.PI) / 180;
+    if (chord < lockDist)
+      return (((-angle + offset + 360) % 360) * Math.PI) / 180;
   }
   return (((-raw + 360) % 360) * Math.PI) / 180;
 }
 
-export default calculateAngle;
+async function rotate(
+  x: number,
+  y: number,
+  angle: number,
+  initPoints: { x: number; y: number }[]
+) {
+  doRotate(x, y, angle, initPoints);
+}
+
+function doRotate(
+  x: number,
+  y: number,
+  angle: number,
+  initPoints: { x: number; y: number }[]
+) {
+  let cos = Math.cos(angle),
+    sin = Math.sin(angle);
+  for (let point of initPoints) {
+    let sx = point.x - x,
+      sy = point.y - y;
+    point.x = sx * cos - sy * sin + x;
+    point.y = sx * sin - sy * cos + y;
+  }
+}
+
+function getCenter(selected: RGroup[]) {
+  //Rotate around the center of the selected group to avoid putting the atoms far away.
+  let minX,
+    maxX = (minX = selected[0].x),
+    minY,
+    maxY = (minY = selected[0].y);
+  for (let rgroup of selected) {
+    minX = Math.min(rgroup.x, minX);
+    minY = Math.min(rgroup.y, minY);
+    maxX = Math.max(rgroup.x, maxX);
+    maxY = Math.max(rgroup.y, maxY);
+  }
+  return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+}
+
+export { calculateAngle, rotate, getCenter };

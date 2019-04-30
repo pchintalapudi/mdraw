@@ -154,4 +154,7 @@ export default Vue.extend({
 .pt-icon-after {
   width: 1em;
 }
+.col {
+    margin: 10px;
+}
 </style>
