@@ -228,7 +228,7 @@ export default Vue.extend({
   pointer-events: all;
 }
 
-.transparent .clickme {
+.transparent .clickme, .transparent {
   pointer-events: none;
 }
 </style>
