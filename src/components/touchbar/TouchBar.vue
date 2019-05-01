@@ -1,7 +1,6 @@
 <template>
   <aside class="touch-bar" @click.stop.prevent>
     <atom-creator/>
-    <button type="button"></button>
   </aside>
 </template>
 <script lang="ts">

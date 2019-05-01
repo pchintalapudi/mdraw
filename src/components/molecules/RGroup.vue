@@ -117,14 +117,14 @@ export default Vue.extend({
     },
     omittable(): boolean {
       return (
-        this.rGroup.payload == elements[6 - 1] ||
+        (this.rGroup.payload == elements[6 - 1] ||
         (this.rGroup.payload == elements[1 - 1] &&
           this.rGroup.bonds.size == 1 &&
           this.rGroup.bonds
             .values()
             .next()
             .value.getPeer(this.rGroup)!.payload == elements[6 - 1])
-      );
+      ) && this.rGroup != this.$store.state.molecules.stateMachine.creating && this.rGroup.bonds.size > 0);
     },
     selected(): boolean {
       return (
