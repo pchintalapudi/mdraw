@@ -1,21 +1,28 @@
 <template>
-  <svg
-    @pointerup="finishGesture"
-    @pointermove="move"
-    @pointerdown="requestSelect"
-    :class="classes"
-    tabindex="0"
-  >
-    <defs>
-      <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
-        <line stroke="black" stroke-width="4px" y2="10"></line>
-      </pattern>
-    </defs>
-    <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
-    <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
-    <selection-box v-if="selecting"></selection-box>
-    <angler-assist v-if="assist"></angler-assist>
-  </svg>
+  <div :class="computeVert">
+    <div :class="computeHor">
+      <svg
+        @pointerup="finishGesture"
+        @pointermove="move"
+        @pointerdown="requestSelect"
+        :class="classes"
+        tabindex="0"
+        overflow="auto"
+      >
+        <defs>
+          <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
+            <line stroke="black" stroke-width="4px" y2="10"></line>
+          </pattern>
+        </defs>
+        <bond-element v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-element>
+        <rgroup-element v-for="rgroup in rgroups" :key="rgroup.id" :r-group="rgroup"></rgroup-element>
+        <selection-box v-if="selecting"></selection-box>
+        <angler-assist v-if="assist"></angler-assist>
+      </svg>
+      <div class="scrollbar vert"></div>
+    </div>
+    <div class="scrollbar hor"></div>
+  </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -24,6 +31,7 @@ import RGroupVue from "../molecules/RGroup.vue";
 import BondVue from "../molecules/Bond.vue";
 import AnglerVue from "./widgets/Angler.vue";
 import SelectionVue from "./Selection.vue";
+const padding = 10;
 export default Vue.extend({
   components: {
     "rgroup-element": RGroupVue,
