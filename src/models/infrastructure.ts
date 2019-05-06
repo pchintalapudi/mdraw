@@ -85,27 +85,20 @@ interface BondSerialized {
 }
 
 class Bond {
-  public start: RGroup;
-  public end: RGroup;
-  public state: BondState = BondState.SINGLE_LINEAR;
-  public readonly id: number;
 
-  constructor(start: RGroup, end: RGroup, id = idGen++) {
-    this.start = start;
-    this.end = end;
-    this.id = id;
+  constructor(public start: RGroup, public end: RGroup, public readonly id = idGen++, public state = BondState.SINGLE_LINEAR) {
   }
 
   public getPeer(rgroup: RGroup) {
     return rgroup == this.start
       ? this.end
       : rgroup == this.end
-      ? this.start
-      : null;
+        ? this.start
+        : null;
   }
 
   public clone(): Bond {
-    return new Bond(this.start, this.end, this.id);
+    return new Bond(this.start, this.end, this.id, this.state);
   }
 
   get bondOrder(): number {
