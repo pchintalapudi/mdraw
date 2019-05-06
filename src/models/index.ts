@@ -1,12 +1,9 @@
-import element_defs from './elements';
+import element_array from './elements';
+import { RGroup, ChemicalElement, Payload } from './rgroups';
+import { Bond, BondState } from './bonds';
 
-type ChemicalElement = typeof element_defs[0];
-
-interface Payload {
-    name: string;
-    symbol: string;
+function element(atomicNumber: number) {
+    return element_array[atomicNumber - 1];
 }
 
-class RGroup {
-    constructor(public payload: Payload, public x = 0, public y = 0, public charge = 0) { }
-}
+export { element, RGroup, ChemicalElement, Payload, Bond, BondState };
