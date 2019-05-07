@@ -1,4 +1,4 @@
-import { RGroup, Bond } from '../models';
+import { RGroup, Bond } from "../models";
 
 class StateVariables {
     public selected: RGroup[] = [];

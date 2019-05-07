@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <svg overflow="auto">
       <defs>
         <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
@@ -9,7 +9,7 @@
       <bond-view v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-view>
       <rgroup-view v-for="rgroup in rgroups" :key="rgroup.id" :rgroup="rgroup"></rgroup-view>
     </svg>
-    <span class="touch-bar"></span>
+    <touchbar-vue class="touch-bar"></touchbar-vue>
   </div>
 </template>
 <script lang="ts">
@@ -18,8 +18,13 @@ import { StateMachine } from "../state_machine";
 import { RGroup, Bond } from "../models";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
+import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 export default Vue.extend({
-  components: { "bond-view": BondVue, "rgroup-vue": RGroupVue },
+  components: {
+    "bond-view": BondVue,
+    "rgroup-vue": RGroupVue,
+    "touchbar-vue": TouchBarVue
+  },
   data() {
     return {
       stateMachine: new StateMachine()
@@ -41,5 +46,11 @@ export default Vue.extend({
   max-height: 200px;
   height: 10vh;
   min-height: 2em;
+  bottom: 5%;
+  margin: auto;
+}
+.wrapper {
+  height: 100%;
+  width: 100%;
 }
 </style>

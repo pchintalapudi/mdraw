@@ -1,5 +1,5 @@
-import StateVariables from './state_variables';
-import Action from './actions';
+import StateVariables from "./state_variables";
+import Action from "./actions";
 
 enum State {
     PLACING_ATOM, PLACING_ATOM_AND_BOND, MOVING_ATOM, SELECTING, ROTATING, IDLE, __COUNT__,
@@ -22,13 +22,13 @@ class StateMachine {
 
 const identity = (stateMachine: StateMachine, action: Action, payload: any) => {
     // tslint:disable-next-line: no-console
-    console.warn('Unregistered transformation');
+    console.warn("Unregistered transformation");
     // tslint:disable-next-line: no-console
     console.log(stateMachine.toString());
     // tslint:disable-next-line: no-console
     console.log(`Action: ${Action[action]}`);
     // tslint:disable-next-line: no-console
-    console.log('Payload: ');
+    console.log("Payload: ");
     // tslint:disable-next-line: no-console
     console.log(payload);
 };

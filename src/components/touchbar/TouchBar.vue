@@ -1,7 +1,7 @@
 <template>
   <span>
     <form name="atom-creator">
-      <button>Spawn Element</button>
+      <button type="button">Spawn Element</button>
       <select name="atom-selector" id="atom-selector">
         <optgroup label="Recently Used">
           <option
@@ -32,10 +32,8 @@ export default Vue.extend({
     return { recentlyUsed: [abbrevs[5]], nameTuple: abbrevs[5] };
   },
   computed: {
-    choices() {
-      const choices = [
-        ...abbrevs.filter(tup => !this.recentlyUsed.includes(tup))
-      ];
+    choices(): Array<[string, string]> {
+      return abbrevs.filter(tup => !this.recentlyUsed.includes(tup));
     }
   }
 });
