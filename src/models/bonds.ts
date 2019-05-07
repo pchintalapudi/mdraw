@@ -1,4 +1,4 @@
-
+import { RGroup } from '../models';
 
 enum BondState {
     PARTIAL, SINGLE, FORWARD, RETREATING, DOUBLE, DOUBLE_LEFT, DOUBLE_RIGHT, TRIPLE, TRIPLE_SHORT,
@@ -28,4 +28,4 @@ class Bond {
     }
 }
 
-export { BondState, Bond }
+export { BondState, Bond };
