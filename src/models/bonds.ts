@@ -1,7 +1,7 @@
-import { RGroup } from '../models';
+import { RGroup } from "../models";
 
 enum BondState {
-    PARTIAL, SINGLE, FORWARD, RETREATING, DOUBLE, DOUBLE_LEFT, DOUBLE_RIGHT, TRIPLE, TRIPLE_SHORT,
+    PARTIAL, SINGLE, FORWARD, RETREATING, THICK, DOUBLE, DOUBLE_LEFT, DOUBLE_RIGHT, TRIPLE, TRIPLE_SHORT,
 }
 
 class Bond {
@@ -14,6 +14,7 @@ class Bond {
             case BondState.SINGLE:
             case BondState.FORWARD:
             case BondState.RETREATING:
+            case BondState.THICK:
                 return 1;
             case BondState.DOUBLE:
             case BondState.DOUBLE_LEFT:

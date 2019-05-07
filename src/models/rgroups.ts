@@ -7,6 +7,7 @@ type ChemicalElement = typeof element_defs[0];
 interface Payload {
     name: string;
     symbol: string;
+    abbrev?: string;
 }
 
 class RGroup {
@@ -14,7 +15,7 @@ class RGroup {
     public bonds = new Map<RGroup, Bond>();
 
     constructor(public payload: Payload, public x = 0, public y = 0,
-                public charge = 0, public id = IDGenerator.nextID) { }
+        public charge = 0, public id = IDGenerator.nextID) { }
 
     public asString(terse = false) {
         return `
