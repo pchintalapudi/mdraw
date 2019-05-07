@@ -26,6 +26,14 @@ class Bond {
                 return -1;
         }
     }
+
+    public asString() {
+        return `
+        Start: ${this.start.asString(true)}\n
+        End: ${this.end.asString(true)}\n
+        State: ${BondState[this.state]}\n
+        `;
+    }
 }
 
 export { BondState, Bond };
