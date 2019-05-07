@@ -1,6 +1,6 @@
-import element_defs from './elements';
-import { IDGenerator } from './globals';
-import { Bond } from './index';
+import element_defs from "./elements";
+import { IDGenerator } from "./globals";
+import { Bond } from "./index";
 
 type ChemicalElement = typeof element_defs[0];
 
@@ -15,6 +15,7 @@ class RGroup {
     public bonds = new Map<RGroup, Bond>();
 
     constructor(public payload: Payload, public x = 0, public y = 0,
+        // tslint:disable-next-line: align
         public charge = 0, public id = IDGenerator.nextID) { }
 
     public asString(terse = false) {
