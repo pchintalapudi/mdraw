@@ -5,7 +5,6 @@
       @pointermove.stop="handleMouseMove"
       @pointerdown.stop="handleMouseDown"
       @pointerup.stop="handleMouseUp"
-      @keypress.stop="handleKey"
       class="surface"
     >
       <defs>
@@ -36,12 +35,7 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import {
-  StateMachine,
-  Action,
-  init_transforms as mounted,
-  State
-} from "../state_machine";
+import { StateMachine, Action, State, init_transforms } from "../state_machine";
 import { RGroup, Bond, ChemicalElement, SelectionRectangle } from "../models";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
@@ -61,7 +55,13 @@ export default Vue.extend({
       stateMachine: new StateMachine()
     };
   },
-  mounted,
+  mounted() {
+    init_transforms();
+    window.addEventListener("keydown", this.handleKey);
+  },
+  beforeDestroy() {
+    window.removeEventListener("keydown", this.handleKey);
+  },
   computed: {
     rgroups(): RGroup[] {
       return this.stateMachine.stateVariables.rgroups;
@@ -131,7 +131,12 @@ export default Vue.extend({
       this.stateMachine.execute(Action.MOUSE_MOVE, payload);
     },
     handleKey(event: KeyboardEvent) {
-      //
+      if (event.key === "Escape") {
+        this.stateMachine.execute(Action.CANCEL, {
+          target: "",
+          payload: undefined
+        });
+      }
     }
   }
 });

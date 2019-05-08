@@ -81,11 +81,14 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
             bond.end = payload;
             bond.start.bonds.delete(rg);
             bond.start.bonds.set(payload, bond);
+            payload.bonds.set(bond.start, bond);
             if (rg.payload !== element(6)) {
                 payload.payload = rg.payload;
             }
             stateMachine.state = State.IDLE;
             stateMachine.stateVariables.lastPlaced = 0;
+        } else {
+            stateMachine.stateVariables.rgroups.push(rg);
         }
     }
 };
@@ -93,6 +96,7 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
 const cancelBondPlacement: Transform = (stateMachine, _) => {
     stateMachine.stateVariables.bonds.pop()!.start.bonds.delete(stateMachine.stateVariables.rgroups.pop()!);
     stateMachine.state = State.IDLE;
+    stateMachine.stateVariables.lastAngle = 0;
 };
 
 export default function () {
