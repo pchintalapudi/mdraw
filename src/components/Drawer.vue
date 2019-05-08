@@ -36,7 +36,12 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { StateMachine, Action, init_transforms, State } from "../state_machine";
+import {
+  StateMachine,
+  Action,
+  init_transforms as mounted,
+  State
+} from "../state_machine";
 import { RGroup, Bond, ChemicalElement, SelectionRectangle } from "../models";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
@@ -56,7 +61,7 @@ export default Vue.extend({
       stateMachine: new StateMachine()
     };
   },
-  mounted: init_transforms,
+  mounted,
   computed: {
     rgroups(): RGroup[] {
       return this.stateMachine.stateVariables.rgroups;

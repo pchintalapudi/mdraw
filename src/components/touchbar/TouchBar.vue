@@ -37,6 +37,11 @@ export default Vue.extend({
       return elements.filter(el => !this.recentlyUsed.includes(el));
     }
   },
+  watch: {
+    element(next) {
+      this.$nextTick(this.spawn);
+    }
+  },
   methods: {
     spawn() {
       if (!this.recentlyUsed.includes(this.element)) {

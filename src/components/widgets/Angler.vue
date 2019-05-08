@@ -1,6 +1,7 @@
 <template>
   <g class="angler">
-    <path :d="path" class="path"></path>
+    <path :d="path" class="path" :transform="`rotate(${offset} ${bond.start.x} ${bond.start.y})`"></path>
+    <text :transform="`translate(${bumpX}, ${bumpY})`">{{`${beautified}°`}}</text>
   </g>
 </template>
 <script lang="ts">
@@ -15,13 +16,29 @@ export default Vue.extend({
   },
   computed: {
     path(): string {
-      return `M ${this.bond.start.x} ${this.bond.start.y} L ${
-        this.bond.end.x
-      } ${this.bond.end.y} A ${Constants.bondLength} ${
+      return `M ${this.bond.start.x} ${this.bond.start.y} l ${
         Constants.bondLength
-      } 0 0 ${Math.sin(this.angle) < 0 ? 1 : 0} ${this.bond.end.x} ${
-        this.bond.end.y
-      }`;
+      } 0 A ${Constants.bondLength} ${Constants.bondLength} 0 0 ${
+        this.beautified > 0 ? 0 : 1
+      } ${this.bond.start.x +
+        Math.cos((this.angle * Math.PI) / 180) * Constants.bondLength} ${this
+        .bond.start.y +
+        Math.sin((this.angle * Math.PI) / 180) * Constants.bondLength}`;
+    },
+    beautified(): number {
+      let a = this.angle;
+      a -= 720;
+      a %= 360;
+      a *= -1;
+      a = a > 180 ? a - 360 : a;
+      a = Math.round(a * 1000) / 1000;
+      return a;
+    },
+    bumpX(): number {
+      return this.bond.start.x + Constants.bondLength;
+    },
+    bumpY(): number {
+      return this.bond.start.y + Constants.bondLength;
     }
   }
 });
