@@ -33,7 +33,7 @@ import Vue from "vue";
 import { RGroup } from "../../models";
 export default Vue.extend({
   props: {
-    rGroup: RGroup
+    rgroup: RGroup
   },
   data() {
     return {
@@ -47,19 +47,19 @@ export default Vue.extend({
   },
   computed: {
     name(): string {
-      return this.rGroup.payload.name;
+      return this.rgroup.payload.name;
     },
     abbrev(): string {
-      return this.rGroup.payload.abbrev || this.name;
+      return this.rgroup.payload.abbrev || this.name;
     },
     x(): number {
-      return this.rGroup.x;
+      return this.rgroup.x;
     },
     y(): number {
-      return this.rGroup.y;
+      return this.rgroup.y;
     },
     charge(): number {
-      return this.rGroup.charge;
+      return this.rgroup.charge;
     },
     contentWidth(): number {
       return this.contentElement ? this.contentElement.getBBox().width : 0;
@@ -140,9 +140,18 @@ export default Vue.extend({
     }
   },
   methods: {
-    pointerDown(event: PointerEvent) {},
-    pointerUp(event: PointerEvent) {},
-    pointerMove(event: PointerEvent) {}
+    pointerDown(event: PointerEvent) {
+      const rgroup = this.rgroup;
+      this.$emit("dmouse", { target: "rgroup", payload: { event, rgroup } });
+    },
+    pointerUp(event: PointerEvent) {
+      const rgroup = this.rgroup;
+      this.$emit("mmouse", { target: "rgroup", payload: { event, rgroup } });
+    },
+    pointerMove(event: PointerEvent) {
+      const rgroup = this.rgroup;
+      this.$emit("umouse", { target: "rgroup", payload: { event, rgroup } });
+    }
   }
 });
 </script>

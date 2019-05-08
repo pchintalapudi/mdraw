@@ -37,10 +37,13 @@ const mouseUpSelecting: Transform = (stateMachine, { target, payload }) => {
 
 // tslint:disable-next-line: no-empty
 const mouseMoveIdle: Transform = () => { };
+// tslint:disable-next-line: no-empty
+const mouseUpIdle: Transform = () => { };
 
 export default () => {
     registerTransform(State.IDLE, Action.MOUSE_DOWN, mouseDownIdle);
     registerTransform(State.SELECTING, Action.MOUSE_MOVE, mouseMoveSelecting);
     registerTransform(State.SELECTING, Action.MOUSE_UP, mouseUpSelecting);
     registerTransform(State.IDLE, Action.MOUSE_MOVE, mouseMoveIdle);
+    registerTransform(State.IDLE, Action.MOUSE_UP, mouseUpIdle);
 };

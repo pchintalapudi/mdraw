@@ -14,7 +14,14 @@
         </pattern>
       </defs>
       <bond-vue v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-vue>
-      <rgroup-vue v-for="rgroup in rgroups" :key="rgroup.id" :rgroup="rgroup"></rgroup-vue>
+      <rgroup-vue
+        v-for="rgroup in rgroups"
+        :key="rgroup.id"
+        :rgroup="rgroup"
+        @dmouse="handleMouseDownRGroup"
+        @mmouse="handleMouseMoveRGroup"
+        @umouse="handleMouseUpRGroup"
+      ></rgroup-vue>
       <selection-rectangle-vue :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
     <touchbar-vue class="touch-bar" @button-click="handleButtonClick"></touchbar-vue>
@@ -75,6 +82,24 @@ export default Vue.extend({
         target: "surface",
         payload
       });
+    },
+    handleMouseDownRGroup(payload: {
+      target: string;
+      payload: { event: PointerEvent; rgroup: RGroup };
+    }) {
+      this.stateMachine.execute(Action.MOUSE_DOWN, payload);
+    },
+    handleMouseUpRGroup(payload: {
+      target: string;
+      payload: { event: PointerEvent; rgroup: RGroup };
+    }) {
+      this.stateMachine.execute(Action.MOUSE_MOVE, payload);
+    },
+    handleMouseMoveRGroup(payload: {
+      target: string;
+      payload: { event: PointerEvent; rgroup: RGroup };
+    }) {
+      this.stateMachine.execute(Action.MOUSE_UP, payload);
     }
   }
 });
