@@ -28,7 +28,8 @@
         @umouse="handleMouseUpRGroup"
         :transparent="transparent.includes(rgroup)"
       ></rgroup-vue>
-      <selection-rectangle-vue :selection-rectangle="selectionBox"></selection-rectangle-vue>
+      <angler-vue :offset="offset" :angle="angle" :bond="bond" v-if="angling"></angler-vue>
+      <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
     <touchbar-vue class="touch-bar" @button-click="handleButtonClick"></touchbar-vue>
   </div>
@@ -41,12 +42,14 @@ import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
+import AnglerVue from "@/components/widgets/Angler.vue";
 export default Vue.extend({
   components: {
     "bond-vue": BondVue,
     "rgroup-vue": RGroupVue,
     "touchbar-vue": TouchBarVue,
-    "selection-rectangle-vue": SelectionRectangleVue
+    "selection-rectangle-vue": SelectionRectangleVue,
+    "angler-vue": AnglerVue
   },
   data() {
     return {
@@ -63,6 +66,21 @@ export default Vue.extend({
     },
     selectionBox(): SelectionRectangle {
       return this.stateMachine.stateVariables.selectionBox;
+    },
+    selecting(): boolean {
+      return this.stateMachine.state === State.SELECTING;
+    },
+    angling(): boolean {
+      return this.stateMachine.state === State.PLACING_ATOM_AND_BOND;
+    },
+    offset(): number {
+      return this.stateMachine.stateVariables.lastPlaced;
+    },
+    angle(): number {
+      return this.stateMachine.stateVariables.lastAngle - this.offset;
+    },
+    bond(): Bond {
+      return this.bonds[this.bonds.length - 1];
     },
     transparent(): Array<RGroup | Bond> {
       const transp = [];

@@ -28,6 +28,10 @@ class Bond {
         }
     }
 
+    public peer(rgroup: RGroup) {
+        return rgroup === this.start ? this.end : this.start;
+    }
+
     public asString() {
         return `
         Start: ${this.start.asString(true)}\n

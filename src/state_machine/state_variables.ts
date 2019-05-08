@@ -5,6 +5,7 @@ class StateVariables {
     public rgroups: RGroup[] = [];
     public bonds: Bond[] = [];
     public lastAngle: number = 0;
+    public lastPlaced: number = 0;
     public selectionBox = new SelectionRectangle();
 
     public toString() {
