@@ -1,8 +1,5 @@
 <template>
-  <g
-    :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`"
-    :class="classes"
-  >
+  <g :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`" :class="classes">
     <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <line
       v-if="isSingleBond || !bond.bondOrder || isThicc"
@@ -57,7 +54,8 @@ import Vue from "vue";
 import { Bond, BondState } from "../../models";
 export default Vue.extend({
   props: {
-    bond: Bond
+    bond: Bond,
+    transparent: Boolean
   },
   data() {
     return {
@@ -88,12 +86,6 @@ export default Vue.extend({
           this.bond.end.y - this.bond.start.y,
           this.bond.end.x - this.bond.start.x
         )
-      );
-    },
-    transparent(): boolean {
-      return (
-        !!this.$store.state.molecules.stateMachine.creating ||
-        this.$store.state.molecules.pointerState.end
       );
     },
     classes(): string[] {

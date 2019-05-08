@@ -12,6 +12,10 @@ class StateVariables {
                 Selected: [${this.selected.map((r) => r.id).sort()}]\n
                 Bonds: [${this.bonds.map((b) => b.asString())}]\n`;
     }
+
+    get creating() {
+        return this.rgroups[this.rgroups.length - 1];
+    }
 }
 
 export default StateVariables;

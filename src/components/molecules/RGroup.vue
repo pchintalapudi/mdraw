@@ -2,9 +2,9 @@
   <g
     :class="classes"
     :transform="`translate(${x - contentWidth / 2} ${y + contentHeight / 4})`"
-    @pointerdown="pointerDown"
-    @pointerup="pointerUp"
-    @pointermove="pointerMove"
+    @pointerdown.stop="pointerDown"
+    @pointerup.stop="pointerUp"
+    @pointermove.stop="pointerMove"
   >
     <circle
       :r="abbrev.length == 1 ? 15 : 25"
@@ -33,7 +33,8 @@ import Vue from "vue";
 import { RGroup } from "../../models";
 export default Vue.extend({
   props: {
-    rgroup: RGroup
+    rgroup: RGroup,
+    transparent: Boolean
   },
   data() {
     return {
@@ -93,16 +94,6 @@ export default Vue.extend({
     outerViewBox(): string {
       return `${-this.radius} ${-this.radius} ${this.radius} ${this.radius}`;
     },
-    transparent(): boolean {
-      //   return (
-      //     this.rGroup === this.$store.state.molecules.stateMachine.creating ||
-      //     (this.$store.state.molecules.stateMachine.creating &&
-      //       this.$store.state.molecules.stateMachine.creating.contains(
-      //         this.rGroup
-      //       ))
-      //   );
-      return false;
-    },
     omittable(): boolean {
       //   return (
       //     (this.rGroup.payload == elements[6 - 1] ||
@@ -142,15 +133,15 @@ export default Vue.extend({
   methods: {
     pointerDown(event: PointerEvent) {
       const rgroup = this.rgroup;
-      this.$emit("dmouse", { target: "rgroup", payload: { event, rgroup } });
+      this.$emit("dmouse", { target: "rgroup", payload: rgroup });
     },
     pointerUp(event: PointerEvent) {
       const rgroup = this.rgroup;
-      this.$emit("mmouse", { target: "rgroup", payload: { event, rgroup } });
+      this.$emit("umouse", { target: "rgroup", payload: rgroup });
     },
     pointerMove(event: PointerEvent) {
       const rgroup = this.rgroup;
-      this.$emit("umouse", { target: "rgroup", payload: { event, rgroup } });
+      this.$emit("mmouse", { target: "rgroup", payload: rgroup });
     }
   }
 });

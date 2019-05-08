@@ -4,7 +4,7 @@ import Action from "./actions";
 enum State {
     PLACING_ATOM, PLACING_ATOM_AND_BOND, MOVING_ATOM, SELECTING, ROTATING, IDLE, __COUNT__,
 }
-const actions: any[][] = [];
+const actions: Transform[][] = [];
 
 class StateMachine {
 

@@ -6,7 +6,6 @@ type ChemicalElement = typeof element_defs[0];
 
 interface Payload {
     name: string;
-    symbol: string;
     abbrev?: string;
 }
 

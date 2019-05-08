@@ -13,7 +13,12 @@
           <line stroke="black" stroke-width="4px" y2="10"></line>
         </pattern>
       </defs>
-      <bond-vue v-for="bond in bonds" :key="bond.id" :bond="bond"></bond-vue>
+      <bond-vue
+        v-for="bond in bonds"
+        :key="bond.id"
+        :bond="bond"
+        :transparent="transparent.includes(bond)"
+      ></bond-vue>
       <rgroup-vue
         v-for="rgroup in rgroups"
         :key="rgroup.id"
@@ -21,6 +26,7 @@
         @dmouse="handleMouseDownRGroup"
         @mmouse="handleMouseMoveRGroup"
         @umouse="handleMouseUpRGroup"
+        :transparent="transparent.includes(rgroup)"
       ></rgroup-vue>
       <selection-rectangle-vue :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
@@ -29,7 +35,7 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { StateMachine, Action, init_transforms } from "../state_machine";
+import { StateMachine, Action, init_transforms, State } from "../state_machine";
 import { RGroup, Bond, ChemicalElement, SelectionRectangle } from "../models";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
@@ -47,9 +53,7 @@ export default Vue.extend({
       stateMachine: new StateMachine()
     };
   },
-  mounted() {
-    init_transforms();
-  },
+  mounted: init_transforms,
   computed: {
     rgroups(): RGroup[] {
       return this.stateMachine.stateVariables.rgroups;
@@ -59,6 +63,17 @@ export default Vue.extend({
     },
     selectionBox(): SelectionRectangle {
       return this.stateMachine.stateVariables.selectionBox;
+    },
+    transparent(): Array<RGroup | Bond> {
+      const transp = [];
+      if (
+        this.stateMachine.state === State.PLACING_ATOM ||
+        this.stateMachine.state === State.PLACING_ATOM_AND_BOND
+      ) {
+        transp.push(this.stateMachine.stateVariables.creating);
+        transp.push(...this.stateMachine.stateVariables.bonds);
+      }
+      return transp;
     }
   },
   methods: {
@@ -83,23 +98,17 @@ export default Vue.extend({
         payload
       });
     },
-    handleMouseDownRGroup(payload: {
-      target: string;
-      payload: { event: PointerEvent; rgroup: RGroup };
-    }) {
+    handleMouseDownRGroup(payload: { target: string; payload: RGroup }) {
       this.stateMachine.execute(Action.MOUSE_DOWN, payload);
     },
-    handleMouseUpRGroup(payload: {
-      target: string;
-      payload: { event: PointerEvent; rgroup: RGroup };
-    }) {
+    handleMouseUpRGroup(payload: { target: string; payload: RGroup }) {
+      this.stateMachine.execute(Action.MOUSE_UP, payload);
+    },
+    handleMouseMoveRGroup(payload: { target: string; payload: RGroup }) {
       this.stateMachine.execute(Action.MOUSE_MOVE, payload);
     },
-    handleMouseMoveRGroup(payload: {
-      target: string;
-      payload: { event: PointerEvent; rgroup: RGroup };
-    }) {
-      this.stateMachine.execute(Action.MOUSE_UP, payload);
+    handleKey(event: KeyboardEvent) {
+      //
     }
   }
 });
