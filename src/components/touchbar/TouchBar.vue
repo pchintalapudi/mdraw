@@ -1,17 +1,21 @@
 <template>
-  <span>
+  <span class="touch-bar">
     <form name="atom-creator">
-      <button type="button">Spawn Element</button>
-      <select name="atom-selector" id="atom-selector">
+      <button type="button" @click="spawn">Spawn {{element.name}}</button>
+      <select name="atom-selector" id="atom-selector" v-model="element">
         <optgroup label="Recently Used">
           <option
-            v-for="tup in recentlyUsed"
-            :key="tup[1]"
-            :value="tup[1]"
-          >{{`${tup[0]} (${tup[1]})`}}</option>
+            v-for="el in recentlyUsed"
+            :key="el.number"
+            :value="el"
+          >{{`${el.number} ${el.name} (${el.abbrev})`}}</option>
         </optgroup>
         <optgroup label="Other Elements">
-          <option v-for="tup in choices" :key="tup[1]" :value="tup[1]">{{`${tup[0]} (${tup[1]})`}}</option>
+          <option
+            v-for="el in choices"
+            :key="el.number"
+            :value="el"
+          >{{`${el.number} ${el.name} (${el.abbrev})`}}</option>
         </optgroup>
       </select>
     </form>
@@ -20,21 +24,39 @@
 <script lang="ts">
 import Vue from "vue";
 import { ChemicalElement, elementCount, element } from "../../models";
-const abbrevToElement = new Map<string, ChemicalElement>();
-const abbrevs: Array<[string, string]> = [];
+const elements: ChemicalElement[] = [];
 for (let i = 1; i <= elementCount; i++) {
-  const e = element(i);
-  abbrevs.push([e.name, e.abbrev]);
-  abbrevToElement.set(e.abbrev, e);
+  elements.push(element(i));
 }
 export default Vue.extend({
   data() {
-    return { recentlyUsed: [abbrevs[5]], nameTuple: abbrevs[5] };
+    return { recentlyUsed: [elements[5]], element: elements[5] };
   },
   computed: {
-    choices(): Array<[string, string]> {
-      return abbrevs.filter(tup => !this.recentlyUsed.includes(tup));
+    choices(): ChemicalElement[] {
+      return elements.filter(el => !this.recentlyUsed.includes(el));
+    }
+  },
+  methods: {
+    spawn() {
+      if (!this.recentlyUsed.includes(this.element)) {
+        this.recentlyUsed.push(this.element);
+        if (this.recentlyUsed.length > 6) {
+          this.recentlyUsed.splice(0, 1);
+        }
+      }
+      this.$emit("button-click", {
+        target: "spawn",
+        payload: this.element
+      });
     }
   }
 });
 </script>
+<style>
+.touch-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
