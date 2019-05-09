@@ -10,7 +10,20 @@ class StateMachine {
 
     public stateVariables = new StateVariables();
     public lastAction = Action.__COUNT__;
-    public state = State.IDLE;
+    // tslint:disable-next-line: variable-name
+    private _state = State.IDLE;
+
+    get state() {
+        return this._state;
+    }
+
+    set state(state: State) {
+        if (this._state !== state) {
+            // tslint:disable-next-line: no-console
+            console.debug(`Changed from ${State[this._state]} to ${State[state]}`);
+            this._state = state;
+        }
+    }
 
     public execute(action: Action, payload: { target: string, payload: any }) {
         this.lastAction = action;
@@ -51,7 +64,7 @@ function registerTransform(state: State, action: Action, transform: Transform) {
         console.warn(`Overriding set transform:\nState: ${State[state]}\nAction: ${Action[action]}`);
     } else {
         // tslint:disable-next-line: no-console
-        console.log(`Set ${State[state]} ${Action[action]}`);
+        console.debug(`Set ${State[state]} ${Action[action]}`);
     }
     actions[+state][+action] = transform;
 }
