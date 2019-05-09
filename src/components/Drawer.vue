@@ -26,6 +26,7 @@
         @mmouse="handleMouseMoveRGroup"
         @umouse="handleMouseUpRGroup"
         :transparent="transparent.includes(rgroup)"
+        :selected="selected.includes(rgroup)"
       ></rgroup-vue>
       <angler-vue :offset="offset" :angle="angle" :bond="bond" v-if="angling"></angler-vue>
       <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
@@ -75,6 +76,9 @@ export default Vue.extend({
     selecting(): boolean {
       return this.stateMachine.state === State.SELECTING;
     },
+    selected(): RGroup[] {
+      return this.stateMachine.stateVariables.selected;
+    },
     angling(): boolean {
       return this.stateMachine.state === State.PLACING_ATOM_AND_BOND;
     },
@@ -93,8 +97,10 @@ export default Vue.extend({
         this.stateMachine.state === State.PLACING_ATOM ||
         this.stateMachine.state === State.PLACING_ATOM_AND_BOND
       ) {
-        transp.push(this.stateMachine.stateVariables.creating);
-        transp.push(...this.stateMachine.stateVariables.bonds);
+        transp.push(this.rgroups[this.rgroups.length - 1]);
+        transp.push(...this.bonds);
+      } else if (this.stateMachine.state === State.MOVING_ATOM) {
+        transp.push(...this.selected);
       }
       return transp;
     }

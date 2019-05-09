@@ -7,6 +7,8 @@ class StateVariables {
     public lastAngle: number = 0;
     public lastPlaced: number = 0;
     public selectionBox = new SelectionRectangle();
+    public itime: number = 0;
+    public ipos: Array<{ x: number, y: number }> = [];
 
     public toString() {
         return `RGroups: [${this.rgroups.map((r) => r.asString(true))}]\n

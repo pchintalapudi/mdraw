@@ -1,5 +1,4 @@
 import { State, Action, Transform, StateMachine, registerTransform } from "../transitions";
-import { RGroup, Bond, element } from "@/models";
 
 const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
@@ -10,6 +9,20 @@ const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
         sbox.y = payload.y;
         sbox.width = 0;
         sbox.height = 0;
+    } else if (target === "rgroup") {
+        const idx = stateMachine.stateVariables.selected.indexOf(payload);
+        if (idx === -1) {
+            stateMachine.stateVariables.selected.length = 0;
+        } else {
+            stateMachine.stateVariables.selected.splice(idx, 1);
+        }
+        stateMachine.stateVariables.selected.push(payload);
+        stateMachine.stateVariables.ipos.length = 0;
+        stateMachine.stateVariables.ipos.push(
+            ...stateMachine.stateVariables.selected.map(r => ({ x: r.x, y: r.y }))
+        );
+        stateMachine.stateVariables.itime = Date.now();
+        stateMachine.state = State.MOVING_ATOM;
     }
 };
 
@@ -43,25 +56,12 @@ const cancelIdle: Transform = (stateMachine, { }) => {
 // tslint:disable-next-line: no-empty
 const mouseMoveIdle: Transform = () => { };
 
-const mouseUpIdle: Transform = (stateMachine, { target, payload }) => {
-    if (target === "rgroup") {
-        stateMachine.state = State.PLACING_ATOM_AND_BOND;
-        payload = payload as RGroup;
-        const rg = new RGroup(element(6), payload.x, payload.y);
-        stateMachine.stateVariables.rgroups.push(rg);
-        const bond = new Bond(payload, rg);
-        payload.bonds.set(rg, bond);
-        rg.bonds.set(payload, bond);
-        stateMachine.stateVariables.bonds.push(bond);
-    }
-};
-
 export default () => {
     registerTransform(State.SELECTING, Action.MOUSE_MOVE, mouseMoveSelecting);
     registerTransform(State.SELECTING, Action.MOUSE_UP, mouseUpSelecting);
     registerTransform(State.SELECTING, Action.CANCEL, cancelIdle);
     registerTransform(State.IDLE, Action.MOUSE_DOWN, mouseDownIdle);
     registerTransform(State.IDLE, Action.MOUSE_MOVE, mouseMoveIdle);
-    registerTransform(State.IDLE, Action.MOUSE_UP, mouseUpIdle);
+    registerTransform(State.IDLE, Action.MOUSE_UP, mouseMoveIdle);
     registerTransform(State.IDLE, Action.CANCEL, cancelIdle);
 };

@@ -34,7 +34,8 @@ import { RGroup } from "../../models";
 export default Vue.extend({
   props: {
     rgroup: RGroup,
-    transparent: Boolean
+    transparent: Boolean,
+    selected: Boolean
   },
   data() {
     return {
@@ -95,25 +96,6 @@ export default Vue.extend({
       return `${-this.radius} ${-this.radius} ${this.radius} ${this.radius}`;
     },
     omittable(): boolean {
-      //   return (
-      //     (this.rGroup.payload == elements[6 - 1] ||
-      //       (this.rGroup.payload == elements[1 - 1] &&
-      //         this.rGroup.bonds.size == 1 &&
-      //         this.rGroup.bonds
-      //           .values()
-      //           .next()
-      //           .value.getPeer(this.rGroup)!.payload == elements[6 - 1])) &&
-      //     this.rGroup != this.$store.state.molecules.stateMachine.creating &&
-      //     this.rGroup.bonds.size > 0
-      //   );
-      return false;
-    },
-    selected(): boolean {
-      //   return (
-      //     this.$store.state.molecules.stateMachine.selected.indexOf(
-      //       this.rGroup
-      //     ) !== -1
-      //   );
       return false;
     },
     classes(): string[] {
