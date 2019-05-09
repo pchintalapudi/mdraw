@@ -28,8 +28,16 @@ class Bond {
         }
     }
 
-    public peer(rgroup: RGroup) {
-        return rgroup === this.start ? this.end : this.start;
+    public peer(rgroup: RGroup, replace?: RGroup) {
+        return rgroup === this.start ? this.end = replace || this.end : this.start = replace || this.start;
+    }
+
+    public replace(rgroup: RGroup, replacement: RGroup) {
+        if (rgroup === this.start) {
+            this.start = replacement;
+        } else {
+            this.end = replacement;
+        }
     }
 
     public asString() {

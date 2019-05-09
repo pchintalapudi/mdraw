@@ -1,7 +1,7 @@
 import { registerTransform, State, Action, Transform } from "../transitions";
 import calculateAngle from "./angles";
 import { Constants } from "@/utils";
-import { element } from "../../models/index";
+import { RGroup, Bond, element } from "@/models";
 
 const buttonAtomPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "spawn") {
@@ -70,10 +70,15 @@ const mouseMoveBondPlacement: Transform = (stateMachine, { target, payload }) =>
 
 const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
+        const rgs = stateMachine.stateVariables.creating;
         mouseMoveBondPlacement(stateMachine, { target, payload });
         stateMachine.stateVariables.lastPlaced = (stateMachine.stateVariables.lastAngle + 720) % 360;
-        stateMachine.state = State.IDLE;
-        stateMachine.execute(Action.MOUSE_UP, { target: "rgroup", payload: stateMachine.stateVariables.creating });
+        const rg = new RGroup(element(6), rgs.x, rgs.y);
+        stateMachine.stateVariables.rgroups.push(rg);
+        const bond = new Bond(rgs, rg);
+        rgs.bonds.set(rg, bond);
+        rg.bonds.set(rgs, bond);
+        stateMachine.stateVariables.bonds.push(bond);
     } else if (target === "rgroup") {
         const rg = stateMachine.stateVariables.rgroups.pop()!;
         const bond = rg.bonds.values().next().value;

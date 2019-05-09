@@ -1,5 +1,5 @@
 import element_array from "./elements";
-import { RGroup } from '@/models';
+import { RGroup } from "@/models";
 export * from "./rgroups";
 export * from "./bonds";
 
