@@ -1,7 +1,9 @@
 <template>
   <span class="touch-bar">
     <form name="atom-creator">
-      <button type="button" @click="spawn">Spawn {{element.name}}</button>
+      <button type="button" @click="spawn" :title="element.name">
+        <div style="border-radius:50%;border-color:black;border-style:solid;padding:0 0.25em;">{{element.abbrev}}</div>
+      </button>
       <select name="atom-selector" id="atom-selector" v-model="element">
         <optgroup label="Recently Used">
           <option
@@ -63,5 +65,6 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #00000011;
 }
 </style>
