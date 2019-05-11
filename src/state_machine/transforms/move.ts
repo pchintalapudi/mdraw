@@ -1,4 +1,4 @@
-import { Transform, registerTransform, State, Action } from "../transitions";
+import { Transform, registerTransform, State, Action, StateMachine } from "../transitions";
 import { RGroup, Bond, element } from "@/models";
 
 // tslint:disable-next-line: no-empty
@@ -32,6 +32,22 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
         sel.length = 0;
     } else {
         if (target === "surface") {
+            const initialPositions = [...ipos];
+            const finalPositions = sel.map(r => ({ x: r.x, y: r.y }));
+            const moved = [...sel];
+            const undo = (sm: StateMachine) => {
+                for (let i = 0; i < moved.length; i++) {
+                    moved[i].x = initialPositions[i].x;
+                    moved[i].y = initialPositions[i].y;
+                }
+            };
+            const redo = (sm: StateMachine) => {
+                for (let i = 0; i < moved.length; i++) {
+                    moved[i].x = finalPositions[i].x;
+                    moved[i].y = finalPositions[i].y;
+                }
+            };
+            stateMachine.stateVariables.log(undo, redo);
             if (sel.length === 1) {
                 sel.length = 0;
             }
@@ -39,21 +55,71 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
         } else if (target === "rgroup") {
             // Merging
             mouseMoveMoving(stateMachine, { target, payload });
+            const initialPositions = [...ipos];
+            const finalPositions = sel.map(r => ({ x: r.x, y: r.y }));
+            const moved = [...sel];
+            const idx = stateMachine.stateVariables.rgroups.indexOf(rgs);
+            const oldPayload = payload.payload;
             if (rgs.payload !== element(6)) {
                 payload.payload = rgs.payload;
             }
-            const remove = new Set<Bond>();
+            const newPayload = payload.payload;
+            const remove = new Map<Bond, number>();
             rgs.bonds.forEach((b, r) => {
-                b.peer(rgs).bonds.delete(rgs);
+                r.bonds.delete(rgs);
                 if (!payload.bonds.has(r)) {
                     b.replace(rgs, payload);
-                    payload.bonds.set(b.peer(payload), b);
-                    b.peer(payload).bonds.set(payload, b);
+                    payload.bonds.set(r, b);
+                    r.bonds.set(payload, b);
                 } else {
-                    remove.add(b);
+                    remove.set(b, -1);
                 }
             });
-            stateMachine.stateVariables.rgroups.splice(stateMachine.stateVariables.rgroups.indexOf(rgs), 1);
+            for (let i = 0; i < stateMachine.stateVariables.bonds.length; i++) {
+                const bond = stateMachine.stateVariables.bonds[i];
+                const m1 = remove.get(bond);
+                if (m1) {
+                    remove.set(bond, i);
+                }
+            }
+            const undo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups.splice(idx, 0, rgs);
+                payload.payload = oldPayload;
+                rgs.bonds.forEach((b, r) => {
+                    r.bonds.set(rgs, b);
+                    if (!remove.has(b)) {
+                        b.replace(payload, rgs);
+                        payload.bonds.delete(r);
+                        r.bonds.delete(payload);
+                    } else {
+                        sm.stateVariables.bonds.splice(remove.get(b)!, 0, b);
+                    }
+                });
+                for (let i = 0; i < moved.length; i++) {
+                    moved[i].x = initialPositions[i].x;
+                    moved[i].y = initialPositions[i].y;
+                }
+            };
+            const redo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups.splice(idx, 1);
+                payload.payload = newPayload;
+                rgs.bonds.forEach((b, r) => {
+                    r.bonds.delete(rgs);
+                    if (!remove.has(b)) {
+                        b.replace(rgs, payload);
+                        payload.bonds.set(r, b);
+                        r.bonds.set(payload, b);
+                    } else {
+                        sm.stateVariables.bonds.splice(remove.get(b)!, 1);
+                    }
+                });
+                for (let i = 0; i < moved.length; i++) {
+                    moved[i].x = finalPositions[i].x;
+                    moved[i].y = finalPositions[i].y;
+                }
+            };
+            stateMachine.stateVariables.log(undo, redo);
+            stateMachine.stateVariables.rgroups.splice(idx, 1);
             stateMachine.stateVariables.bonds = stateMachine.stateVariables.bonds.filter(b => !remove.has(b));
             stateMachine.state = State.IDLE;
         }

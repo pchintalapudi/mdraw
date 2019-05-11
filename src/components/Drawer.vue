@@ -142,6 +142,15 @@ export default Vue.extend({
           target: "",
           payload: undefined
         });
+      } else if (event.key === "z" && event.ctrlKey) {
+        this.stateMachine.stateVariables.undo(this.stateMachine);
+      } else if (
+        ((event.key === "z" || event.key === "Z") &&
+          event.ctrlKey &&
+          event.shiftKey) ||
+        (event.key === "y" && event.ctrlKey)
+      ) {
+        this.stateMachine.stateVariables.redo(this.stateMachine);
       }
     }
   }
