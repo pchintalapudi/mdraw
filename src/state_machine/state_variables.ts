@@ -7,6 +7,31 @@ class UndoableAction {
     constructor(public undo: Action, public redo: Action) { }
 }
 
+function getValidBonds(rgroups: RGroup[]) {
+    const rgroupSet = new Set<RGroup>(rgroups);
+    const bonds = new Set<Bond>();
+    for (const rgroup of rgroups) {
+        rgroup.bonds.forEach((b, r) => {
+            if (rgroupSet.has(r) && !bonds.has(b)) {
+                bonds.add(b);
+            }
+        });
+    }
+    return Array.from(bonds);
+}
+
+function serialize(rgroups: RGroup[], bonds: Bond[]) {
+    return `${rgroups.map(r => r.serialize()).join()}!${bonds.map(b => b.serialize()).join()}`;
+}
+
+function deserialize(str: string): [RGroup[], Bond[]] {
+    const rgroupString = str.substring(0, str.indexOf("!"));
+    const bondString = str.substring(str.indexOf("!"));
+    const rgroupMap = new Map(rgroupString.split(",").filter(s => s).map(s => RGroup.deserialize(s)));
+    const bonds = bondString.split(",").filter(s => s).map(s => Bond.deserialize(s, rgroupMap));
+    return [Array.from(rgroupMap.values()), bonds];
+}
+
 // tslint:disable-next-line: max-classes-per-file
 class StateVariables {
     public selected: RGroup[] = [];
@@ -19,6 +44,7 @@ class StateVariables {
     public ipos: Array<{ x: number, y: number }> = [];
     private undoQueue: UndoableAction[] = [];
     private redoQueue: UndoableAction[] = [];
+    private clipboard: string = "";
 
     public toString() {
         return `RGroups: [${this.rgroups.map((r) => r.asString(true))}]\n
@@ -59,6 +85,75 @@ class StateVariables {
             action.redo(stateMachine);
             this.undoQueue.push(action);
         }
+    }
+
+    public serialize() {
+        return serialize(this.rgroups, this.bonds);
+    }
+
+    public deserialize(str: string) {
+        const vars = deserialize(str);
+        const ilenr = this.rgroups.length;
+        const ilenb = this.bonds.length;
+        const undo = (sm: StateMachine) => {
+            sm.stateVariables.rgroups.splice(ilenr, vars[0].length);
+            sm.stateVariables.bonds.splice(ilenb, vars[1].length);
+        };
+        const redo = (sm: StateMachine) => {
+            sm.stateVariables.rgroups.push(...vars[0]);
+            sm.stateVariables.bonds.push(...vars[1]);
+        };
+        this.rgroups.push(...vars[0]);
+        this.bonds.push(...vars[1]);
+        this.log(undo, redo);
+    }
+
+    public copy() {
+        this.clipboard = serialize(this.selected, getValidBonds(this.selected));
+    }
+
+    public delete() {
+        const removedRGroups = new Map<RGroup, number>();
+        this.selected.forEach(r => removedRGroups.set(r, -1));
+        for (let i = 0; i < this.rgroups.length; i++) {
+            if (removedRGroups.has(this.rgroups[i])) {
+                removedRGroups.set(this.rgroups[i], i);
+            }
+        }
+        const removedBonds = new Map<Bond, number>();
+        this.rgroups.map(r => r.bonds).forEach(bmap => bmap.forEach(b => removedBonds.set(b, -1)));
+        for (let i = 0; i < this.bonds.length; i++) {
+            if (removedBonds.has(this.bonds[i])) {
+                removedBonds.set(this.bonds[i], i);
+            }
+        }
+        const undo = (sm: StateMachine) => {
+            const newRGroups: RGroup[] = [];
+            const newBonds: Bond[] = [];
+            newRGroups.length = sm.stateVariables.rgroups.length + removedRGroups.size;
+            newBonds.length = sm.stateVariables.bonds.length + removedBonds.size;
+            removedRGroups.forEach((i, r) => newRGroups[i] = r);
+            removedBonds.forEach((i, b) => newBonds[i] = b);
+            let j = -1;
+            for (const r of sm.stateVariables.rgroups) {
+                while (newRGroups[++j]);
+                newRGroups[j] = r;
+            }
+            j = -1;
+            for (const b of sm.stateVariables.bonds) {
+                while (newBonds[++j]);
+                newBonds[j] = b;
+            }
+            sm.stateVariables.rgroups = newRGroups;
+            sm.stateVariables.bonds = newBonds;
+        };
+        const redo = (sm: StateMachine) => {
+            sm.stateVariables.rgroups.filter(r => !removedRGroups.has(r));
+            sm.stateVariables.bonds.filter(b => !removedBonds.has(b));
+        };
+        this.log(undo, redo);
+        this.rgroups.filter(r => !removedRGroups.has(r));
+        this.bonds.filter(b => !removedBonds.has(b));
     }
 }
 

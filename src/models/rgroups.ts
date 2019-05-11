@@ -1,6 +1,6 @@
 import element_defs from "./elements";
 import { IDGenerator } from "./globals";
-import { Bond } from "./index";
+import { Bond, element } from "./index";
 
 type ChemicalElement = typeof element_defs[0];
 
@@ -28,6 +28,24 @@ class RGroup {
     }
     public toString() {
         return this.asString();
+    }
+
+    public serialize() {
+        if ((this.payload as ChemicalElement).number !== undefined) {
+            return `${this.id}@A${(this.payload as ChemicalElement).number}@${this.x}@${this.y}@${this.charge}`;
+        }
+    }
+
+    // tslint:disable-next-line: member-ordering
+    public static deserialize(str: string): [number, RGroup] {
+        const parts = str.split("@");
+        if (parts[1][0] === "A") {
+            return [parseInt(parts[0], 10),
+            new RGroup(element(parseInt(parts[1].substring(1), 10)),
+                parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]))];
+        } else {
+            return undefined as any as [number, RGroup];
+        }
     }
 }
 

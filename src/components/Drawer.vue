@@ -152,6 +152,7 @@ export default Vue.extend({
       ) {
         this.stateMachine.stateVariables.redo(this.stateMachine);
       }
+      event.preventDefault();
     }
   }
 });

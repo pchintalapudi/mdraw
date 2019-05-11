@@ -17,6 +17,8 @@
     "no-consecutive-blank-lines": false,
     "trailing-comma":false,
     "arrow-parens":false,
-    "space-before-function-paren":false
+    "space-before-function-paren":false,
+    "comment-format":false,
+    "curly": [true, "ignore-same-line"]
   }
 }

@@ -40,12 +40,28 @@ class Bond {
         }
     }
 
+    get id() {
+        //Cantor pairing function
+        return ((this.start.id + this.end.id) * (this.start.id + this.end.id + 1)) / 2 + this.end.id;
+    }
+
     public asString() {
         return `
         Start: ${this.start.asString(true)}\n
         End: ${this.end.asString(true)}\n
         State: ${BondState[this.state]}\n
         `;
+    }
+
+    public serialize() {
+        return `${this.start.id}@${this.end.id}@${this.state}`;
+    }
+
+    // tslint:disable-next-line: member-ordering
+    public static deserialize(str: string, rgroupMap: Map<number, RGroup>) {
+        const parts = str.split("@");
+        return new Bond(rgroupMap.get(parseInt(parts[0], 10))!,
+            rgroupMap.get(parseInt(parts[1], 10))!, parseInt(parts[2], 10) as BondState);
     }
 }
 

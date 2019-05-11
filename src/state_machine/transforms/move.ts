@@ -85,6 +85,8 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
             const undo = (sm: StateMachine) => {
                 sm.stateVariables.rgroups.splice(idx, 0, rgs);
                 payload.payload = oldPayload;
+                const newbonds: Bond[] | undefined = [];
+                newbonds.length = sm.stateVariables.bonds.length + remove.size;
                 rgs.bonds.forEach((b, r) => {
                     r.bonds.set(rgs, b);
                     if (!remove.has(b)) {
@@ -92,9 +94,17 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                         payload.bonds.delete(r);
                         r.bonds.delete(payload);
                     } else {
-                        sm.stateVariables.bonds.splice(remove.get(b)!, 0, b);
+                        newbonds[remove.get(b)!] = b;
                     }
                 });
+                let j = -1;
+                for (const bond of sm.stateVariables.bonds) {
+                    // tslint:disable-next-line: curly
+                    while (newbonds[++j]);
+                    newbonds[j] = bond;
+                }
+                sm.stateVariables.bonds.length = 0;
+                sm.stateVariables.bonds.push(...newbonds);
                 for (let i = 0; i < moved.length; i++) {
                     moved[i].x = initialPositions[i].x;
                     moved[i].y = initialPositions[i].y;
@@ -110,7 +120,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                         payload.bonds.set(r, b);
                         r.bonds.set(payload, b);
                     } else {
-                        sm.stateVariables.bonds.splice(remove.get(b)!, 1);
+                        sm.stateVariables.bonds = sm.stateVariables.bonds.filter(bond => !remove.has(bond));
                     }
                 });
                 for (let i = 0; i < moved.length; i++) {
