@@ -53,7 +53,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      stateMachine: new StateMachine()
+      stateMachine: new StateMachine(),
+      clipboard: ""
     };
   },
   mounted() {
@@ -151,6 +152,17 @@ export default Vue.extend({
         (event.key === "y" && event.ctrlKey)
       ) {
         this.stateMachine.stateVariables.redo(this.stateMachine);
+      } else if (event.key === "Delete") {
+        this.stateMachine.stateVariables.delete();
+      } else if ((event.key === "r" || event.key === "R") && event.ctrlKey) {
+        window.location.reload(event.shiftKey);
+      } else if (event.key === "x" && event.ctrlKey) {
+        this.clipboard = this.stateMachine.stateVariables.copy();
+        this.stateMachine.stateVariables.delete();
+      } else if (event.key === "c" && event.ctrlKey) {
+        this.clipboard = this.stateMachine.stateVariables.copy();
+      } else if (event.key === "v" && event.ctrlKey) {
+        this.stateMachine.stateVariables.deserialize(this.clipboard);
       }
       event.preventDefault();
     }

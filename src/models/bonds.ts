@@ -1,11 +1,14 @@
 import { RGroup } from "../models";
+import { IDGenerator } from "./globals";
 
 enum BondState {
     PARTIAL, SINGLE, FORWARD, RETREATING, THICK, DOUBLE, DOUBLE_LEFT, DOUBLE_RIGHT, TRIPLE, TRIPLE_SHORT,
 }
 
 class Bond {
-    constructor(public start: RGroup, public end: RGroup, public state = BondState.SINGLE) { }
+    constructor(public start: RGroup, public end: RGroup,
+        // tslint:disable-next-line: align
+        public state = BondState.SINGLE, public readonly id = IDGenerator.nextID) { }
 
     public bondOrder() {
         switch (+this.bondOrder) {
@@ -40,7 +43,7 @@ class Bond {
         }
     }
 
-    get id() {
+    get cmp() {
         //Cantor pairing function
         return ((this.start.id + this.end.id) * (this.start.id + this.end.id + 1)) / 2 + this.end.id;
     }
@@ -60,8 +63,11 @@ class Bond {
     // tslint:disable-next-line: member-ordering
     public static deserialize(str: string, rgroupMap: Map<number, RGroup>) {
         const parts = str.split("@");
-        return new Bond(rgroupMap.get(parseInt(parts[0], 10))!,
+        const b = new Bond(rgroupMap.get(parseInt(parts[0], 10))!,
             rgroupMap.get(parseInt(parts[1], 10))!, parseInt(parts[2], 10) as BondState);
+        b.start.bonds.set(b.end, b);
+        b.end.bonds.set(b.start, b);
+        return b;
     }
 }
 

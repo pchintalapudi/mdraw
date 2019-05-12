@@ -26,7 +26,7 @@ function serialize(rgroups: RGroup[], bonds: Bond[]) {
 
 function deserialize(str: string): [RGroup[], Bond[]] {
     const rgroupString = str.substring(0, str.indexOf("!"));
-    const bondString = str.substring(str.indexOf("!"));
+    const bondString = str.substring(str.indexOf("!") + 1);
     const rgroupMap = new Map(rgroupString.split(",").filter(s => s).map(s => RGroup.deserialize(s)));
     const bonds = bondString.split(",").filter(s => s).map(s => Bond.deserialize(s, rgroupMap));
     return [Array.from(rgroupMap.values()), bonds];
@@ -44,7 +44,6 @@ class StateVariables {
     public ipos: Array<{ x: number, y: number }> = [];
     private undoQueue: UndoableAction[] = [];
     private redoQueue: UndoableAction[] = [];
-    private clipboard: string = "";
 
     public toString() {
         return `RGroups: [${this.rgroups.map((r) => r.asString(true))}]\n
@@ -106,10 +105,11 @@ class StateVariables {
         this.rgroups.push(...vars[0]);
         this.bonds.push(...vars[1]);
         this.log(undo, redo);
+        this.selected = vars[0];
     }
 
     public copy() {
-        this.clipboard = serialize(this.selected, getValidBonds(this.selected));
+        return serialize(this.selected, getValidBonds(this.selected));
     }
 
     public delete() {
