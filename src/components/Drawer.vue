@@ -162,8 +162,6 @@ export default Vue.extend({
         this.stateMachine.stateVariables.redo(this.stateMachine);
       } else if (event.key === "Delete") {
         this.stateMachine.stateVariables.delete();
-      } else if ((event.key === "r" || event.key === "R") && event.ctrlKey) {
-        window.location.reload(event.shiftKey);
       } else if (event.key === "x" && event.ctrlKey) {
         this.clipboard = this.stateMachine.stateVariables.copy();
         this.stateMachine.stateVariables.delete();
@@ -173,13 +171,13 @@ export default Vue.extend({
         this.stateMachine.stateVariables.deserialize(this.clipboard);
       } else if (event.key === "o") {
         this.omit = !this.omit;
-      }
+      } else return;
       event.preventDefault();
     }
   }
 });
 </script>
-<style scoped>
+<style>
 .touch-bar {
   position: fixed;
   max-height: 200px;
@@ -202,5 +200,11 @@ export default Vue.extend({
 .omit .omittable {
   visibility: hidden;
   pointer-events: none;
+}
+html, body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 </style>
