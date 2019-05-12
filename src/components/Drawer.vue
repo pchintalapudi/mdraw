@@ -5,7 +5,7 @@
       @pointermove.stop="handleMouseMove"
       @pointerdown.stop="handleMouseDown"
       @pointerup.stop="handleMouseUp"
-      class="surface"
+      :class="classes"
     >
       <defs>
         <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
@@ -54,7 +54,8 @@ export default Vue.extend({
   data() {
     return {
       stateMachine: new StateMachine(),
-      clipboard: ""
+      clipboard: "",
+      omit: false
     };
   },
   mounted() {
@@ -104,6 +105,13 @@ export default Vue.extend({
         transp.push(...this.selected);
       }
       return transp;
+    },
+    classes(): string[] {
+      const clazzes = ["surface"];
+      if (this.omit) {
+        clazzes.push("omit");
+      }
+      return clazzes;
     }
   },
   methods: {
@@ -163,6 +171,8 @@ export default Vue.extend({
         this.clipboard = this.stateMachine.stateVariables.copy();
       } else if (event.key === "v" && event.ctrlKey) {
         this.stateMachine.stateVariables.deserialize(this.clipboard);
+      } else if (event.key === "o") {
+        this.omit = !this.omit;
       }
       event.preventDefault();
     }
@@ -188,5 +198,9 @@ export default Vue.extend({
   height: 100%;
   width: 100%;
   display: flex;
+}
+.omit .omittable {
+  visibility: hidden;
+  pointer-events: none;
 }
 </style>

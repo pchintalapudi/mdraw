@@ -93,18 +93,27 @@ export default Vue.extend({
       if (this.transparent) {
         clazzes.push("transparent");
       }
+      if (this.omittable()) {
+        clazzes.push("omittable");
+      }
       const start = this.bond.start;
       const end = this.bond.end;
-      //   if (start.payload === elements[1 - 1]) {
-      //     if (end.payload === elements[6 - 1]) {
-      //       clazzes.push("omittable");
-      //     }
-      //   } else if (start.payload === elements[6 - 1]) {
-      //     if (end.payload === elements[1 - 1]) {
-      //       clazzes.push("omittable");
-      //     }
-      //   }
       return clazzes;
+    }
+  },
+  methods: {
+    omittable(): boolean {
+      if (this.bond.start.payload.name === "Carbon") {
+        return (
+          this.bond.end.payload.name === "Hydrogen" &&
+          this.bond.end.bonds.size === 1
+        );
+      } else if (this.bond.end.payload.name === "Carbon") {
+        return (
+          this.bond.start.payload.name === "Hydrogen" &&
+          this.bond.start.bonds.size === 1
+        );
+      } else return false;
     }
   }
 });

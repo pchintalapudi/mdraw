@@ -31,6 +31,7 @@
 <script lang='ts'>
 import Vue from "vue";
 import { RGroup } from "../../models";
+import { element } from "../../models/index";
 export default Vue.extend({
   props: {
     rgroup: RGroup,
@@ -95,15 +96,16 @@ export default Vue.extend({
     outerViewBox(): string {
       return `${-this.radius} ${-this.radius} ${this.radius} ${this.radius}`;
     },
-    omittable(): boolean {
-      return false;
-    },
     classes(): string[] {
       const clazzes: string[] = [];
       if (this.transparent) {
         clazzes.push("transparent");
       }
-      if (this.omittable) {
+      if (this.softOmittable()) {
+        clazzes.push("omittable");
+        clazzes.push("soft");
+        clazzes.push("override");
+      } else if (this.omittable()) {
         clazzes.push("omittable");
       }
       if (this.selected) {
@@ -124,6 +126,18 @@ export default Vue.extend({
     pointerMove(event: PointerEvent) {
       const rgroup = this.rgroup;
       this.$emit("mmouse", { target: "rgroup", payload: rgroup });
+    },
+    softOmittable(): boolean {
+      return (
+        this.rgroup.payload.name === "Carbon" && this.rgroup.bonds.size > 0
+      );
+    },
+    omittable(): boolean {
+      return (
+        this.rgroup.payload.name === "Hydrogen" &&
+        this.rgroup.bonds.size === 1 &&
+        this.rgroup.bonds.keys().next().value.payload.name === "Carbon"
+      );
     }
   }
 });
@@ -134,7 +148,8 @@ export default Vue.extend({
   color: inherit;
 }
 
-.transparent {
+.transparent,
+.omittable.soft.override.transparent {
   pointer-events: none;
 }
 
@@ -147,7 +162,7 @@ export default Vue.extend({
   fill: #0088ff44;
 }
 
-.selected {
-  opacity: 1 !important;
+.omittable.soft.override {
+  pointer-events: all;
 }
 </style>
