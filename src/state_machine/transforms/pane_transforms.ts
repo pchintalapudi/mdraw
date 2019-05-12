@@ -57,6 +57,7 @@ const cancelIdle: Transform = (stateMachine, { }) => {
 const mouseMoveIdle: Transform = () => { };
 
 export default () => {
+    registerTransform(State.SELECTING, Action.MOUSE_DOWN, mouseMoveIdle);
     registerTransform(State.SELECTING, Action.MOUSE_MOVE, mouseMoveSelecting);
     registerTransform(State.SELECTING, Action.MOUSE_UP, mouseUpSelecting);
     registerTransform(State.SELECTING, Action.CANCEL, cancelIdle);

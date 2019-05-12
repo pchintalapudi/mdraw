@@ -30,8 +30,8 @@ const mouseUpAtomPlacement: Transform = (stateMachine, { target, payload }) => {
         const oldPayload = payload.payload;
         payload.payload = rg.payload;
         rgs.pop();
-        const undo = (sm: StateMachine) => payload.payload = oldPayload;
-        const redo = (sm: StateMachine) => payload.payload = oldPayload;
+        const undo = (_: StateMachine) => payload.payload = oldPayload;
+        const redo = (_: StateMachine) => payload.payload = oldPayload;
         stateMachine.stateVariables.log(undo, redo);
         stateMachine.state = State.IDLE;
         stateMachine.execute(Action.BUTTON, { target: "spawn", payload: payload.payload });
