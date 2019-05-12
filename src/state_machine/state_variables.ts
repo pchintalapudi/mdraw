@@ -148,12 +148,12 @@ class StateVariables {
             sm.stateVariables.bonds = newBonds;
         };
         const redo = (sm: StateMachine) => {
-            sm.stateVariables.rgroups.filter(r => !removedRGroups.has(r));
-            sm.stateVariables.bonds.filter(b => !removedBonds.has(b));
+            sm.stateVariables.rgroups = sm.stateVariables.rgroups.filter(r => !removedRGroups.has(r));
+            sm.stateVariables.bonds = sm.stateVariables.bonds.filter(b => !removedBonds.has(b));
         };
         this.log(undo, redo);
-        this.rgroups.filter(r => !removedRGroups.has(r));
-        this.bonds.filter(b => !removedBonds.has(b));
+        this.rgroups = this.rgroups.filter(r => !removedRGroups.has(r));
+        this.bonds = this.bonds.filter(b => !removedBonds.has(b));
     }
 }
 
