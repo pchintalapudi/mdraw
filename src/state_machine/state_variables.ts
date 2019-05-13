@@ -149,7 +149,7 @@ class StateVariables {
             }
         }
         const removedBonds = new Map<Bond, number>();
-        this.rgroups.map(r => r.bonds).forEach(bmap => bmap.forEach(b => removedBonds.set(b, -1)));
+        this.selected.map(r => r.bonds).forEach(bmap => bmap.forEach(b => removedBonds.set(b, -1)));
         for (let i = 0; i < this.bonds.length; i++) {
             if (removedBonds.has(this.bonds[i])) {
                 removedBonds.set(this.bonds[i], i);
