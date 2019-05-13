@@ -37,13 +37,15 @@ class StateVariables {
     public selected: RGroup[] = [];
     public rgroups: RGroup[] = [];
     public bonds: Bond[] = [];
-    public lastAngle: number = 0;
-    public lastPlaced: number = 0;
+    public lastAngle = 0;
+    public lastPlaced = 0;
     public selectionBox = new SelectionRectangle();
-    public itime: number = 0;
+    public itime = 0;
     public ipos: Array<{ x: number, y: number }> = [];
+    public file = "";
     private undoQueue: UndoableAction[] = [];
     private redoQueue: UndoableAction[] = [];
+    private savedLength = 0;
 
     public toString() {
         return `RGroups: [${this.rgroups.map((r) => r.asString(true))}]\n
@@ -90,22 +92,48 @@ class StateVariables {
         return serialize(this.rgroups, this.bonds);
     }
 
-    public deserialize(str: string) {
-        const vars = deserialize(str);
-        const ilenr = this.rgroups.length;
-        const ilenb = this.bonds.length;
-        const undo = (sm: StateMachine) => {
-            sm.stateVariables.rgroups.splice(ilenr, vars[0].length);
-            sm.stateVariables.bonds.splice(ilenb, vars[1].length);
-        };
-        const redo = (sm: StateMachine) => {
-            sm.stateVariables.rgroups.push(...vars[0]);
-            sm.stateVariables.bonds.push(...vars[1]);
-        };
-        this.rgroups.push(...vars[0]);
-        this.bonds.push(...vars[1]);
-        this.log(undo, redo);
-        this.selected = vars[0];
+    public save() {
+        this.savedLength = this.undoQueue.length;
+    }
+
+    get saved() {
+        return this.savedLength === this.undoQueue.length;
+    }
+
+    public deserialize(str: string, clear = false) {
+        if (!clear) {
+            const vars = deserialize(str);
+            const ilenr = this.rgroups.length;
+            const ilenb = this.bonds.length;
+            const undo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups.splice(ilenr, vars[0].length);
+                sm.stateVariables.bonds.splice(ilenb, vars[1].length);
+            };
+            const redo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups.push(...vars[0]);
+                sm.stateVariables.bonds.push(...vars[1]);
+            };
+            this.rgroups.push(...vars[0]);
+            this.bonds.push(...vars[1]);
+            this.log(undo, redo);
+            this.selected = vars[0];
+        } else {
+            const vars = deserialize(str);
+            const beforeRGroups = this.rgroups;
+            const beforeBonds = this.bonds;
+            const undo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups = beforeRGroups;
+                sm.stateVariables.bonds = beforeBonds;
+            };
+            const redo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups = vars[0];
+                sm.stateVariables.bonds = vars[1];
+            };
+            this.log(undo, redo);
+            this.rgroups = vars[0];
+            this.bonds = vars[1];
+            this.save();
+        }
     }
 
     public copy() {

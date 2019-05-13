@@ -32,35 +32,49 @@
       <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
     <touchbar-vue class="touch-bar" @button-click="handleButtonClick"></touchbar-vue>
+    <file-chooser-vue v-if="dialogging" :save="saving" @close="closeDialog" @new-file="newFile"></file-chooser-vue>
   </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
 import { StateMachine, Action, State, init_transforms } from "../state_machine";
 import { RGroup, Bond, ChemicalElement, SelectionRectangle } from "../models";
+import { saveFile, loadFile } from "../files";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
 import AnglerVue from "@/components/widgets/Angler.vue";
+import FileChooserVue from "@/components/files/FileChooser.vue";
 export default Vue.extend({
   components: {
     "bond-vue": BondVue,
     "rgroup-vue": RGroupVue,
     "touchbar-vue": TouchBarVue,
     "selection-rectangle-vue": SelectionRectangleVue,
-    "angler-vue": AnglerVue
+    "angler-vue": AnglerVue,
+    "file-chooser-vue": FileChooserVue
   },
   data() {
     return {
       stateMachine: new StateMachine(),
       clipboard: "",
-      omit: false
+      omit: false,
+      dialogging: false,
+      saving: "",
+      loading: false,
+      deserializeOnSave: false
     };
   },
   mounted() {
     init_transforms();
     window.addEventListener("keydown", this.handleKey);
+    window.addEventListener("beforeunload", ev => {
+      if (!this.stateMachine.stateVariables.saved) {
+        ev.preventDefault();
+        return "Don't close yet";
+      }
+    });
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.handleKey);
@@ -145,34 +159,99 @@ export default Vue.extend({
     handleMouseMoveRGroup(payload: { target: string; payload: RGroup }) {
       this.stateMachine.execute(Action.MOUSE_MOVE, payload);
     },
-    handleKey(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        this.stateMachine.execute(Action.CANCEL, {
-          target: "",
-          payload: undefined
-        });
-      } else if (event.key === "z" && event.ctrlKey) {
-        this.stateMachine.stateVariables.undo(this.stateMachine);
-      } else if (
-        ((event.key === "z" || event.key === "Z") &&
-          event.ctrlKey &&
-          event.shiftKey) ||
-        (event.key === "y" && event.ctrlKey)
+    openDialog(save: boolean, load = false) {
+      if (
+        !save &&
+        !load &&
+        !this.stateMachine.stateVariables.saved &&
+        confirm("Would you like to save your content?")
       ) {
-        this.stateMachine.stateVariables.redo(this.stateMachine);
-      } else if (event.key === "Delete") {
-        this.stateMachine.stateVariables.delete();
-      } else if (event.key === "x" && event.ctrlKey) {
-        this.clipboard = this.stateMachine.stateVariables.copy();
-        this.stateMachine.stateVariables.delete();
-      } else if (event.key === "c" && event.ctrlKey) {
-        this.clipboard = this.stateMachine.stateVariables.copy();
-      } else if (event.key === "v" && event.ctrlKey) {
-        this.stateMachine.stateVariables.deserialize(this.clipboard);
-      } else if (event.key === "o") {
-        this.omit = !this.omit;
-      } else return;
-      event.preventDefault();
+        this.deserializeOnSave = true;
+        this.openDialog(true, false);
+      }
+      this.dialogging = true;
+      this.saving = save ? this.stateMachine.stateVariables.serialize() : "";
+      this.loading = load;
+    },
+    closeDialog(response: [boolean, string]) {
+      if (this.saving) {
+        if (response[0]) {
+          this.stateMachine.stateVariables.file = response[1];
+          this.stateMachine.stateVariables.save();
+          if (this.deserializeOnSave) {
+            this.openDialog(false, false);
+          }
+        }
+        this.deserializeOnSave = false;
+      } else {
+        if (response[0]) {
+          if (this.stateMachine.stateVariables.file) {
+            saveFile(
+              this.stateMachine.stateVariables.file,
+              this.stateMachine.stateVariables.serialize(),
+              true
+            );
+          } else {
+            this.openDialog(true);
+          }
+          this.stateMachine.stateVariables.deserialize(
+            loadFile(response[1]),
+            !this.loading
+          );
+          if (!this.loading) {
+            this.stateMachine.stateVariables.file = response[1];
+          }
+        }
+      }
+      this.dialogging = false;
+    },
+    newFile() {
+      this.dialogging = false;
+    },
+    handleKey(event: KeyboardEvent) {
+      if (!this.dialogging) {
+        if (event.key === "Escape") {
+          this.stateMachine.execute(Action.CANCEL, {
+            target: "",
+            payload: undefined
+          });
+        } else if (event.key === "z" && event.ctrlKey) {
+          this.stateMachine.stateVariables.undo(this.stateMachine);
+        } else if (
+          ((event.key === "z" || event.key === "Z") &&
+            event.ctrlKey &&
+            event.shiftKey) ||
+          (event.key === "y" && event.ctrlKey)
+        ) {
+          this.stateMachine.stateVariables.redo(this.stateMachine);
+        } else if (event.key === "Delete") {
+          this.stateMachine.stateVariables.delete();
+        } else if (event.key === "x" && event.ctrlKey) {
+          this.clipboard = this.stateMachine.stateVariables.copy();
+          this.stateMachine.stateVariables.delete();
+        } else if (event.key === "c" && event.ctrlKey) {
+          this.clipboard = this.stateMachine.stateVariables.copy();
+        } else if (event.key === "v" && event.ctrlKey) {
+          this.stateMachine.stateVariables.deserialize(this.clipboard);
+        } else if (event.key === "s" && event.ctrlKey) {
+          if (this.stateMachine.stateVariables.file) {
+            saveFile(
+              this.stateMachine.stateVariables.file,
+              this.stateMachine.stateVariables.serialize(),
+              true
+            );
+          } else {
+            this.openDialog(true);
+          }
+        } else if (event.key === "o" && event.ctrlKey) {
+          this.openDialog(false);
+        } else if (event.key === "o") {
+          this.omit = !this.omit;
+        } else if (event.key === "l" && event.ctrlKey) {
+          this.openDialog(false, true);
+        } else return;
+        event.preventDefault();
+      }
     }
   }
 });
@@ -201,7 +280,8 @@ export default Vue.extend({
   visibility: hidden;
   pointer-events: none;
 }
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
   padding: 0;
