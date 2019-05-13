@@ -240,6 +240,7 @@ export default Vue.extend({
               this.stateMachine.stateVariables.serialize(),
               true
             );
+            this.stateMachine.stateVariables.save();
           } else {
             this.openDialog(true);
           }

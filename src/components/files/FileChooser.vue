@@ -6,6 +6,8 @@
           v-for="(name, idx) in fileNames"
           :key="name || idx"
           :type="name ? 'Drawing' : ''"
+          :name="name"
+          :selected="fileName && name === fileName"
           @select="fileName = name"
           @open="deal()"
           @focus="fileName=name"
@@ -14,9 +16,9 @@
         ></row-vue>
       </div>
       <div class="bottom">
-        <input type="text" name="fileName" id="fileName" v-model="fileName">
+        <input type="text" name="fileName" id="fileName" v-model="fileName" @keydown.enter="deal(false)">
         <button v-if="!save" @click="$emit('new-file')">New</button>
-        <button>{{save ? "Save" : "Open"}}</button>
+        <button @click="deal(false)">{{save ? "Save" : "Open"}}</button>
         <button @click="$emit('close', [false, ''])">Cancel</button>
       </div>
       <dialog-vue
@@ -156,6 +158,7 @@ export default Vue.extend({
   bottom: 10%;
   display: flex;
   flex-flow: column nowrap;
+  background-color: white;
 }
 .top {
   flex: 1;
@@ -164,9 +167,16 @@ export default Vue.extend({
   overflow: auto;
 }
 .bottom {
+  padding: 20px;
   flex: 0;
-  flex-basis: 2em;
   justify-content: center;
   align-items: center;
+  margin-left: auto;
+}
+.bottom > * {
+  flex: 0;
+}
+.bottom > input {
+  flex: 1;
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
-  <div class="die" @click.stop>
+  <div class="die" @click.stop="$emit('deny')">
     <div @click.stop>
       <span class="row">
         <p>{{header}}</p>
-        <button @click="$emit('cancel')">&times;</button>
+        <button class="button deny" @click="$emit('deny')">&times;</button>
       </span>
       <div>{{message}}</div>
-      <span class="row">
+      <span class="row" style="justify-content:center">
         <button
           v-for="a in affirmations"
           :key="a"
@@ -58,10 +58,13 @@ export default Vue.extend({
 }
 .die > div:first-child {
   position: fixed;
-  top: 10%;
-  left: 10%;
-  right: 10%;
-  bottom: 10%;
+  top: 40%;
+  left: 25%;
+  right: 25%;
+  bottom: 40%;
+  display: flex;
+  flex-flow: column nowrap;
+  background-color: white;
 }
 .row {
   display: flex;
@@ -70,5 +73,9 @@ export default Vue.extend({
 .row + div {
   text-align: center;
   flex: 1;
+}
+.row>p {
+  flex: 1;
+  text-align: center;
 }
 </style>

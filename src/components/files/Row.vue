@@ -22,6 +22,7 @@ export default Vue.extend({
   background-color: white;
   display: flex;
   flex-flow: row nowrap;
+  flex: 1;
 }
 .row:nth-child(odd) {
   background-color: #eeeeee;
