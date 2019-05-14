@@ -101,15 +101,14 @@ export default Vue.extend({
       if (this.transparent) {
         clazzes.push("transparent");
       }
-      if (this.softOmittable()) {
+      if (this.selected) {
+        clazzes.push("selected");
+      } else if (this.softOmittable()) {
         clazzes.push("omittable");
         clazzes.push("soft");
         clazzes.push("override");
       } else if (this.omittable()) {
         clazzes.push("omittable");
-      }
-      if (this.selected) {
-        clazzes.push("selected");
       }
       return clazzes;
     }
@@ -128,16 +127,10 @@ export default Vue.extend({
       this.$emit("mmouse", { target: "rgroup", payload: rgroup });
     },
     softOmittable(): boolean {
-      return (
-        this.rgroup.payload.name === "Carbon" && this.rgroup.bonds.size > 0
-      );
+      return this.rgroup.softOmittable;
     },
     omittable(): boolean {
-      return (
-        this.rgroup.payload.name === "Hydrogen" &&
-        this.rgroup.bonds.size === 1 &&
-        this.rgroup.bonds.keys().next().value.payload.name === "Carbon"
-      );
+      return this.rgroup.omittable;
     }
   }
 });

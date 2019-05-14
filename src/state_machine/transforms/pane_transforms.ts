@@ -32,7 +32,7 @@ function select(stateMachine: StateMachine) {
 }
 
 const mouseMoveSelecting: Transform = (stateMachine, { target, payload }) => {
-    if (target === "surface") {
+    if (target === "surface" || target === "rgroup") {
         const sbox = stateMachine.stateVariables.selectionBox;
         payload = payload as PointerEvent;
         sbox.ex = payload.x;

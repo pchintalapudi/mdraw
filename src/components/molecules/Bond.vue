@@ -10,12 +10,12 @@
   >
     <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <line
-      v-if="isSingleBond || !bond.bondOrder || isThicc"
+      v-if="isSingleBond || !bond.bondOrder || isThick"
       x1="0"
       :x2="dist"
       y1="0"
       y2="0"
-      :class="`${(bond.bondOrder ? isThicc ? 'thonk' : 'single' : 'partial')} bond`"
+      :class="`${(bond.bondOrder ? isThick ? 'thick' : 'single' : 'partial')} bond`"
     />
     <polygon
       v-else-if="bond.bondOrder == 1"
@@ -23,14 +23,14 @@
       :points="`0,0 ${this.dist - 10},5 ${this.dist - 10},-5`"
     ></polygon>
     <g v-else-if="bond.bondOrder == 2">
-      <line :y1="doubleDown" :y2="doubleDown" :x1="doubleStartLeft" :x2="doubleEndLeft" class="bond"/>
       <line
-        :y1="doubleUp"
-        :y2="doubleUp"
-        :x1="doubleStartRight"
-        :x2="doubleEndRight"
+        :y1="doubleDown"
+        :y2="doubleDown"
+        :x1="doubleStartLeft"
+        :x2="doubleEndLeft"
         class="bond"
       />
+      <line :y1="doubleUp" :y2="doubleUp" :x1="doubleStartRight" :x2="doubleEndRight" class="bond"/>
     </g>
     <g v-else-if="bond.bondOrder == 3">
       <line y1="5" y2="5" :x1="doubleStartLeft" :x2="doubleEndLeft" class="bond"/>
@@ -49,7 +49,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      shorten: 2 / 7
+      shortenVisible: 2 / 7,
+      shortenOmitted: 1 / 7
     };
   },
   computed: {
@@ -59,7 +60,7 @@ export default Vue.extend({
     isSingleBond(): boolean {
       return this.bond.state === BondState.SINGLE;
     },
-    isThicc(): boolean {
+    isThick(): boolean {
       return this.bond.state === BondState.THICK;
     },
     isApproachingBond(): boolean {
@@ -92,6 +93,16 @@ export default Vue.extend({
       const end = this.bond.end;
       return clazzes;
     },
+    shortenStart(): number {
+      return this.rgroupOmittable(true)
+        ? this.shortenOmitted
+        : this.shortenVisible;
+    },
+    shortenEnd(): number {
+      return this.rgroupOmittable(false)
+        ? this.shortenOmitted
+        : this.shortenVisible;
+    },
     doubleUp(): number {
       return this.bond.state === BondState.DOUBLE_LEFT ||
         this.bond.state === BondState.TRIPLE_SHORT
@@ -107,41 +118,36 @@ export default Vue.extend({
     doubleStartLeft(): number {
       return this.bond.state === BondState.DOUBLE_LEFT ||
         this.bond.state === BondState.TRIPLE_SHORT
-        ? this.dist * this.shorten
+        ? this.dist * this.shortenStart
         : 0;
     },
     doubleStartRight(): number {
       return this.bond.state === BondState.DOUBLE_RIGHT ||
         this.bond.state === BondState.TRIPLE_SHORT
-        ? this.dist * this.shorten
+        ? this.dist * this.shortenStart
         : 0;
     },
     doubleEndLeft(): number {
       return this.bond.state === BondState.DOUBLE_LEFT ||
         this.bond.state === BondState.TRIPLE_SHORT
-        ? this.dist * (1 - this.shorten)
+        ? this.dist * (1 - this.shortenEnd)
         : this.dist;
     },
     doubleEndRight(): number {
       return this.bond.state === BondState.DOUBLE_RIGHT ||
         this.bond.state === BondState.TRIPLE_SHORT
-        ? this.dist * (1 - this.shorten)
+        ? this.dist * (1 - this.shortenEnd)
         : this.dist;
     }
   },
   methods: {
+    rgroupOmittable(start: boolean): boolean {
+      return start
+        ? this.bond.start.softOmittable || this.bond.start.omittable
+        : this.bond.end.softOmittable || this.bond.end.omittable;
+    },
     omittable(): boolean {
-      if (this.bond.start.payload.name === "Carbon") {
-        return (
-          this.bond.end.payload.name === "Hydrogen" &&
-          this.bond.end.bonds.size === 1
-        );
-      } else if (this.bond.end.payload.name === "Carbon") {
-        return (
-          this.bond.start.payload.name === "Hydrogen" &&
-          this.bond.start.bonds.size === 1
-        );
-      } else return false;
+      return this.bond.omittable;
     }
   }
 });
@@ -152,7 +158,7 @@ export default Vue.extend({
   stroke-width: 1;
 }
 
-.thonk {
+.thick {
   stroke-width: 10;
 }
 

@@ -47,6 +47,19 @@ class RGroup {
             return undefined as any as [number, RGroup];
         }
     }
+
+    get softOmittable() {
+        return (
+            this.payload.name === "Carbon" && this.bonds.size > 0
+        );
+    }
+    get omittable() {
+        return (
+            this.payload.name === "Hydrogen" &&
+            this.bonds.size === 1 &&
+            this.bonds.keys().next().value.payload.name === "Carbon"
+        );
+    }
 }
 
 export { ChemicalElement, Payload, RGroup };

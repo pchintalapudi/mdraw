@@ -50,7 +50,7 @@ const angles: number[] = [
     108.0,
     252.0
 ];
-const lockDist = 10;
+const lockDist = 20;
 function calculateAngle(dist: number, raw: number, offset = 0): number {
     for (const angle of angles) {
         const chord = Math.abs(

@@ -69,6 +69,10 @@ class Bond {
         b.end.bonds.set(b.start, b);
         return b;
     }
+
+    get omittable() {
+        return this.start.omittable || this.end.omittable;
+    }
 }
 
 export { BondState, Bond };
