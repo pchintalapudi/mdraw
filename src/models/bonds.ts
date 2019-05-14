@@ -10,8 +10,8 @@ class Bond {
         // tslint:disable-next-line: align
         public state = BondState.SINGLE, public readonly id = IDGenerator.nextID) { }
 
-    public bondOrder() {
-        switch (+this.bondOrder) {
+    get bondOrder() {
+        switch (+this.state) {
             case BondState.PARTIAL:
                 return 0;
             case BondState.SINGLE:

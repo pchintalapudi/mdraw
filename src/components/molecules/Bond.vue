@@ -1,11 +1,19 @@
 <template>
-  <g :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`" :class="classes">
+  <g
+    :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`"
+    :class="classes"
+    @mousedown.stop
+    @mousemove.stop
+    @mouseup.stop
+    @click.stop="$emit('click-bond', bond)"
+    @dblclick.stop="$emit('dblclick-bond', bond)"
+  >
     <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <line
       v-if="isSingleBond || !bond.bondOrder || isThicc"
       x1="0"
-      y1="0"
       :x2="dist"
+      y1="0"
       y2="0"
       :class="`${(bond.bondOrder ? isThicc ? 'thonk' : 'single' : 'partial')} bond`"
     />
@@ -15,37 +23,19 @@
       :points="`0,0 ${this.dist - 10},5 ${this.dist - 10},-5`"
     ></polygon>
     <g v-else-if="bond.bondOrder == 2">
+      <line :y1="doubleUp" :y2="doubleUp" :x1="doubleStartLeft" :x2="doubleEndLeft" class="bond"/>
       <line
-        :y1="shortenRight ? 0 : 3.75"
-        :y2="shortenRight ? 0 : 3.75"
-        :x1="shortenLeft ? dist * shorten : 0"
-        :x2="shortenLeft ? dist * (1-shorten) : dist"
-        class="bond"
-      />
-      <line
-        :y1="shortenLeft ? 0 : -3.75"
-        :y2="shortenLeft ? 0 : -3.75"
-        :x1="shortenRight ? dist * shorten : 0"
-        :x2="shortenRight ? dist * (1-shorten) : dist"
+        :y1="doubleDown"
+        :y2="doubleDown"
+        :x1="doubleStartRight"
+        :x2="doubleEndRight"
         class="bond"
       />
     </g>
     <g v-else-if="bond.bondOrder == 3">
-      <line
-        y1="5"
-        y2="5"
-        :x1="shortenLeft ? dist * shorten : 0"
-        :x2="shortenLeft ? dist * (1-shorten) : dist"
-        class="bond"
-      />
+      <line y1="5" y2="5" :x1="doubleStartLeft" :x2="doubleEndLeft" class="bond"/>
       <line y1="0" y2="0" x1="0" :x2="dist" class="bond"/>
-      <line
-        y1="-5"
-        y2="-5"
-        :x1="shortenRight ? dist * shorten : 0"
-        :x2="shortenRight ? dist * (1-shorten) : dist"
-        class="bond"
-      />
+      <line y1="-5" y2="-5" :x1="doubleStartRight" :x2="doubleEndRight" class="bond"/>
     </g>
   </g>
 </template>
@@ -59,11 +49,13 @@ export default Vue.extend({
   },
   data() {
     return {
-      visualState: 0,
       shorten: 2 / 7
     };
   },
   computed: {
+    bondOrder(): number {
+      return this.bond.bondOrder;
+    },
     isSingleBond(): boolean {
       return this.bond.state === BondState.SINGLE;
     },
@@ -99,6 +91,42 @@ export default Vue.extend({
       const start = this.bond.start;
       const end = this.bond.end;
       return clazzes;
+    },
+    doubleUp(): number {
+      return this.bond.state === BondState.DOUBLE_LEFT ||
+        this.bond.state === BondState.TRIPLE_SHORT
+        ? 0
+        : 3.75;
+    },
+    doubleDown(): number {
+      return this.bond.state === BondState.DOUBLE_RIGHT ||
+        this.bond.state === BondState.TRIPLE_SHORT
+        ? 0
+        : -3.75;
+    },
+    doubleStartLeft(): number {
+      return this.bond.state === BondState.DOUBLE_LEFT ||
+        this.bond.state === BondState.TRIPLE_SHORT
+        ? this.dist * this.shorten
+        : 0;
+    },
+    doubleStartRight(): number {
+      return this.bond.state === BondState.DOUBLE_RIGHT ||
+        this.bond.state === BondState.TRIPLE_SHORT
+        ? this.dist * this.shorten
+        : 0;
+    },
+    doubleEndLeft(): number {
+      return this.bond.state === BondState.DOUBLE_LEFT ||
+        this.bond.state === BondState.TRIPLE_SHORT
+        ? this.dist * (1 - this.shorten)
+        : this.dist;
+    },
+    doubleEndRight(): number {
+      return this.bond.state === BondState.DOUBLE_RIGHT ||
+        this.bond.state === BondState.TRIPLE_SHORT
+        ? this.dist * (1 - this.shorten)
+        : this.dist;
     }
   },
   methods: {

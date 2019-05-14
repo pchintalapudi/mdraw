@@ -17,6 +17,8 @@
         :key="bond.id"
         :bond="bond"
         :transparent="transparent.includes(bond)"
+        @click-bond="handleBondClick"
+        @dblclick-bond="handleBondDblClick"
       ></bond-vue>
       <rgroup-vue
         v-for="rgroup in rgroups"
@@ -205,6 +207,18 @@ export default Vue.extend({
       }
       this.dialogging = false;
     },
+    handleBondClick(bond: Bond) {
+      this.stateMachine.execute(Action.CLICK, {
+        target: "bond",
+        payload: bond
+      });
+    },
+    handleBondDblClick(bond: Bond) {
+      this.stateMachine.execute(Action.DOUBLE_CLICK, {
+        target: "bond",
+        payload: bond
+      });
+    },
     newFile() {
       this.dialogging = false;
     },
@@ -233,8 +247,8 @@ export default Vue.extend({
           this.clipboard = this.stateMachine.stateVariables.copy();
         } else if (event.key === "v" && event.ctrlKey) {
           this.stateMachine.stateVariables.deserialize(this.clipboard);
-        } else if (event.key === "s" && event.ctrlKey) {
-          if (this.stateMachine.stateVariables.file) {
+        } else if ((event.key === "s" || event.key === "S") && event.ctrlKey) {
+          if (!event.shiftKey && this.stateMachine.stateVariables.file) {
             saveFile(
               this.stateMachine.stateVariables.file,
               this.stateMachine.stateVariables.serialize(),

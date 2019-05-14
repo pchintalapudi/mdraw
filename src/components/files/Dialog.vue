@@ -49,7 +49,7 @@ export default Vue.extend({
   background-color: rgba(var(--button-color), 0.5);
 }
 .die {
-  background-color: #00000044;
+  background-color: #00000088;
   position: fixed;
   top: 0;
   left: 0;

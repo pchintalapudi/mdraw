@@ -5,10 +5,10 @@
         <row-vue
           v-for="(name, idx) in fileNames"
           :key="name || idx"
-          :type="name ? 'Drawing' : ''"
+          :type="name ? 'R' : ''"
           :name="name"
           :selected="fileName && name === fileName"
-          @select="fileName = name"
+          @select="fileName=name"
           @open="deal()"
           @focus="fileName=name"
           tabindex="0"
@@ -16,7 +16,13 @@
         ></row-vue>
       </div>
       <div class="bottom">
-        <input type="text" name="fileName" id="fileName" v-model="fileName" @keydown.enter="deal(false)">
+        <input
+          type="text"
+          name="fileName"
+          id="fileName"
+          v-model="fileName"
+          @keydown.enter="deal(false)"
+        >
         <button v-if="!save" @click="$emit('new-file')">New</button>
         <button @click="deal(false)">{{save ? "Save" : "Open"}}</button>
         <button @click="$emit('close', [false, ''])">Cancel</button>
@@ -143,7 +149,7 @@ export default Vue.extend({
 </script>
 <style scoped>
 .die {
-  background-color: #00000044;
+  background-color: #00000088;
   position: fixed;
   top: 0;
   left: 0;

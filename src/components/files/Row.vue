@@ -5,7 +5,7 @@
     :class="!name ? 'disabled row' : selected ? 'selected row' : 'row'"
   >
     <p class="bold">{{type}}</p>
-    {{name}}
+    <p>{{name}}</p>
   </span>
 </template>
 <script lang="ts">
@@ -17,6 +17,7 @@ export default Vue.extend({
 <style scoped>
 .bold {
   font-weight: bold;
+  margin: auto 2.5%;
 }
 .row {
   background-color: white;

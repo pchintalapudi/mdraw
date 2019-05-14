@@ -15,7 +15,7 @@ try {
 }
 
 function readManifest() {
-    for (const file of localStorage.getItem(FILE_MANIFEST)!.split(" ").slice(1)) compiledManifest.add(file);
+    localStorage.getItem(FILE_MANIFEST)!.split(" ").slice(1).forEach(s => s && compiledManifest.add(s));
     loadTime = Number(localStorage.getItem(FILE_MANIFEST)![0]);
 }
 
