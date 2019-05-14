@@ -71,7 +71,7 @@ export default Vue.extend({
       return this.contentElement ? this.contentElement.getBBox().height : 0;
     },
     chargeWidth(): number {
-      return this.chargeElement ? this.chargeElement!.getBBox().width : 0;
+      return this.chargeElement ? this.chargeElement.getBBox().width : 0;
     },
     chargeHeight(): number {
       return this.chargeElement ? this.chargeElement.getBBox().height : 0;

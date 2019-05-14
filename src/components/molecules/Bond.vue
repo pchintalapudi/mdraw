@@ -23,10 +23,10 @@
       :points="`0,0 ${this.dist - 10},5 ${this.dist - 10},-5`"
     ></polygon>
     <g v-else-if="bond.bondOrder == 2">
-      <line :y1="doubleUp" :y2="doubleUp" :x1="doubleStartLeft" :x2="doubleEndLeft" class="bond"/>
+      <line :y1="doubleDown" :y2="doubleDown" :x1="doubleStartLeft" :x2="doubleEndLeft" class="bond"/>
       <line
-        :y1="doubleDown"
-        :y2="doubleDown"
+        :y1="doubleUp"
+        :y2="doubleUp"
         :x1="doubleStartRight"
         :x2="doubleEndRight"
         class="bond"
