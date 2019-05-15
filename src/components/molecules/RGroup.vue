@@ -26,11 +26,13 @@
       :x="contentWidth / 2 + 7.5"
       :y="-contentHeight / 2 - chargeHeight / 8"
     >{{chargeText}}</text>
+    <lone-pair-vue v-for="lp in lonePairs" :key="lp.id" :lonepair="lp" :dist="radius"></lone-pair-vue>
   </g>
 </template>
 <script lang='ts'>
 import Vue from "vue";
-import { RGroup } from "../../models";
+import LonePairVue from "@/components/molecules/LonePair.vue";
+import { RGroup, LonePair } from "../../models";
 import { element } from "../../models/index";
 export default Vue.extend({
   props: {
@@ -38,6 +40,7 @@ export default Vue.extend({
     transparent: Boolean,
     selected: Boolean
   },
+  components: { "lone-pair-vue": LonePairVue },
   data() {
     return {
       contentElement: undefined as SVGTextElement | undefined,
@@ -54,6 +57,9 @@ export default Vue.extend({
     },
     abbrev(): string {
       return this.rgroup.payload.abbrev || this.name;
+    },
+    lonePairs(): LonePair[] {
+      return this.rgroup.lonePairs;
     },
     x(): number {
       return this.rgroup.x;

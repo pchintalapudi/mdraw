@@ -1,9 +1,9 @@
 <template>
-  <g class="lone-pair" :transform="`translate(${dist}, 0) rotate(${angle})`">
+  <g class="lone-pair" :transform="`translate(${dist+10}, 0) rotate(${angle})`">
     <circle v-if="count === 1" cx="0" cy="0"></circle>
     <template v-else>
-      <circle cx="-5" cy="0" r="2.5" fill="black"></circle>
-      <circle cx="5" cy="0" r="2.5" fill="black"></circle>
+      <circle cx="-7.5" cy="0" r="5" fill="black"></circle>
+      <circle cx="7.5" cy="0" r="5" fill="black"></circle>
     </template>
   </g>
 </template>
