@@ -1,4 +1,4 @@
-import { RGroup, Bond, SelectionRectangle } from "../models";
+import { RGroup, Bond, SelectionRectangle, LonePair } from "../models";
 import { StateMachine, Action as StateMachineActions } from "./index";
 
 type Action = (stateMachine: StateMachine) => void;
@@ -50,7 +50,7 @@ class StateVariables {
     public toString() {
         return `RGroups: [${this.rgroups.map((r) => r.asString(true))}]\n
                 Selected: [${this.selected.map((r) => r.id).sort()}]\n
-                Bonds: [${this.bonds.map((b) => b.asString())}]\n`;
+                Bonds: [${this.bonds.map((b) => b.asString())}]`;
     }
 
     get creating() {

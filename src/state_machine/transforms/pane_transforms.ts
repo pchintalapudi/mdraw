@@ -56,7 +56,7 @@ const cancelIdle: Transform = (stateMachine, { }) => {
 // tslint:disable-next-line: no-empty
 const mouseMoveIdle: Transform = () => { };
 
-export default () => {
+export default function () {
     registerTransform(State.SELECTING, Action.MOUSE_DOWN, mouseMoveIdle);
     registerTransform(State.SELECTING, Action.MOUSE_MOVE, mouseMoveSelecting);
     registerTransform(State.SELECTING, Action.MOUSE_UP, mouseUpSelecting);
@@ -65,4 +65,4 @@ export default () => {
     registerTransform(State.IDLE, Action.MOUSE_MOVE, mouseMoveIdle);
     registerTransform(State.IDLE, Action.MOUSE_UP, mouseMoveIdle);
     registerTransform(State.IDLE, Action.CANCEL, cancelIdle);
-};
+}

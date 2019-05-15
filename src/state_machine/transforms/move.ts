@@ -35,13 +35,13 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
             const initialPositions = [...ipos];
             const finalPositions = sel.map(r => ({ x: r.x, y: r.y }));
             const moved = [...sel];
-            const undo = (sm: StateMachine) => {
+            const undo = (_: StateMachine) => {
                 for (let i = 0; i < moved.length; i++) {
                     moved[i].x = initialPositions[i].x;
                     moved[i].y = initialPositions[i].y;
                 }
             };
-            const redo = (sm: StateMachine) => {
+            const redo = (_: StateMachine) => {
                 for (let i = 0; i < moved.length; i++) {
                     moved[i].x = finalPositions[i].x;
                     moved[i].y = finalPositions[i].y;
@@ -82,6 +82,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                     remove.set(bond, i);
                 }
             }
+            payload.lonePairs.push(...rgs.lonePairs);
             const undo = (sm: StateMachine) => {
                 sm.stateVariables.rgroups.splice(idx, 0, rgs);
                 payload.payload = oldPayload;
@@ -109,6 +110,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                     moved[i].x = initialPositions[i].x;
                     moved[i].y = initialPositions[i].y;
                 }
+                payload.lonePairs.length -= rgs.lonePairs.length;
             };
             const redo = (sm: StateMachine) => {
                 sm.stateVariables.rgroups.splice(idx, 1);
@@ -127,6 +129,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                     moved[i].x = finalPositions[i].x;
                     moved[i].y = finalPositions[i].y;
                 }
+                payload.lonePairs.push(...rgs.lonePairs);
             };
             stateMachine.stateVariables.log(undo, redo);
             stateMachine.stateVariables.rgroups.splice(idx, 1);

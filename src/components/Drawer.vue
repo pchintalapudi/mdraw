@@ -40,7 +40,13 @@
 <script lang="ts">
 import Vue from "vue";
 import { StateMachine, Action, State, init_transforms } from "../state_machine";
-import { RGroup, Bond, ChemicalElement, SelectionRectangle } from "../models";
+import {
+  RGroup,
+  Bond,
+  ChemicalElement,
+  SelectionRectangle,
+  element
+} from "../models";
 import { saveFile, loadFile } from "../files";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
@@ -65,7 +71,8 @@ export default Vue.extend({
       dialogging: false,
       saving: "",
       loading: false,
-      deserializeOnSave: false
+      deserializeOnSave: false,
+      lastElement: element(6)
     };
   },
   mounted() {
@@ -133,6 +140,9 @@ export default Vue.extend({
   methods: {
     handleButtonClick(payload: { target: string; payload: ChemicalElement }) {
       this.stateMachine.execute(Action.BUTTON, payload);
+      if (payload.target === "spawn") {
+        this.lastElement = payload.payload;
+      }
     },
     handleMouseMove(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_MOVE, {
@@ -255,15 +265,36 @@ export default Vue.extend({
               true
             );
             this.stateMachine.stateVariables.save();
-          } else {
-            this.openDialog(true);
-          }
+          } else this.openDialog(true);
         } else if (event.key === "o" && event.ctrlKey) {
           this.openDialog(false);
         } else if (event.key === "o") {
           this.omit = !this.omit;
         } else if (event.key === "l" && event.ctrlKey) {
           this.openDialog(false, true);
+        } else if (event.key === "-") {
+          this.selected.forEach(r => r.charge--);
+          const selected = [...this.selected];
+          this.stateMachine.stateVariables.log(
+            _ => selected.forEach(r => r.charge++),
+            _ => {
+              selected.forEach(r => r.charge--);
+            }
+          );
+        } else if (event.key === "+") {
+          this.selected.forEach(r => r.charge++);
+          const selected = [...this.selected];
+          this.stateMachine.stateVariables.log(
+            _ => selected.forEach(r => r.charge--),
+            _ => {
+              selected.forEach(r => r.charge++);
+            }
+          );
+        } else if (event.key === " ") {
+          this.handleButtonClick({
+            target: "spawn",
+            payload: this.lastElement
+          });
         } else return;
         event.preventDefault();
       }

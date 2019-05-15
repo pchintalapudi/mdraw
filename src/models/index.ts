@@ -2,6 +2,7 @@ import element_array from "./elements";
 import { RGroup } from "@/models";
 export * from "./rgroups";
 export * from "./bonds";
+export * from "./lonepair";
 
 export function element(atomicNumber: number) {
     return element_array[atomicNumber - 1];

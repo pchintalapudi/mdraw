@@ -23,9 +23,9 @@
       class="charge"
       v-if="charge"
       ref="charge"
-      :x="x + contentWidth / 2 + 2"
-      :y="y - contentHeight / 2 - chargeHeight / 2"
-    >{{charge.toString()}}</text>
+      :x="contentWidth / 2 + 7.5"
+      :y="-contentHeight / 2 - chargeHeight / 8"
+    >{{chargeText}}</text>
   </g>
 </template>
 <script lang='ts'>
@@ -96,6 +96,18 @@ export default Vue.extend({
     outerViewBox(): string {
       return `${-this.radius} ${-this.radius} ${this.radius} ${this.radius}`;
     },
+    chargeText(): string {
+      switch (this.charge) {
+        case 0:
+          return "";
+        case 1:
+          return "+";
+        case -1:
+          return "-";
+        default:
+          return this.charge > 0 ? `${this.charge}+` : `${-this.charge}-`;
+      }
+    },
     classes(): string[] {
       const clazzes: string[] = [];
       if (this.transparent) {
@@ -157,5 +169,9 @@ export default Vue.extend({
 
 .omittable.soft.override {
   pointer-events: all;
+}
+
+.omittable .charge {
+  visibility: visible;
 }
 </style>
