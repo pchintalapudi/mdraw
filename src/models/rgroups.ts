@@ -41,12 +41,14 @@ class RGroup {
 
     // tslint:disable-next-line: member-ordering
     public static deserialize(str: string): [number, RGroup] {
-        const parts = str.split("@");
+        const parts = str.split("@").filter(s => s);
         if (parts[1][0] === "A") {
             const rg = new RGroup(element(parseInt(parts[1].substring(1), 10)),
                 parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
-            const lonePairs = parts[5].split("&").map(s => LonePair.deserialize(s, rg));
-            rg.lonePairs = lonePairs;
+            if (parts.length > 5) {
+                const lonePairs = parts[5].split("&").map(s => LonePair.deserialize(s, rg));
+                rg.lonePairs = lonePairs;
+            }
             return [parseInt(parts[0], 10), rg];
         } else {
             return undefined as any as [number, RGroup];

@@ -39,6 +39,7 @@ class StateVariables {
     public bonds: Bond[] = [];
     public lastAngle = 0;
     public lastPlaced = 0;
+    public count = 0;
     public selectionBox = new SelectionRectangle();
     public itime = 0;
     public ipos: Array<{ x: number, y: number }> = [];

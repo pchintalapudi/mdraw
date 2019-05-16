@@ -30,6 +30,11 @@
         :transparent="transparent.includes(rgroup)"
         :selected="selected.includes(rgroup)"
       ></rgroup-vue>
+      <lone-pair-simulator-vue
+        v-if="simulateLonePair"
+        :position="lonePairSimulatorCoords"
+        :count="count"
+      ></lone-pair-simulator-vue>
       <angler-vue :offset="offset" :angle="angle" :bond="bond" v-if="angling"></angler-vue>
       <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
@@ -50,6 +55,7 @@ import {
 import { saveFile, loadFile } from "../files";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
+import LonePairSimulatorVue from "@/components/molecules/LonePairSimulator.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
 import AnglerVue from "@/components/widgets/Angler.vue";
@@ -58,6 +64,7 @@ export default Vue.extend({
   components: {
     "bond-vue": BondVue,
     "rgroup-vue": RGroupVue,
+    "lone-pair-simulator-vue": LonePairSimulatorVue,
     "touchbar-vue": TouchBarVue,
     "selection-rectangle-vue": SelectionRectangleVue,
     "angler-vue": AnglerVue,
@@ -126,8 +133,19 @@ export default Vue.extend({
         transp.push(...this.bonds);
       } else if (this.stateMachine.state === State.MOVING_ATOM) {
         transp.push(...this.selected);
+      } else if (this.stateMachine.state === State.PLACING_LONE_PAIR) {
+        transp.push(...this.bonds);
+      } else if (this.stateMachine.state === State.ANGLING_LONE_PAIR) {
+        transp.push(...this.rgroups);
+        transp.push(...this.bonds);
       }
       return transp;
+    },
+    lonePairSimulatorCoords(): { x: number; y: number } {
+      return this.stateMachine.stateVariables.ipos[0];
+    },
+    count(): number {
+      return this.stateMachine.stateVariables.count;
     },
     classes(): string[] {
       const clazzes = ["surface"];
@@ -135,6 +153,12 @@ export default Vue.extend({
         clazzes.push("omit");
       }
       return clazzes;
+    },
+    simulateLonePair(): boolean {
+      return (
+        this.stateMachine.state === State.PLACING_LONE_PAIR &&
+        !this.stateMachine.stateVariables.selected.length
+      );
     }
   },
   methods: {
@@ -197,14 +221,16 @@ export default Vue.extend({
         this.deserializeOnSave = false;
       } else {
         if (response[0]) {
-          if (this.stateMachine.stateVariables.file) {
-            saveFile(
-              this.stateMachine.stateVariables.file,
-              this.stateMachine.stateVariables.serialize(),
-              true
-            );
-          } else {
-            this.openDialog(true);
+          if (!this.stateMachine.stateVariables.saved) {
+            if (this.stateMachine.stateVariables.file) {
+              saveFile(
+                this.stateMachine.stateVariables.file,
+                this.stateMachine.stateVariables.serialize(),
+                true
+              );
+            } else {
+              this.openDialog(true);
+            }
           }
           this.stateMachine.stateVariables.deserialize(
             loadFile(response[1]),
@@ -270,7 +296,7 @@ export default Vue.extend({
           this.openDialog(false);
         } else if (event.key === "o") {
           this.omit = !this.omit;
-        } else if (event.key === "l" && event.ctrlKey) {
+        } else if (event.key === "i" && event.ctrlKey) {
           this.openDialog(false, true);
         } else if (event.key === "-") {
           this.selected.forEach(r => r.charge--);

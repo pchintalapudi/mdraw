@@ -1,9 +1,6 @@
 import StateVariables from "./state_variables";
 import Action from "./actions";
-
-enum State {
-    PLACING_ATOM, PLACING_ATOM_AND_BOND, MOVING_ATOM, SELECTING, ROTATING, IDLE, __COUNT__,
-}
+import State from "./state";
 const actions: Transform[][] = [];
 
 class StateMachine {

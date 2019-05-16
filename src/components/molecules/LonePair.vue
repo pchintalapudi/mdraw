@@ -1,9 +1,9 @@
 <template>
-  <g class="lone-pair" :transform="`translate(${dist+10}, 0) rotate(${angle})`">
-    <circle v-if="count === 1" cx="0" cy="0"></circle>
+  <g class="lone-pair" :transform="`translate(${dist+9}, -5) rotate(${angle}, ${-dist-4}, 0)`">
+    <circle v-if="count === 1" cx="0" cy="0" r="2"></circle>
     <template v-else>
-      <circle cx="-7.5" cy="0" r="5" fill="black"></circle>
-      <circle cx="7.5" cy="0" r="5" fill="black"></circle>
+      <circle cx="0" cy="-3" r="2" fill="black"></circle>
+      <circle cx="0" cy="3" r="2" fill="black"></circle>
     </template>
   </g>
 </template>
@@ -17,7 +17,7 @@ export default Vue.extend({
       return this.lonepair.count;
     },
     angle(): number {
-      return (this.lonepair.angle * Math.PI) / 180;
+      return this.lonepair.angle;
     }
   }
 });
