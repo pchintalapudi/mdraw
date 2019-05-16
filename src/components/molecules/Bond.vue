@@ -45,7 +45,8 @@ import { Bond, BondState } from "../../models";
 export default Vue.extend({
   props: {
     bond: Bond,
-    transparent: Boolean
+    transparent: Boolean,
+    omitting: Boolean
   },
   data() {
     return {
@@ -94,12 +95,12 @@ export default Vue.extend({
       return clazzes;
     },
     shortenStart(): number {
-      return this.rgroupOmittable(true)
+      return this.rgroupOmittable(true) && this.omitting
         ? this.shortenOmitted
         : this.shortenVisible;
     },
     shortenEnd(): number {
-      return this.rgroupOmittable(false)
+      return this.rgroupOmittable(false) && this.omitting
         ? this.shortenOmitted
         : this.shortenVisible;
     },

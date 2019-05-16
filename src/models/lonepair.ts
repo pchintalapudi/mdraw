@@ -12,7 +12,7 @@ class LonePair {
     public static deserialize(str: string, rg: RGroup) {
         return new LonePair(rg,
             parseInt(str.substring(0, str.indexOf("*")), 10),
-            parseFloat(str.substring(str.indexOf("*"))));
+            parseFloat(str.substring(str.indexOf("*") + 1)));
     }
 }
 

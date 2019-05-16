@@ -54,7 +54,27 @@ const mouseUpAnglingLonePair: Transform = (stateMachine, { target, payload }) =>
     const undo = () => rg.lonePairs.pop();
     const redo = () => rg.lonePairs.push(lp);
     stateMachine.stateVariables.log(undo, redo);
-    stateMachine.state = State.IDLE;
+    stateMachine.state = State.PLACING_LONE_PAIR;
+    stateMachine.stateVariables.selected.length = 0;
+    stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
+    stateMachine.stateVariables.count = lp.count;
+};
+
+const buttonPlacingLonePair: Transform = (stateMachine, { target, payload }) => {
+    if (target === "lone-pair") {
+        if (stateMachine.stateVariables.selected.length) {
+            const lps = stateMachine.stateVariables.selected[0].lonePairs;
+            lps[lps.length].count = payload;
+        }
+        stateMachine.stateVariables.count = payload;
+    } else if (target === "spawn") {
+        if (stateMachine.stateVariables.selected.length) {
+            stateMachine.stateVariables.selected[0].lonePairs.pop();
+            stateMachine.stateVariables.selected.length = 0;
+        }
+        stateMachine.state = State.PLACING_ATOM;
+        stateMachine.stateVariables.rgroups.push(new RGroup(payload));
+    }
 };
 
 export default function () {
@@ -66,4 +86,6 @@ export default function () {
     registerTransform(State.ANGLING_LONE_PAIR, Action.MOUSE_MOVE, mouseMoveAnglingLonePair);
     registerTransform(State.ANGLING_LONE_PAIR, Action.MOUSE_UP, mouseUpAnglingLonePair);
     registerTransform(State.ANGLING_LONE_PAIR, Action.CANCEL, cancelPlacingLonePair);
+    registerTransform(State.PLACING_LONE_PAIR, Action.BUTTON, buttonPlacingLonePair);
+    registerTransform(State.ANGLING_LONE_PAIR, Action.BUTTON, buttonPlacingLonePair);
 }

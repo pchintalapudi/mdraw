@@ -19,6 +19,7 @@
         :transparent="transparent.includes(bond)"
         @click-bond="handleBondClick"
         @dblclick-bond="handleBondDblClick"
+        :omitting="omit"
       ></bond-vue>
       <rgroup-vue
         v-for="rgroup in rgroups"
@@ -29,6 +30,7 @@
         @umouse="handleMouseUpRGroup"
         :transparent="transparent.includes(rgroup)"
         :selected="selected.includes(rgroup)"
+        :omitting="omit"
       ></rgroup-vue>
       <lone-pair-simulator-vue
         v-if="simulateLonePair"

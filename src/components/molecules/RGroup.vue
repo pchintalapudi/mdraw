@@ -26,7 +26,13 @@
       :x="contentWidth / 2 + 7.5"
       :y="-contentHeight / 2 - chargeHeight / 8"
     >{{chargeText}}</text>
-    <lone-pair-vue v-for="lp in lonePairs" :key="lp.id" :lonepair="lp" :dist="radius"></lone-pair-vue>
+    <lone-pair-vue
+      v-for="lp in lonePairs"
+      :key="lp.id"
+      :lonepair="lp"
+      :dist="radius"
+      :omitting="omitting"
+    ></lone-pair-vue>
   </g>
 </template>
 <script lang='ts'>
@@ -38,7 +44,8 @@ export default Vue.extend({
   props: {
     rgroup: RGroup,
     transparent: Boolean,
-    selected: Boolean
+    selected: Boolean,
+    omitting: Boolean
   },
   components: { "lone-pair-vue": LonePairVue },
   data() {
