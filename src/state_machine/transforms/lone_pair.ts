@@ -39,8 +39,7 @@ const mouseMoveAnglingLonePair: Transform = (stateMachine, { target, payload }) 
     if (target === "surface") {
         lp.angle = stateMachine.stateVariables.lastAngle = calculateAngle(
             Math.hypot(payload.y - rg.y, payload.x - rg.x),
-            Math.atan2(payload.y - rg.y, payload.x - rg.x) * 180 / Math.PI,
-            stateMachine.stateVariables.lastPlaced);
+            Math.atan2(payload.y - rg.y, payload.x - rg.x) * 180 / Math.PI);
     } else if (target === "rgroup") {
         lp.angle = Math.atan2(payload.y - rg.y, payload.x - rg.x);
     }

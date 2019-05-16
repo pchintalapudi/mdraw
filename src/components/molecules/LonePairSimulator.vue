@@ -1,5 +1,5 @@
 <template>
-  <g :transform="`translate(${position.x}, ${position.y})`">
+  <g :transform="`translate(${position.x}, ${position.y})`" style="pointer-events:none">
     <circle v-if="count === 1" cx="0" cy="0" r="2.5"></circle>
     <template v-else>
       <circle cx="-3" cy="-3" r="2.5"></circle>

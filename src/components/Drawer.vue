@@ -12,6 +12,7 @@
           <line stroke="black" stroke-width="4px" y2="10"></line>
         </pattern>
       </defs>
+      <straight-arrow-vue v-for="arrow in straightArrows" :key="arrow.id" :arrow="arrow"></straight-arrow-vue>
       <bond-vue
         v-for="bond in bonds"
         :key="bond.id"
@@ -32,11 +33,8 @@
         :selected="selected.includes(rgroup)"
         :omitting="omit"
       ></rgroup-vue>
-      <lone-pair-simulator-vue
-        v-if="simulateLonePair"
-        :position="lonePairSimulatorCoords"
-        :count="count"
-      ></lone-pair-simulator-vue>
+      <lone-pair-simulator-vue v-if="simulateLonePair" :position="ipos0" :count="count"></lone-pair-simulator-vue>
+      <arrow-simulator-vue v-if="simulateArrow" :stubby="stubby" :position="ipos0"></arrow-simulator-vue>
       <angler-vue :offset="offset" :angle="angle" :bond="bond" v-if="angling"></angler-vue>
       <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
@@ -52,12 +50,15 @@ import {
   Bond,
   ChemicalElement,
   SelectionRectangle,
-  element
+  element,
+  StraightArrow
 } from "../models";
 import { saveFile, loadFile } from "../files";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
 import LonePairSimulatorVue from "@/components/molecules/LonePairSimulator.vue";
+import ArrowSimulatorVue from "@/components/molecules/ArrowSimulator.vue";
+import StraightArrowVue from "@/components/molecules/StraightArrow.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
 import AnglerVue from "@/components/widgets/Angler.vue";
@@ -66,6 +67,8 @@ export default Vue.extend({
   components: {
     "bond-vue": BondVue,
     "rgroup-vue": RGroupVue,
+    "straight-arrow-vue": StraightArrowVue,
+    "arrow-simulator-vue": ArrowSimulatorVue,
     "lone-pair-simulator-vue": LonePairSimulatorVue,
     "touchbar-vue": TouchBarVue,
     "selection-rectangle-vue": SelectionRectangleVue,
@@ -103,6 +106,9 @@ export default Vue.extend({
     },
     bonds(): Bond[] {
       return this.stateMachine.stateVariables.bonds;
+    },
+    straightArrows(): StraightArrow[] {
+      return this.stateMachine.stateVariables.straightArrows;
     },
     selectionBox(): SelectionRectangle {
       return this.stateMachine.stateVariables.selectionBox;
@@ -143,7 +149,7 @@ export default Vue.extend({
       }
       return transp;
     },
-    lonePairSimulatorCoords(): { x: number; y: number } {
+    ipos0(): { x: number; y: number } {
       return this.stateMachine.stateVariables.ipos[0];
     },
     count(): number {
@@ -161,6 +167,15 @@ export default Vue.extend({
         this.stateMachine.state === State.PLACING_LONE_PAIR &&
         !this.stateMachine.stateVariables.selected.length
       );
+    },
+    simulateArrow(): boolean {
+      return (
+        this.stateMachine.state === State.PLACING_STRAIGHT_ARROW ||
+        this.stateMachine.state === State.PLACING_CURVED_ARROW
+      );
+    },
+    stubby(): boolean {
+      return this.stateMachine.state === State.PLACING_CURVED_ARROW;
     }
   },
   methods: {

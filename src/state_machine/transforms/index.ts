@@ -4,6 +4,7 @@ import register_button from "./touch_bar";
 import register_move from "./move";
 import register_bonds from "./bonds";
 import register_lone_pairs from "./lone_pair";
+import register_straight_arrows from "./straight_arrow";
 
 function init() {
     register_pane_transforms();
@@ -12,6 +13,7 @@ function init() {
     register_move();
     register_bonds();
     register_lone_pairs();
+    register_straight_arrows();
 }
 
 export { init as init_transforms };

@@ -1,4 +1,4 @@
-import { RGroup, Bond, SelectionRectangle, LonePair } from "../models";
+import { RGroup, Bond, SelectionRectangle, StraightArrow } from "../models";
 import { StateMachine, Action as StateMachineActions } from "./index";
 
 type Action = (stateMachine: StateMachine) => void;
@@ -37,6 +37,7 @@ class StateVariables {
     public selected: RGroup[] = [];
     public rgroups: RGroup[] = [];
     public bonds: Bond[] = [];
+    public straightArrows: StraightArrow[] = [];
     public lastAngle = 0;
     public lastPlaced = 0;
     public count = 0;

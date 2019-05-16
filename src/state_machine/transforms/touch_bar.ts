@@ -10,6 +10,9 @@ const handleButton: Transform = (stateMachine, { target, payload }) => {
         stateMachine.stateVariables.selected.length = 0;
         stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
         stateMachine.stateVariables.count = payload;
+    } else if (target === "straight-arrow") {
+        stateMachine.state = State.PLACING_STRAIGHT_ARROW;
+        stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
     }
 };
 
