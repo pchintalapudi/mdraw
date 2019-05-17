@@ -38,8 +38,8 @@ class SelectionRectangle {
         this.height = ey - this.y;
     }
 
-    public contains(rgroup: RGroup) {
-        return rgroup.x >= this.left && rgroup.x <= this.right && rgroup.y >= this.top && rgroup.y <= this.bottom;
+    public contains(coord: { x: number, y: number }) {
+        return coord.x >= this.left && coord.x <= this.right && coord.y >= this.top && coord.y <= this.bottom;
     }
 }
 

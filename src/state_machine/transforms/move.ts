@@ -4,7 +4,7 @@ import { RGroup, Bond, element } from "@/models";
 // tslint:disable-next-line: no-empty
 const mouseDownMoving: Transform = () => { };
 
-const mouseMoveMoving: Transform = (stateMachine, { target, payload }) => {
+const mouseMoveMoving: Transform = (stateMachine, { payload }) => {
     const sel = stateMachine.stateVariables.selected;
     const ipos = stateMachine.stateVariables.ipos;
     const xdif = payload.x - ipos[ipos.length - 1].x;
@@ -22,14 +22,16 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
     const dist = Math.hypot(rgs.x - ipos[ipos.length - 1].x, rgs.y - ipos[ipos.length - 1].y);
     if ((Date.now() - 250 < stateMachine.stateVariables.itime && dist < 75) || dist < 15) {
         cancelMoving(stateMachine, undefined as any);
-        stateMachine.state = State.PLACING_ATOM_AND_BOND;
-        const rg = new RGroup(element(6), rgs.x, rgs.y);
-        stateMachine.stateVariables.rgroups.push(rg);
-        const bond = new Bond(rgs, rg);
-        rgs.bonds.set(rg, bond);
-        rg.bonds.set(rgs, bond);
-        stateMachine.stateVariables.bonds.push(bond);
-        sel.length = 0;
+        if (rgs instanceof RGroup) {
+            stateMachine.state = State.PLACING_ATOM_AND_BOND;
+            const rg = new RGroup(element(6), rgs.x, rgs.y);
+            stateMachine.stateVariables.rgroups.push(rg);
+            const bond = new Bond(rgs, rg);
+            rgs.bonds.set(rg, bond);
+            rg.bonds.set(rgs, bond);
+            stateMachine.stateVariables.bonds.push(bond);
+            sel.length = 0;
+        }
     } else {
         if (target === "surface") {
             const initialPositions = [...ipos];
@@ -52,7 +54,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                 sel.length = 0;
             }
             stateMachine.state = State.IDLE;
-        } else if (target === "rgroup") {
+        } else if (target === "rgroup" && rgs instanceof RGroup) {
             // Merging
             mouseMoveMoving(stateMachine, { target, payload });
             const initialPositions = [...ipos];

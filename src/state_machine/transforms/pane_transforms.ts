@@ -28,7 +28,9 @@ const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
 
 function select(stateMachine: StateMachine) {
     const sbox = stateMachine.stateVariables.selectionBox;
-    stateMachine.stateVariables.selected = stateMachine.stateVariables.rgroups.filter(r => sbox.contains(r));
+    const selected: Array<{ x: number, y: number, id: number }> = stateMachine.stateVariables.selected = [];
+    selected.push(...stateMachine.stateVariables.rgroups.filter(r => sbox.contains(r)));
+    selected.push(...stateMachine.stateVariables.straightArrows.filter(s => sbox.contains(s)));
 }
 
 const mouseMoveSelecting: Transform = (stateMachine, { target, payload }) => {

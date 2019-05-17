@@ -12,7 +12,12 @@
           <line stroke="black" stroke-width="4px" y2="10"></line>
         </pattern>
       </defs>
-      <straight-arrow-vue v-for="arrow in straightArrows" :key="arrow.id" :arrow="arrow"></straight-arrow-vue>
+      <straight-arrow-vue
+        v-for="arrow in straightArrows"
+        :key="arrow.id"
+        :arrow="arrow"
+        :selected="selected.includes(arrow)"
+      ></straight-arrow-vue>
       <bond-vue
         v-for="bond in bonds"
         :key="bond.id"
@@ -116,7 +121,7 @@ export default Vue.extend({
     selecting(): boolean {
       return this.stateMachine.state === State.SELECTING;
     },
-    selected(): RGroup[] {
+    selected(): Array<{ x: number; y: number; id: number }> {
       return this.stateMachine.stateVariables.selected;
     },
     angling(): boolean {
@@ -131,7 +136,7 @@ export default Vue.extend({
     bond(): Bond {
       return this.bonds[this.bonds.length - 1];
     },
-    transparent(): Array<RGroup | Bond> {
+    transparent(): Array<{ x: number; y: number; id: number } | Bond> {
       const transp = [];
       if (
         this.stateMachine.state === State.PLACING_ATOM ||
@@ -316,8 +321,10 @@ export default Vue.extend({
         } else if (event.key === "i" && event.ctrlKey) {
           this.openDialog(false, true);
         } else if (event.key === "-") {
-          this.selected.forEach(r => r.charge--);
-          const selected = [...this.selected];
+          const selected = this.selected.filter(
+            r => r instanceof RGroup
+          ) as RGroup[];
+          selected.forEach(r => r.charge--);
           this.stateMachine.stateVariables.log(
             _ => selected.forEach(r => r.charge++),
             _ => {
@@ -325,8 +332,10 @@ export default Vue.extend({
             }
           );
         } else if (event.key === "+") {
-          this.selected.forEach(r => r.charge++);
-          const selected = [...this.selected];
+          const selected = this.selected.filter(
+            r => r instanceof RGroup
+          ) as RGroup[];
+          selected.forEach(r => r.charge++);
           this.stateMachine.stateVariables.log(
             _ => selected.forEach(r => r.charge--),
             _ => {

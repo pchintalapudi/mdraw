@@ -8,7 +8,7 @@ const mouseDownPlacingLonePair: Transform = () => { };
 const mouseMovePlacingLonePair: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
         if (stateMachine.stateVariables.selected.length) {
-            stateMachine.stateVariables.selected.pop()!.lonePairs.pop();
+            (stateMachine.stateVariables.selected.pop()! as RGroup).lonePairs.pop();
         }
         stateMachine.stateVariables.ipos[0].x = payload.x;
         stateMachine.stateVariables.ipos[0].y = payload.y;
@@ -28,13 +28,13 @@ const mouseUpPlacingLonePair: Transform = (stateMachine, { target, payload }) =>
 
 const cancelPlacingLonePair: Transform = (stateMachine) => {
     if (stateMachine.stateVariables.selected.length) {
-        stateMachine.stateVariables.selected.pop()!.lonePairs.pop();
+        (stateMachine.stateVariables.selected.pop()! as RGroup).lonePairs.pop();
     }
     stateMachine.state = State.IDLE;
 };
 
 const mouseMoveAnglingLonePair: Transform = (stateMachine, { target, payload }) => {
-    const rg = stateMachine.stateVariables.selected[0];
+    const rg = stateMachine.stateVariables.selected[0] as RGroup;
     const lp = rg.lonePairs[rg.lonePairs.length - 1];
     if (target === "surface") {
         lp.angle = stateMachine.stateVariables.lastAngle = calculateAngle(
@@ -47,7 +47,7 @@ const mouseMoveAnglingLonePair: Transform = (stateMachine, { target, payload }) 
 
 const mouseUpAnglingLonePair: Transform = (stateMachine, { target, payload }) => {
     mouseMoveAnglingLonePair(stateMachine, { target, payload });
-    const rg = stateMachine.stateVariables.selected.pop()!;
+    const rg = stateMachine.stateVariables.selected.pop()! as RGroup;
     const lp = rg.lonePairs.pop()!;
     rg.lonePairs.push(lp);
     const undo = () => rg.lonePairs.pop();
@@ -62,13 +62,13 @@ const mouseUpAnglingLonePair: Transform = (stateMachine, { target, payload }) =>
 const buttonPlacingLonePair: Transform = (stateMachine, { target, payload }) => {
     if (target === "lone-pair") {
         if (stateMachine.stateVariables.selected.length) {
-            const lps = stateMachine.stateVariables.selected[0].lonePairs;
+            const lps = (stateMachine.stateVariables.selected[0] as RGroup).lonePairs;
             lps[lps.length].count = payload;
         }
         stateMachine.stateVariables.count = payload;
     } else if (target === "spawn") {
         if (stateMachine.stateVariables.selected.length) {
-            stateMachine.stateVariables.selected[0].lonePairs.pop();
+            (stateMachine.stateVariables.selected[0] as RGroup).lonePairs.pop();
             stateMachine.stateVariables.selected.length = 0;
         }
         stateMachine.state = State.PLACING_ATOM;

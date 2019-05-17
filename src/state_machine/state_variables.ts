@@ -20,21 +20,20 @@ function getValidBonds(rgroups: RGroup[]) {
     return Array.from(bonds);
 }
 
-function serialize(rgroups: RGroup[], bonds: Bond[]) {
+function serialize(rgroups: RGroup[], bonds: Bond[], straightArrows: StraightArrow[]) {
     return `${rgroups.map(r => r.serialize()).join()}!${bonds.map(b => b.serialize()).join()}`;
 }
 
 function deserialize(str: string): [RGroup[], Bond[]] {
-    const rgroupString = str.substring(0, str.indexOf("!"));
-    const bondString = str.substring(str.indexOf("!") + 1);
-    const rgroupMap = new Map(rgroupString.split(",").filter(s => s).map(s => RGroup.deserialize(s)));
-    const bonds = bondString.split(",").filter(s => s).map(s => Bond.deserialize(s, rgroupMap));
+    const strings = str.split("!");
+    const rgroupMap = new Map(strings[0].split(",").filter(s => s).map(s => RGroup.deserialize(s)));
+    const bonds = strings[1].split(",").filter(s => s).map(s => Bond.deserialize(s, rgroupMap));
     return [Array.from(rgroupMap.values()), bonds];
 }
 
 // tslint:disable-next-line: max-classes-per-file
 class StateVariables {
-    public selected: RGroup[] = [];
+    public selected: Array<{ x: number, y: number, id: number }> = [];
     public rgroups: RGroup[] = [];
     public bonds: Bond[] = [];
     public straightArrows: StraightArrow[] = [];
@@ -74,6 +73,7 @@ class StateVariables {
 
     public undo(stateMachine: StateMachine) {
         if (this.canUndo) {
+            this.selected.length = 0;
             stateMachine.execute(StateMachineActions.CANCEL, undefined as any);
             const action = this.undoQueue.pop()!;
             action.undo(stateMachine);
@@ -83,6 +83,7 @@ class StateVariables {
 
     public redo(stateMachine: StateMachine) {
         if (this.canRedo) {
+            this.selected.length = 0;
             stateMachine.execute(StateMachineActions.CANCEL, undefined as any);
             const action = this.redoQueue.pop()!;
             action.redo(stateMachine);
@@ -91,7 +92,7 @@ class StateVariables {
     }
 
     public serialize() {
-        return serialize(this.rgroups, this.bonds);
+        return serialize(this.rgroups, this.bonds, this.straightArrows);
     }
 
     public save() {
@@ -139,19 +140,30 @@ class StateVariables {
     }
 
     public copy() {
-        return serialize(this.selected, getValidBonds(this.selected));
+        const rgroupsSelected = this.selected.filter(r => r instanceof RGroup) as RGroup[];
+        return serialize(rgroupsSelected, getValidBonds(rgroupsSelected),
+            this.selected.filter(s => s instanceof StraightArrow) as StraightArrow[]);
     }
 
     public delete() {
         const removedRGroups = new Map<RGroup, number>();
-        this.selected.forEach(r => removedRGroups.set(r, -1));
+        const removedStraightArrows = new Map<StraightArrow, number>();
+        this.selected.forEach(r => r instanceof RGroup ?
+            removedRGroups.set(r, -1) :
+            r instanceof StraightArrow && removedStraightArrows.set(r, -1));
         for (let i = 0; i < this.rgroups.length; i++) {
             if (removedRGroups.has(this.rgroups[i])) {
                 removedRGroups.set(this.rgroups[i], i);
             }
         }
+        for (let i = 0; i < this.straightArrows.length; i++) {
+            if (removedStraightArrows.has(this.straightArrows[i])) {
+                removedStraightArrows.set(this.straightArrows[i], i);
+            }
+        }
         const removedBonds = new Map<Bond, number>();
-        this.selected.map(r => r.bonds).forEach(bmap => bmap.forEach(b => removedBonds.set(b, -1)));
+        this.selected.filter(s => s instanceof RGroup).map(r => (r as RGroup).bonds)
+            .forEach(bmap => bmap.forEach(b => removedBonds.set(b, -1)));
         for (let i = 0; i < this.bonds.length; i++) {
             if (removedBonds.has(this.bonds[i])) {
                 removedBonds.set(this.bonds[i], i);
@@ -160,10 +172,12 @@ class StateVariables {
         const undo = (sm: StateMachine) => {
             const newRGroups: RGroup[] = [];
             const newBonds: Bond[] = [];
+            const newStraightArrows: StraightArrow[] = [];
             newRGroups.length = sm.stateVariables.rgroups.length + removedRGroups.size;
             newBonds.length = sm.stateVariables.bonds.length + removedBonds.size;
             removedRGroups.forEach((i, r) => newRGroups[i] = r);
             removedBonds.forEach((i, b) => newBonds[i] = b);
+            removedStraightArrows.forEach((i, s) => newStraightArrows[i] = s);
             let j = -1;
             for (const r of sm.stateVariables.rgroups) {
                 while (newRGroups[++j]);
@@ -174,12 +188,20 @@ class StateVariables {
                 while (newBonds[++j]);
                 newBonds[j] = b;
             }
+            j = -1;
+            for (const s of sm.stateVariables.straightArrows) {
+                while (newBonds[++j]);
+                newStraightArrows[j] = s;
+            }
             sm.stateVariables.rgroups = newRGroups;
             sm.stateVariables.bonds = newBonds;
+            sm.stateVariables.straightArrows = newStraightArrows;
         };
         const redo = (sm: StateMachine) => {
             sm.stateVariables.rgroups = sm.stateVariables.rgroups.filter(r => !removedRGroups.has(r));
             sm.stateVariables.bonds = sm.stateVariables.bonds.filter(b => !removedBonds.has(b));
+            sm.stateVariables.straightArrows =
+                sm.stateVariables.straightArrows.filter(s => !removedStraightArrows.has(s));
         };
         this.log(undo, redo);
         this.rgroups = this.rgroups.filter(r => !removedRGroups.has(r));
