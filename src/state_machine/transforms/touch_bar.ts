@@ -1,5 +1,6 @@
-import { Transform, registerTransform, State, Action } from "../transitions";
+import { Transform, registerTransform } from "../transitions";
 import { RGroup } from "@/models";
+import { State, Action } from "..";
 
 const handleButton: Transform = (stateMachine, { target, payload }) => {
     if (target === "spawn") {

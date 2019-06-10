@@ -1,6 +1,7 @@
-import { registerTransform, State, Action, Transform } from "../transitions";
+import { registerTransform, Transform } from "../transitions";
 import { RGroup, LonePair } from "@/models";
 import calculateAngle from "./angles";
+import { State, Action } from "..";
 
 // tslint:disable-next-line: no-empty
 const mouseDownPlacingLonePair: Transform = () => { };
@@ -52,7 +53,7 @@ const mouseUpAnglingLonePair: Transform = (stateMachine, { target, payload }) =>
     rg.lonePairs.push(lp);
     const undo = () => rg.lonePairs.pop();
     const redo = () => rg.lonePairs.push(lp);
-    stateMachine.stateVariables.log(undo, redo);
+    stateMachine.log(undo, redo);
     stateMachine.state = State.PLACING_LONE_PAIR;
     stateMachine.stateVariables.selected.length = 0;
     stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];

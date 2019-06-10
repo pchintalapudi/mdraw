@@ -1,36 +1,8 @@
 import StateVariables from "./state_variables";
 import Action from "./actions";
 import State from "./state";
+import { StateMachine } from "./index";
 const actions: Transform[][] = [];
-
-class StateMachine {
-
-    public stateVariables = new StateVariables();
-    public lastAction = Action.__COUNT__;
-    // tslint:disable-next-line: variable-name
-    private _state = State.IDLE;
-
-    get state() {
-        return this._state;
-    }
-
-    set state(state: State) {
-        if (this._state !== state) {
-            // tslint:disable-next-line: no-console
-            console.debug(`Changed from ${State[this._state]} to ${State[state]}`);
-            this._state = state;
-        }
-    }
-
-    public execute(action: Action, payload: { target: string, payload: any }) {
-        this.lastAction = action;
-        actions[+this.state][+action](this, payload);
-    }
-
-    public toString() {
-        return `State: ${State[this.state]}\nState Variables: ${this.stateVariables.toString()}`;
-    }
-}
 
 function identity(stateMachine: StateMachine, payload: { target: string, payload: any }) {
     // tslint:disable-next-line: no-console
@@ -66,4 +38,4 @@ function registerTransform(state: State, action: Action, transform: Transform) {
     actions[+state][+action] = transform;
 }
 
-export { State, StateMachine, Action, registerTransform, Transform, StateVariables };
+export { registerTransform, Transform, actions };

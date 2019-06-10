@@ -1,5 +1,6 @@
-import { registerTransform, StateMachine, Transform, State, Action } from "../transitions";
+import { registerTransform, Transform } from "../transitions";
 import { Bond, BondState } from "@/models";
+import { State, Action, StateMachine } from "..";
 
 const bondClick: Transform = (stateMachine, { target, payload }) => {
     if (target === "bond") {
@@ -40,7 +41,7 @@ const bondClick: Transform = (stateMachine, { target, payload }) => {
         }
         const undo = (_: StateMachine) => { bond.state = oldState; };
         const redo = (_: StateMachine) => { bond.state = newState; };
-        stateMachine.stateVariables.log(undo, redo);
+        stateMachine.log(undo, redo);
         bond.state = newState;
     }
 };
@@ -73,7 +74,7 @@ const bondDoubleClick: Transform = (stateMachine, { target, payload }) => {
         }
         const undo = (_: StateMachine) => { bond.state = oldState; };
         const redo = (_: StateMachine) => { bond.state = newState; };
-        stateMachine.stateVariables.log(undo, redo);
+        stateMachine.log(undo, redo);
         bond.state = newState;
     }
 };

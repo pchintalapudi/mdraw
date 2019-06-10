@@ -1,4 +1,5 @@
-import { State, Action, Transform, StateMachine, registerTransform } from "../transitions";
+import { Transform, registerTransform } from "../transitions";
+import { State, Action, StateMachine } from "..";
 
 const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {

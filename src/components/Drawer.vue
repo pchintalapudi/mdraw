@@ -96,7 +96,7 @@ export default Vue.extend({
     init_transforms();
     window.addEventListener("keydown", this.handleKey);
     window.addEventListener("beforeunload", ev => {
-      if (!this.stateMachine.stateVariables.saved) {
+      if (!this.stateMachine.saved) {
         ev.preventDefault();
         return "Don't close yet";
       }
@@ -217,54 +217,6 @@ export default Vue.extend({
     handleMouseMoveRGroup(payload: { target: string; payload: RGroup }) {
       this.stateMachine.execute(Action.MOUSE_MOVE, payload);
     },
-    openDialog(save: boolean, load = false) {
-      if (
-        !save &&
-        !load &&
-        !this.stateMachine.stateVariables.saved &&
-        confirm("Would you like to save your content?")
-      ) {
-        this.deserializeOnSave = true;
-        this.openDialog(true, false);
-      }
-      this.dialogging = true;
-      this.saving = save ? this.stateMachine.stateVariables.serialize() : "";
-      this.loading = load;
-    },
-    closeDialog(response: [boolean, string]) {
-      if (this.saving) {
-        if (response[0]) {
-          this.stateMachine.stateVariables.file = response[1];
-          this.stateMachine.stateVariables.save();
-          if (this.deserializeOnSave) {
-            this.openDialog(false, false);
-          }
-        }
-        this.deserializeOnSave = false;
-      } else {
-        if (response[0]) {
-          if (!this.stateMachine.stateVariables.saved) {
-            if (this.stateMachine.stateVariables.file) {
-              saveFile(
-                this.stateMachine.stateVariables.file,
-                this.stateMachine.stateVariables.serialize(),
-                true
-              );
-            } else {
-              this.openDialog(true);
-            }
-          }
-          this.stateMachine.stateVariables.deserialize(
-            loadFile(response[1]),
-            !this.loading
-          );
-          if (!this.loading) {
-            this.stateMachine.stateVariables.file = response[1];
-          }
-        }
-      }
-      this.dialogging = false;
-    },
     handleBondClick(bond: Bond) {
       this.stateMachine.execute(Action.CLICK, {
         target: "bond",
@@ -288,44 +240,37 @@ export default Vue.extend({
             payload: undefined
           });
         } else if (event.key === "z" && event.ctrlKey) {
-          this.stateMachine.stateVariables.undo(this.stateMachine);
+          this.stateMachine.undo(this.stateMachine);
         } else if (
           ((event.key === "z" || event.key === "Z") &&
             event.ctrlKey &&
             event.shiftKey) ||
           (event.key === "y" && event.ctrlKey)
         ) {
-          this.stateMachine.stateVariables.redo(this.stateMachine);
+          this.stateMachine.redo(this.stateMachine);
         } else if (event.key === "Delete") {
-          this.stateMachine.stateVariables.delete();
+          this.stateMachine.deleteSelected();
         } else if (event.key === "x" && event.ctrlKey) {
-          this.clipboard = this.stateMachine.stateVariables.copy();
-          this.stateMachine.stateVariables.delete();
+          this.clipboard = this.stateMachine.copySelected();
+          this.stateMachine.deleteSelected();
         } else if (event.key === "c" && event.ctrlKey) {
-          this.clipboard = this.stateMachine.stateVariables.copy();
+          this.clipboard = this.stateMachine.copySelected();
         } else if (event.key === "v" && event.ctrlKey) {
-          this.stateMachine.stateVariables.deserialize(this.clipboard);
+          this.stateMachine.loadData(this.clipboard, false);
         } else if ((event.key === "s" || event.key === "S") && event.ctrlKey) {
-          if (!event.shiftKey && this.stateMachine.stateVariables.file) {
-            saveFile(
-              this.stateMachine.stateVariables.file,
-              this.stateMachine.stateVariables.serialize(),
-              true
-            );
-            this.stateMachine.stateVariables.save();
-          } else this.openDialog(true);
+          //Save
         } else if (event.key === "o" && event.ctrlKey) {
-          this.openDialog(false);
+          //Open
         } else if (event.key === "o") {
           this.omit = !this.omit;
         } else if (event.key === "i" && event.ctrlKey) {
-          this.openDialog(false, true);
+          //Load
         } else if (event.key === "-") {
           const selected = this.selected.filter(
             r => r instanceof RGroup
           ) as RGroup[];
           selected.forEach(r => r.charge--);
-          this.stateMachine.stateVariables.log(
+          this.stateMachine.log(
             _ => selected.forEach(r => r.charge++),
             _ => {
               selected.forEach(r => r.charge--);
@@ -336,7 +281,7 @@ export default Vue.extend({
             r => r instanceof RGroup
           ) as RGroup[];
           selected.forEach(r => r.charge++);
-          this.stateMachine.stateVariables.log(
+          this.stateMachine.log(
             _ => selected.forEach(r => r.charge--),
             _ => {
               selected.forEach(r => r.charge++);

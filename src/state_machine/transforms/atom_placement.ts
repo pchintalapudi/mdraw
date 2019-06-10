@@ -1,7 +1,8 @@
-import { registerTransform, State, Action, Transform, StateMachine } from "../transitions";
+import { registerTransform, Transform } from "../transitions";
 import calculateAngle from "./angles";
 import { Constants } from "@/utils";
 import { RGroup, Bond, element } from "@/models";
+import { State, Action, StateMachine } from "..";
 
 const buttonAtomPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "spawn") {
@@ -24,7 +25,7 @@ const mouseUpAtomPlacement: Transform = (stateMachine, { target, payload }) => {
         mouseMoveAtomPlacement(stateMachine, { target, payload });
         const undo = (sm: StateMachine) => sm.stateVariables.rgroups.pop();
         const redo = (sm: StateMachine) => sm.stateVariables.rgroups.push(rg);
-        stateMachine.stateVariables.log(undo, redo);
+        stateMachine.log(undo, redo);
         stateMachine.state = State.IDLE;
     } else if (target === "rgroup") {
         const oldPayload = payload.payload;
@@ -32,7 +33,7 @@ const mouseUpAtomPlacement: Transform = (stateMachine, { target, payload }) => {
         rgs.pop();
         const undo = (_: StateMachine) => payload.payload = oldPayload;
         const redo = (_: StateMachine) => payload.payload = oldPayload;
-        stateMachine.stateVariables.log(undo, redo);
+        stateMachine.log(undo, redo);
         stateMachine.state = State.IDLE;
         stateMachine.execute(Action.BUTTON, { target: "spawn", payload: payload.payload });
     }
@@ -93,7 +94,7 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
             bond.start.bonds.set(rgs, b);
             sm.stateVariables.lastPlaced = lastPlaced;
         };
-        stateMachine.stateVariables.log(undo, redo);
+        stateMachine.log(undo, redo);
         const rg = new RGroup(element(6), rgs.x, rgs.y);
         stateMachine.stateVariables.rgroups.push(rg);
         const bond = new Bond(rgs, rg);
@@ -128,7 +129,7 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
                 payload.payload = newPayload;
                 sm.stateVariables.lastPlaced = 0;
             };
-            stateMachine.stateVariables.log(undo, redo);
+            stateMachine.log(undo, redo);
             stateMachine.state = State.IDLE;
             stateMachine.stateVariables.lastPlaced = 0;
         } else {

@@ -1,5 +1,6 @@
-import { Transform, registerTransform, State, Action, StateMachine } from "../transitions";
+import { Transform, registerTransform } from "../transitions";
 import { RGroup, Bond, element } from "@/models";
+import { State, Action, StateMachine } from "..";
 
 // tslint:disable-next-line: no-empty
 const mouseDownMoving: Transform = () => { };
@@ -49,7 +50,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                     moved[i].y = finalPositions[i].y;
                 }
             };
-            stateMachine.stateVariables.log(undo, redo);
+            stateMachine.log(undo, redo);
             if (sel.length === 1) {
                 sel.length = 0;
             }
@@ -133,7 +134,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                 }
                 payload.lonePairs.push(...rgs.lonePairs);
             };
-            stateMachine.stateVariables.log(undo, redo);
+            stateMachine.log(undo, redo);
             stateMachine.stateVariables.rgroups.splice(idx, 1);
             stateMachine.stateVariables.bonds = stateMachine.stateVariables.bonds.filter(b => !remove.has(b));
             stateMachine.state = State.IDLE;

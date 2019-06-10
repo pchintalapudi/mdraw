@@ -1,4 +1,5 @@
-import { registerTransform, Transform, State, Action, StateMachine } from "../transitions";
+import { registerTransform, Transform } from "../transitions";
+import { State, Action, StateMachine } from "..";
 import { StraightArrow } from "@/models";
 import calculateAngle from "./angles";
 
@@ -45,7 +46,7 @@ const mouseUpAnglingStraightArrow: Transform = (stateMachine, { target, payload 
         const redo = (sm: StateMachine) => {
             sm.stateVariables.straightArrows.push(sa);
         };
-        stateMachine.stateVariables.log(undo, redo);
+        stateMachine.log(undo, redo);
         stateMachine.stateVariables.straightArrows.push(sa);
         stateMachine.state = State.IDLE;
     }
