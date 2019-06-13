@@ -1,4 +1,3 @@
-import StateVariables from "./state_variables";
 import Action from "./actions";
 import State from "./state";
 import { StateMachine } from "./index";

@@ -44,7 +44,6 @@
       <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
     <touchbar-vue class="touch-bar" @button-click="handleButtonClick"></touchbar-vue>
-    <file-chooser-vue v-if="dialogging" :save="saving" @close="closeDialog" @new-file="newFile"></file-chooser-vue>
   </div>
 </template>
 <script lang="ts">
