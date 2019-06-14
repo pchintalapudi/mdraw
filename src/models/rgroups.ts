@@ -43,13 +43,13 @@ class RGroup {
     public static deserialize(str: string): [number, RGroup] {
         const parts = str.split("@").filter(s => s);
         if (parts[1][0] === "A") {
-            const rg = new RGroup(element(parseInt(parts[1].substring(1), 10)),
+            const rg = new RGroup(element(+parts[1].substring(1)),
                 parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
             if (parts.length > 5) {
                 const lonePairs = parts[5].split("&").map(s => LonePair.deserialize(s, rg));
                 rg.lonePairs = lonePairs;
             }
-            return [parseInt(parts[0], 10), rg];
+            return [+parts[0], rg];
         } else {
             return undefined as any as [number, RGroup];
         }

@@ -63,8 +63,8 @@ class Bond {
     // tslint:disable-next-line: member-ordering
     public static deserialize(str: string, rgroupMap: Map<number, RGroup>) {
         const parts = str.split("@");
-        const b = new Bond(rgroupMap.get(parseInt(parts[0], 10))!,
-            rgroupMap.get(parseInt(parts[1], 10))!, parseInt(parts[2], 10) as BondState);
+        const b = new Bond(rgroupMap.get(+parts[0])!,
+            rgroupMap.get(+parts[1])!, +parts[2] as BondState);
         b.start.bonds.set(b.end, b);
         b.end.bonds.set(b.start, b);
         return b;
