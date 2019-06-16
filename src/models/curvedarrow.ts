@@ -1,6 +1,6 @@
 import bezierSpline from "@freder/bezier-spline";
 import { IDGenerator } from "./globals";
-interface Point { x: number; y: number; id?: number; }
+interface Point { readonly x: number; readonly y: number; id?: number; }
 type ArrayPoint = [number, number];
 type BezierCurve = [ArrayPoint, ArrayPoint, ArrayPoint, ArrayPoint];
 
@@ -39,6 +39,10 @@ export class CurvedArrow {
             return this.bezierCurveCache = bezierSpline.getSegments(
                 bezierSpline.combinePoints(points, bezierSpline.getControlPoints(points)));
         }
+    }
+
+    public contains(point: Point) {
+        return point === this.pointsInternal[0] || point === this.pointsInternal[this.pointsInternal.length - 1];
     }
 
     public serialize() {

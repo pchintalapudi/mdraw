@@ -57,21 +57,29 @@ class Bond {
     }
 
     public serialize() {
-        return `${this.start.id}@${this.end.id}@${this.state}`;
+        return `${this.id}@${this.start.id}@${this.end.id}@${this.state}`;
     }
 
     // tslint:disable-next-line: member-ordering
-    public static deserialize(str: string, rgroupMap: Map<number, RGroup>) {
+    public static deserialize(str: string, rgroupMap: Map<number, RGroup>): [number, Bond] {
         const parts = str.split("@");
-        const b = new Bond(rgroupMap.get(+parts[0])!,
-            rgroupMap.get(+parts[1])!, +parts[2] as BondState);
+        const b = new Bond(rgroupMap.get(+parts[1])!,
+            rgroupMap.get(+parts[2])!, +parts[3] as BondState);
         b.start.bonds.set(b.end, b);
         b.end.bonds.set(b.start, b);
-        return b;
+        return [+parts[0], b];
     }
 
     get omittable() {
         return this.start.omittable || this.end.omittable;
+    }
+
+    get x() {
+        return (this.start.x + this.end.x) / 2;
+    }
+
+    get y() {
+        return (this.start.y + this.end.y) / 2;
     }
 }
 

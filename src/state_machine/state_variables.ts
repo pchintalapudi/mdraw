@@ -1,10 +1,11 @@
-import { RGroup, Bond, SelectionRectangle, StraightArrow } from "../models";
+import { RGroup, Bond, SelectionRectangle, StraightArrow, CurvedArrow } from "../models";
 
 class StateVariables {
-    public selected: Array<{ x: number, y: number, id: number }> = [];
+    public selected: Array<RGroup | StraightArrow> = [];
     public rgroups: RGroup[] = [];
     public bonds: Bond[] = [];
     public straightArrows: StraightArrow[] = [];
+    public curvedArrows: CurvedArrow[] = [];
     public lastAngle = 0;
     public lastPlaced = 0;
     public count = 0;
@@ -13,14 +14,21 @@ class StateVariables {
     public ipos: Array<{ x: number, y: number }> = [];
     public file = "";
 
-    public toString() {
-        return `RGroups: [${this.rgroups.map((r) => r.asString(true))}]\n
-                Selected: [${this.selected.map((r) => r.id).sort()}]\n
-                Bonds: [${this.bonds.map((b) => b.asString())}]`;
+    public setEntities(rgroups?: RGroup[], bonds?: Bond[],
+        // tslint:disable-next-line: align
+        straightArrows?: StraightArrow[], curvedArrows?: CurvedArrow[]) {
+        this.rgroups = rgroups || this.rgroups;
+        this.bonds = bonds || this.bonds;
+        this.straightArrows = straightArrows || this.straightArrows;
+        this.curvedArrows = curvedArrows || this.curvedArrows;
     }
 
-    get creating() {
-        return this.rgroups[this.rgroups.length - 1];
+    public getCopy(field: number):
+        [RGroup[] | undefined, Bond[] | undefined, StraightArrow[] | undefined, CurvedArrow[] | undefined] {
+        // tslint:disable-next-line: no-bitwise no-conditional-assignment
+        return [field & 1 ? this.rgroups : undefined, (field >>= 1) & 1 ? this.bonds : undefined,
+        // tslint:disable-next-line: no-bitwise no-conditional-assignment
+        (field >>= 1) & 1 ? this.straightArrows : undefined, (field >>= 1) & 1 ? this.curvedArrows : undefined];
     }
 }
 

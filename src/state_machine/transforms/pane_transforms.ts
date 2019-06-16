@@ -1,5 +1,6 @@
 import { Transform, registerTransform } from "../transitions";
 import { State, Action, StateMachine } from "..";
+import { RGroup, StraightArrow } from "@/models";
 
 const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
@@ -29,7 +30,7 @@ const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
 
 function select(stateMachine: StateMachine) {
     const sbox = stateMachine.stateVariables.selectionBox;
-    const selected: Array<{ x: number, y: number, id: number }> = stateMachine.stateVariables.selected = [];
+    const selected: Array<RGroup | StraightArrow> = stateMachine.stateVariables.selected = [];
     selected.push(...stateMachine.stateVariables.rgroups.filter(r => sbox.contains(r)));
     selected.push(...stateMachine.stateVariables.straightArrows.filter(s => sbox.contains(s)));
 }

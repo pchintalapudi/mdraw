@@ -1,15 +1,16 @@
 import { StateMachine } from "..";
+import Action from "../actions";
 
-type Action = (sm: StateMachine) => void;
+type Operation = (sm: StateMachine) => void;
 
-interface Executed { undo: Action; redo: Action; }
+interface Executed { undo: Operation; redo: Operation; }
 
 export default class {
     private stack: Executed[] = [];
     private idx: number = -1;
     private savedAction = null as null | Executed;
 
-    public log(undo: Action, redo: Action) {
+    public log(undo: Operation, redo: Operation) {
         this.stack[this.stack.length = ++this.idx] = { undo, redo };
     }
 
@@ -22,11 +23,19 @@ export default class {
     }
 
     public undo(sm: StateMachine) {
-        if (this.canUndo) this.stack[this.idx--].undo(sm);
+        if (this.canUndo) {
+            sm.execute(Action.CANCEL, undefined as any);
+            sm.stateVariables.selected.length = 0;
+            this.stack[this.idx--].undo(sm);
+        }
     }
 
     public redo(sm: StateMachine) {
-        if (this.canRedo) this.stack[++this.idx].redo(sm);
+        if (this.canRedo) {
+            sm.execute(Action.CANCEL, undefined as any);
+            sm.stateVariables.selected.length = 0;
+            this.stack[++this.idx].redo(sm);
+        }
     }
 
     public markSaved() {

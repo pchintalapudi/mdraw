@@ -3,7 +3,7 @@ import StateVariables from "./state_variables";
 import Action from "./actions";
 import { actions } from "./transitions";
 import History from "./undo_redo";
-import { save, load } from "./marshal_unmarshal";
+import { save, load, deleteSelected as delSel } from "./marshal_unmarshal";
 
 class StateMachineBase extends History {
 
@@ -40,12 +40,11 @@ export class StateMachine extends StateMachineBase {
     }
 
     public deleteSelected() {
-        //Delete
+        delSel(this);
     }
 
     public copySelected() {
-        //Copy
-        return "";
+        return save(this.stateVariables, false);
     }
 
     public execute(action: Action, payload: { target: string, payload: any }) {

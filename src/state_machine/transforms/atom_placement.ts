@@ -55,7 +55,8 @@ const buttonBondPlacement: Transform = (stateMachine, { target, payload }) => {
 
 const mouseMoveBondPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
-        const rg = stateMachine.stateVariables.creating;
+        const rgs = stateMachine.stateVariables.rgroups;
+        const rg = rgs[rgs.length - 1];
         const bonds = stateMachine.stateVariables.bonds;
         const start = bonds[bonds.length - 1].start;
         stateMachine.stateVariables.lastAngle = calculateAngle(Math.hypot(payload.y - start.y, payload.x - start.x),
@@ -76,7 +77,8 @@ const mouseMoveBondPlacement: Transform = (stateMachine, { target, payload }) =>
 
 const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
-        const rgs = stateMachine.stateVariables.creating;
+        const rgs = stateMachine.stateVariables.rgroups;
+        const rgc = rgs[rgs.length - 1];
         const bs = stateMachine.stateVariables.bonds;
         const b = bs[bs.length - 1];
         mouseMoveBondPlacement(stateMachine, { target, payload });
@@ -85,21 +87,21 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
         const undo = (sm: StateMachine) => {
             sm.stateVariables.rgroups.pop();
             sm.stateVariables.bonds.pop();
-            bond.start.bonds.delete(rgs);
+            bond.start.bonds.delete(rgc);
             sm.stateVariables.lastPlaced = prevPlaced;
         };
         const redo = (sm: StateMachine) => {
-            sm.stateVariables.rgroups.push(rgs);
+            sm.stateVariables.rgroups.push(rgc);
             sm.stateVariables.bonds.push(b);
-            bond.start.bonds.set(rgs, b);
+            bond.start.bonds.set(rgc, b);
             sm.stateVariables.lastPlaced = lastPlaced;
         };
         stateMachine.log(undo, redo);
-        const rg = new RGroup(element(6), rgs.x, rgs.y);
+        const rg = new RGroup(element(6), rgc.x, rgc.y);
         stateMachine.stateVariables.rgroups.push(rg);
-        const bond = new Bond(rgs, rg);
-        rgs.bonds.set(rg, bond);
-        rg.bonds.set(rgs, bond);
+        const bond = new Bond(rgc, rg);
+        rgc.bonds.set(rg, bond);
+        rg.bonds.set(rgc, bond);
         stateMachine.stateVariables.bonds.push(bond);
     } else if (target === "rgroup") {
         const rg = stateMachine.stateVariables.rgroups.pop()!;

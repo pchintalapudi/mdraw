@@ -51,6 +51,17 @@ class StraightArrow {
     set y(y: number) {
         this.start.y += y - this.y;
     }
+
+    public serialize() {
+        return `${this.start.x}@${this.start.y}@${this._dist}@${this._angle}`;
+    }
+
+// tslint:disable-next-line: member-ordering
+    public static deserialize(str: string) {
+        const parts = str.split("@");
+        return new StraightArrow({ x: parseFloat(parts[0]), y: parseFloat(parts[1]) },
+            parseFloat(parts[2]), parseFloat(parts[3]));
+    }
 }
 
 export { StraightArrow };
