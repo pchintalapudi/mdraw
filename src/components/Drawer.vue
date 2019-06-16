@@ -66,7 +66,6 @@ import StraightArrowVue from "@/components/molecules/StraightArrow.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
 import AnglerVue from "@/components/widgets/Angler.vue";
-import FileChooserVue from "@/components/files/FileChooser.vue";
 export default Vue.extend({
   components: {
     "bond-vue": BondVue,
@@ -77,7 +76,6 @@ export default Vue.extend({
     "touchbar-vue": TouchBarVue,
     "selection-rectangle-vue": SelectionRectangleVue,
     "angler-vue": AnglerVue,
-    "file-chooser-vue": FileChooserVue
   },
   data() {
     return {
@@ -94,12 +92,12 @@ export default Vue.extend({
   mounted() {
     init_transforms();
     window.addEventListener("keydown", this.handleKey);
-    window.addEventListener("beforeunload", ev => {
-      if (!this.stateMachine.saved) {
-        ev.preventDefault();
-        return "Don't close yet";
-      }
-    });
+    // window.addEventListener("beforeunload", ev => {
+    //   if (!this.stateMachine.saved) {
+    //     ev.preventDefault();
+    //     return "Don't close yet";
+    //   }
+    // });
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.handleKey);
