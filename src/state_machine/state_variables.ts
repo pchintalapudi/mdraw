@@ -26,9 +26,11 @@ class StateVariables {
     public getCopy(field: number):
         [RGroup[] | undefined, Bond[] | undefined, StraightArrow[] | undefined, CurvedArrow[] | undefined] {
         // tslint:disable-next-line: no-bitwise no-conditional-assignment
-        return [field & 1 ? this.rgroups : undefined, (field >>= 1) & 1 ? this.bonds : undefined,
+        return [field & 1 ? [...this.rgroups] : undefined, (field >>= 1) & 1 ? [...this.bonds] : undefined,
         // tslint:disable-next-line: no-bitwise no-conditional-assignment
-        (field >>= 1) & 1 ? this.straightArrows : undefined, (field >>= 1) & 1 ? this.curvedArrows : undefined];
+        (field >>= 1) & 1 ? [...this.straightArrows] : undefined,
+        // tslint:disable-next-line: no-bitwise
+        (field >> 1) & 1 ? [...this.curvedArrows] : undefined];
     }
 }
 

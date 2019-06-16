@@ -2,7 +2,8 @@ import { StateMachine, Action } from "..";
 import { RGroup, Bond, LonePair, StraightArrow, CurvedArrow } from "@/models";
 
 export function load(data: string, stateMachine: StateMachine, clear: boolean) {
-    const groups = data.split("!").filter(s => s).map(s => s.split(",").filter(str => str));
+    if (!data) return;
+    const groups = data.split("!").map(s => s.split(",").filter(str => str));
     const entityMap = new Map<number, RGroup | Bond | LonePair>();
     const rgroups: RGroup[] = [];
     for (const r of groups[0].map(RGroup.deserialize)) {
@@ -19,30 +20,30 @@ export function load(data: string, stateMachine: StateMachine, clear: boolean) {
     const curvedArrows: CurvedArrow[] = groups[3].map(s => CurvedArrow.deserialize(s, entityMap));
     stateMachine.execute(Action.CANCEL, undefined as any);
     const copy = stateMachine.stateVariables.getCopy(0b1111) as [RGroup[], Bond[], StraightArrow[], CurvedArrow[]];
-    const vars = stateMachine.stateVariables;
     if (clear) {
-        const undo = () => {
-            vars.setEntities(...copy);
+        const undo = (sm: StateMachine) => {
+            sm.stateVariables.setEntities(...copy);
         };
-        const redo = () => {
-            vars.setEntities(rgroups, bonds, straightArrows, curvedArrows);
+        const redo = (sm: StateMachine) => {
+            sm.stateVariables.setEntities(rgroups, bonds, straightArrows, curvedArrows);
         };
         stateMachine.log(undo, redo);
-        redo();
+        redo(stateMachine);
     } else {
-        const undo = () => {
-            vars.rgroups.splice(copy[0].length, rgroups.length);
-            vars.bonds.splice(copy[1].length, bonds.length);
-            vars.straightArrows.splice(copy[2].length, straightArrows.length);
-            vars.curvedArrows.splice(copy[3].length, curvedArrows.length);
+        const undo = (sm: StateMachine) => {
+            sm.stateVariables.rgroups.splice(copy[0].length, rgroups.length);
+            sm.stateVariables.bonds.splice(copy[1].length, bonds.length);
+            sm.stateVariables.straightArrows.splice(copy[2].length, straightArrows.length);
+            sm.stateVariables.curvedArrows.splice(copy[3].length, curvedArrows.length);
         };
-        const redo = () => {
-            vars.rgroups.push(...rgroups);
-            vars.bonds.push(...bonds);
-            vars.straightArrows.push(...straightArrows);
-            vars.curvedArrows.push(...curvedArrows);
+        const redo = (sm: StateMachine) => {
+            sm.stateVariables.rgroups.push(...rgroups);
+            sm.stateVariables.bonds.push(...bonds);
+            sm.stateVariables.straightArrows.push(...straightArrows);
+            sm.stateVariables.curvedArrows.push(...curvedArrows);
         };
+        stateMachine.stateVariables.selected = [...rgroups, ...straightArrows];
         stateMachine.log(undo, redo);
-        redo();
+        redo(stateMachine);
     }
 }

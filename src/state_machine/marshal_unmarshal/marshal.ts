@@ -1,5 +1,5 @@
 import StateVariables from "../state_variables";
-import { RGroup, Bond, StraightArrow, CurvedArrow } from "../../models";
+import { RGroup, Bond } from "../../models";
 function getValidBonds(rgroups: RGroup[]) {
     const rgroupSet = new Set<RGroup>(rgroups);
     const bonds = new Set<Bond>();
@@ -19,6 +19,6 @@ export function save(vars: StateVariables, full = true) {
     } else {
         const rgroups = vars.selected.filter(s => s instanceof RGroup) as RGroup[];
         const bonds = getValidBonds(rgroups);
-        return `${rgroups.map(r => r.serialize()).join()}!${bonds.map(b => b.serialize()).join()}`;
+        return `${rgroups.map(r => r.serialize()).join()}!${bonds.map(b => b.serialize()).join()}!!`;
     }
 }
