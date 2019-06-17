@@ -2,9 +2,9 @@
   <g
     :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`"
     :class="classes"
-    @mousedown.stop
-    @mousemove.stop
-    @mouseup.stop
+    @mousedown.stop="$emit('dmouse', bond)"
+    @mousemove.stop="$emit('mmouse', bond)"
+    @mouseup.stop="$emit('umouse', bond)"
     @click.stop="$emit('click-bond', bond)"
     @dblclick.stop="$emit('dblclick-bond', bond)"
   >

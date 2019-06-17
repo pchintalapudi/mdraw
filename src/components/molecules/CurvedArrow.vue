@@ -1,11 +1,19 @@
 <template>
   <g>
-    <path :d="computedPath"></path>
+    <path :d="computedPath" style="fill:transparent;stroke:black;"></path>
     <polygon
       :transform="`translate(${endpoint[0]}, ${endpoint[1]}) rotate(${endpointAngle})`"
       points="0,5 0,-5 5,0"
       style="fill:black;stroke:transparent;pointer-events:none;"
     ></polygon>
+    <circle
+      v-for="(point, idx) in points"
+      :key="idx"
+      :cx="point.x"
+      :cy="point.y"
+      r="5"
+      style="fill:blue"
+    ></circle>
   </g>
 </template>
 <script lang="ts">
@@ -16,6 +24,9 @@ type BezierCurve = [ArrayPoint, ArrayPoint, ArrayPoint, ArrayPoint];
 export default Vue.extend({
   props: { arrow: CurvedArrow },
   computed: {
+    points(): Array<{ x: number; y: number }> {
+      return this.arrow.draggablePoints;
+    },
     bezierCoefficients(): BezierCurve[] {
       return this.arrow.computedCurve;
     },
@@ -26,16 +37,31 @@ export default Vue.extend({
       const endCurve = this.bezierCoefficients[
         this.bezierCoefficients.length - 1
       ];
-      return Math.atan2(
-        endCurve[3][1] - endCurve[2][1],
-        endCurve[3][0] - endCurve[2][0]
+      return (
+        (Math.atan2(
+          endCurve[3][1] - endCurve[2][1],
+          endCurve[3][0] - endCurve[2][0]
+        ) *
+          180) /
+        Math.PI
       );
+    },
+    mappedCoeffs(): string {
+      return this.bezierCoefficients
+        .map(
+          bc =>
+            `C ${bc
+              .slice(1)
+              .map(p => p.join(" "))
+              .join(", ")}`
+        )
+        .join(" ");
     },
     computedPath(): string {
       return `
         M ${this.bezierCoefficients[0][0][0]} ${
         this.bezierCoefficients[0][0][1]
-      } ${this.bezierCoefficients.map(bc => `C ${bc.slice(1).map(p => p.join(" ")).join(", ")}`).join(", ")}
+      } ${this.mappedCoeffs}
         `;
     }
   }

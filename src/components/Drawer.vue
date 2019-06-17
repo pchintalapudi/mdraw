@@ -25,6 +25,9 @@
         :transparent="transparent.includes(bond)"
         @click-bond="handleBondClick"
         @dblclick-bond="handleBondDblClick"
+        @dmouse="handleMouseDownBond"
+        @mmouse="handleMouseMoveBond"
+        @umouse="handleMouseUpBond"
         :omitting="omit"
       ></bond-vue>
       <rgroup-vue
@@ -38,6 +41,7 @@
         :selected="selected.includes(rgroup)"
         :omitting="omit"
       ></rgroup-vue>
+      <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow"></curved-arrow-vue>
       <lone-pair-simulator-vue v-if="simulateLonePair" :position="ipos0" :count="count"></lone-pair-simulator-vue>
       <arrow-simulator-vue v-if="simulateArrow" :stubby="stubby" :position="ipos0"></arrow-simulator-vue>
       <angler-vue :offset="offset" :angle="angle" :bond="bond" v-if="angling"></angler-vue>
@@ -55,7 +59,8 @@ import {
   ChemicalElement,
   SelectionRectangle,
   element,
-  StraightArrow
+  StraightArrow,
+  CurvedArrow
 } from "../models";
 import { saveFile, loadFile } from "../files";
 import RGroupVue from "@/components/molecules/RGroup.vue";
@@ -63,6 +68,7 @@ import BondVue from "@/components/molecules/Bond.vue";
 import LonePairSimulatorVue from "@/components/molecules/LonePairSimulator.vue";
 import ArrowSimulatorVue from "@/components/molecules/ArrowSimulator.vue";
 import StraightArrowVue from "@/components/molecules/StraightArrow.vue";
+import CurvedArrowVue from "@/components/molecules/CurvedArrow.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
 import AnglerVue from "@/components/widgets/Angler.vue";
@@ -71,11 +77,12 @@ export default Vue.extend({
     "bond-vue": BondVue,
     "rgroup-vue": RGroupVue,
     "straight-arrow-vue": StraightArrowVue,
+    "curved-arrow-vue": CurvedArrowVue,
     "arrow-simulator-vue": ArrowSimulatorVue,
     "lone-pair-simulator-vue": LonePairSimulatorVue,
     "touchbar-vue": TouchBarVue,
     "selection-rectangle-vue": SelectionRectangleVue,
-    "angler-vue": AnglerVue,
+    "angler-vue": AnglerVue
   },
   data() {
     return {
@@ -112,6 +119,9 @@ export default Vue.extend({
     straightArrows(): StraightArrow[] {
       return this.stateMachine.stateVariables.straightArrows;
     },
+    curvedArrows(): CurvedArrow[] {
+      return this.stateMachine.stateVariables.curvedArrows;
+    },
     selectionBox(): SelectionRectangle {
       return this.stateMachine.stateVariables.selectionBox;
     },
@@ -120,6 +130,9 @@ export default Vue.extend({
     },
     selected(): Array<{ x: number; y: number; id: number }> {
       return this.stateMachine.stateVariables.selected;
+    },
+    state(): string {
+      return State[this.stateMachine.state];
     },
     angling(): boolean {
       return this.stateMachine.state === State.PLACING_ATOM_AND_BOND;
@@ -143,7 +156,11 @@ export default Vue.extend({
         transp.push(...this.bonds);
       } else if (this.stateMachine.state === State.MOVING_ATOM) {
         transp.push(...this.selected);
-      } else if (this.stateMachine.state === State.PLACING_LONE_PAIR) {
+        transp.push(...this.bonds);
+      } else if (
+        this.stateMachine.state === State.PLACING_LONE_PAIR ||
+        this.stateMachine.state === State.SELECTING
+      ) {
         transp.push(...this.bonds);
       } else if (this.stateMachine.state === State.ANGLING_LONE_PAIR) {
         transp.push(...this.rgroups);
@@ -213,6 +230,24 @@ export default Vue.extend({
     },
     handleMouseMoveRGroup(payload: { target: string; payload: RGroup }) {
       this.stateMachine.execute(Action.MOUSE_MOVE, payload);
+    },
+    handleMouseDownBond(bond: Bond) {
+      this.stateMachine.execute(Action.MOUSE_DOWN, {
+        target: "bond",
+        payload: bond
+      });
+    },
+    handleMouseUpBond(bond: Bond) {
+      this.stateMachine.execute(Action.MOUSE_UP, {
+        target: "bond",
+        payload: bond
+      });
+    },
+    handleMouseMoveBond(bond: Bond) {
+      this.stateMachine.execute(Action.MOUSE_MOVE, {
+        target: "bond",
+        payload: bond
+      });
     },
     handleBondClick(bond: Bond) {
       this.stateMachine.execute(Action.CLICK, {

@@ -17,6 +17,7 @@ const handleButton: Transform = (stateMachine, { target, payload }) => {
     } else if (target === "curved-arrow") {
         stateMachine.state = State.PLACING_CURVED_ARROW;
         stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
+        stateMachine.stateVariables.count = 0;
     }
 };
 

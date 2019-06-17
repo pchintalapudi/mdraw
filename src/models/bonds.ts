@@ -81,6 +81,16 @@ class Bond {
     get y() {
         return (this.start.y + this.end.y) / 2;
     }
+
+    get offset1(): { x: number, y: number } {
+        const midpoint = [(this.start.x + this.end.x) / 2, (this.start.y + this.end.y) / 2];
+        return { x: 0, y: 0 };
+    }
+
+    get offset2(): { x: number, y: number } {
+        const midpoint = [(this.start.x + this.end.x) / 2, (this.start.y + this.end.y) / 2];
+        return { x: 0, y: 0 };
+    }
 }
 
 export { BondState, Bond };

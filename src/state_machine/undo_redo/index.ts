@@ -3,12 +3,12 @@ import Action from "../actions";
 
 type Operation = (sm: StateMachine) => void;
 
-interface Executed { undo: Operation; redo: Operation; }
+interface Frame { undo: Operation; redo: Operation; }
 
 export default class {
-    private stack: Executed[] = [];
+    private stack: Frame[] = [];
     private idx: number = -1;
-    private savedAction = null as null | Executed;
+    private savedAction = null as null | Frame;
 
     public log(undo: Operation, redo: Operation) {
         this.stack[this.stack.length = ++this.idx] = { undo, redo };
@@ -36,6 +36,10 @@ export default class {
             sm.stateVariables.selected.length = 0;
             this.stack[++this.idx].redo(sm);
         }
+    }
+
+    public drop(frameCount: number) {
+        this.stack.length = (this.idx = Math.max(this.idx - frameCount, -1)) + 1;
     }
 
     public markSaved() {
