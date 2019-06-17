@@ -9,7 +9,7 @@
     <select name="atom-selector" id="atom-selector" v-model="element">
       <optgroup label="Recently Used">
         <option
-          v-for="el in recentlyUsed"
+          v-for="el in recent"
           :key="el.number"
           :value="el"
         >{{`${el.number} ${el.name} (${el.abbrev})`}}</option>
@@ -27,17 +27,28 @@
 <script lang="ts">
 import Vue from "vue";
 import { ChemicalElement, elementCount, element } from "../../models";
+import { State, StateMachine } from "../../state_machine";
 const elements: ChemicalElement[] = [];
 for (let i = 1; i <= elementCount; i++) {
   elements.push(element(i));
 }
 export default Vue.extend({
+  props: {
+    stateMachine: StateMachine
+  },
   data() {
     return { recentlyUsed: [elements[5]], element: elements[5] };
   },
   computed: {
     choices(): ChemicalElement[] {
       return elements.filter(el => !this.recentlyUsed.includes(el));
+    },
+    recent(): ChemicalElement[] {
+      const rev = [];
+      for (let i = this.recentlyUsed.length; i-- > 0; ) {
+        rev.push(this.recentlyUsed[i]);
+      }
+      return rev;
     }
   },
   watch: {
@@ -52,6 +63,13 @@ export default Vue.extend({
         if (this.recentlyUsed.length > 6) {
           this.recentlyUsed.splice(0, 1);
         }
+      } else {
+        const used = [];
+        for (const el of this.recentlyUsed) {
+          if (el !== this.element) used.push(el);
+        }
+        used.push(this.element);
+        this.recentlyUsed = used;
       }
       this.$emit("button-click", {
         target: "spawn",
@@ -64,7 +82,7 @@ export default Vue.extend({
 <style scoped>
 .atom-creator {
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: column wrap;
   height: 100%;
 }
 .atom-creator > button {

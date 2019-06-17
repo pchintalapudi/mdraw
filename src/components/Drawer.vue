@@ -43,11 +43,11 @@
       ></rgroup-vue>
       <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow"></curved-arrow-vue>
       <lone-pair-simulator-vue v-if="simulateLonePair" :position="ipos0" :count="count"></lone-pair-simulator-vue>
-      <arrow-simulator-vue v-if="simulateArrow" :stubby="stubby" :position="ipos0"></arrow-simulator-vue>
+      <arrow-simulator-vue v-if="simulateArrow" :position="ipos0"></arrow-simulator-vue>
       <angler-vue :offset="offset" :angle="angle" :bond="bond" v-if="angling"></angler-vue>
       <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
-    <touchbar-vue class="touch-bar" @button-click="handleButtonClick"></touchbar-vue>
+    <touchbar-vue class="touch-bar" :state-machine="stateMachine" @button-click="handleButtonClick"></touchbar-vue>
   </div>
 </template>
 <script lang="ts">
@@ -99,12 +99,6 @@ export default Vue.extend({
   mounted() {
     init_transforms();
     window.addEventListener("keydown", this.handleKey);
-    // window.addEventListener("beforeunload", ev => {
-    //   if (!this.stateMachine.saved) {
-    //     ev.preventDefault();
-    //     return "Don't close yet";
-    //   }
-    // });
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.handleKey);
@@ -131,7 +125,11 @@ export default Vue.extend({
     selected(): Array<{ x: number; y: number; id: number }> {
       return this.stateMachine.stateVariables.selected;
     },
-    state(): string {
+    state(): State {
+      return this.stateMachine.state;
+    },
+    //For debugging
+    stateName(): string {
       return State[this.stateMachine.state];
     },
     angling(): boolean {
@@ -142,9 +140,6 @@ export default Vue.extend({
     },
     angle(): number {
       return this.stateMachine.stateVariables.lastAngle - this.offset;
-    },
-    bond(): Bond {
-      return this.bonds[this.bonds.length - 1];
     },
     transparent(): Array<{ x: number; y: number; id: number } | Bond> {
       const transp = [];
@@ -192,9 +187,6 @@ export default Vue.extend({
         this.stateMachine.state === State.PLACING_STRAIGHT_ARROW ||
         this.stateMachine.state === State.PLACING_CURVED_ARROW
       );
-    },
-    stubby(): boolean {
-      return this.stateMachine.state === State.PLACING_CURVED_ARROW;
     }
   },
   methods: {

@@ -12,7 +12,7 @@
       :cx="point.x"
       :cy="point.y"
       r="5"
-      style="fill:blue"
+      class="target"
     ></circle>
   </g>
 </template>
@@ -67,3 +67,12 @@ export default Vue.extend({
   }
 });
 </script>
+<style scoped>
+.target {
+  fill: transparent;
+}
+.target:hover {
+  fill: blue;
+  pointer-events: all;
+}
+</style>
