@@ -1,6 +1,6 @@
 <template>
   <g>
-    <path :d="computedPath" style="fill:transparent;stroke:black;"></path>
+    <path :d="computedPath" style="fill:transparent;stroke:black;pointer-events:none;"></path>
     <polygon
       :transform="`translate(${endpoint[0]}, ${endpoint[1]}) rotate(${endpointAngle})`"
       points="0,5 0,-5 5,0"
