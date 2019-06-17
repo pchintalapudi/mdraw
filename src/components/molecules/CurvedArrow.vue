@@ -17,12 +17,12 @@
   </g>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import Vue, {PropType} from "vue";
 import { CurvedArrow } from "../../models";
 type ArrayPoint = [number, number];
 type BezierCurve = [ArrayPoint, ArrayPoint, ArrayPoint, ArrayPoint];
 export default Vue.extend({
-  props: { arrow: CurvedArrow },
+  props: { arrow: Object as PropType<CurvedArrow> },
   computed: {
     points(): Array<{ x: number; y: number }> {
       return this.arrow.draggablePoints;

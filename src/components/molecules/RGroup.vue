@@ -36,13 +36,13 @@
   </g>
 </template>
 <script lang='ts'>
-import Vue from "vue";
+import Vue, {PropType} from "vue";
 import LonePairVue from "@/components/molecules/LonePair.vue";
 import { RGroup, LonePair } from "../../models";
 import { element } from "../../models/index";
 export default Vue.extend({
   props: {
-    rgroup: RGroup,
+    rgroup: Object as PropType<RGroup>,
     transparent: Boolean,
     selected: Boolean,
     omitting: Boolean

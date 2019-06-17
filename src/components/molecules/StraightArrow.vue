@@ -14,10 +14,10 @@
   </g>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import { StraightArrow } from "@/models";
 export default Vue.extend({
-  props: { arrow: StraightArrow, selected: Boolean },
+  props: { arrow: Object as PropType<StraightArrow>, selected: Boolean },
   computed: {
     dist(): number {
       return this.arrow.dist;

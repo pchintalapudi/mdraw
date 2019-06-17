@@ -5,14 +5,14 @@
   </g>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import { Bond } from "@/models";
 import { Constants } from "@/utils";
 export default Vue.extend({
   props: {
-    offset: Number,
-    angle: Number,
-    bond: Bond
+    offset: Number as PropType<number>,
+    angle: Number as PropType<number>,
+    bond: Object as PropType<Bond>
   },
   computed: {
     path(): string {
@@ -26,7 +26,7 @@ export default Vue.extend({
         Math.sin((this.angle * Math.PI) / 180) * Constants.bondLength}`;
     },
     beautified(): number {
-      let a = this.angle;
+      let a = this.angle as number;
       a -= 720;
       a %= 360;
       a *= -1;

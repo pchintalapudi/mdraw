@@ -10,10 +10,10 @@
   ></rect>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import { SelectionRectangle } from "../../models";
 export default Vue.extend({
-  props: { selectionRectangle: SelectionRectangle },
+  props: { selectionRectangle: Object as PropType<SelectionRectangle> },
   computed: {
     left(): number {
       return this.selectionRectangle.left;

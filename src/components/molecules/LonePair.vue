@@ -8,10 +8,14 @@
   </g>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import { LonePair, RGroup } from "../../models";
 export default Vue.extend({
-  props: { lonepair: LonePair, dist: Number, omitting: Boolean },
+  props: {
+    lonepair: Object as PropType<LonePair>,
+    dist: Number,
+    omitting: Boolean
+  },
   computed: {
     count(): number {
       return this.lonepair.count;
