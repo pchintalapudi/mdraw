@@ -65,8 +65,8 @@ import {
 import { saveFile, loadFile } from "../files";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
-import LonePairSimulatorVue from "@/components/molecules/LonePairSimulator.vue";
-import ArrowSimulatorVue from "@/components/molecules/ArrowSimulator.vue";
+import LonePairSimulatorVue from "@/components/widgets/LonePairSimulator.vue";
+import ArrowSimulatorVue from "@/components/widgets/ArrowSimulator.vue";
 import StraightArrowVue from "@/components/molecules/StraightArrow.vue";
 import CurvedArrowVue from "@/components/molecules/CurvedArrow.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";

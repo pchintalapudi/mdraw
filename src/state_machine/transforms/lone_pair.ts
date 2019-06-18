@@ -64,16 +64,18 @@ const buttonPlacingLonePair: Transform = (stateMachine, { target, payload }) => 
     if (target === "lone-pair") {
         if (stateMachine.stateVariables.selected.length) {
             const lps = (stateMachine.stateVariables.selected[0] as RGroup).lonePairs;
-            lps[lps.length].count = payload;
+            const lp = lps[lps.length - 1];
+            if (lp.count === payload) {
+                stateMachine.execute(Action.CANCEL, undefined as any);
+                return;
+            } else {
+                lps[lps.length].count = payload;
+            }
         }
         stateMachine.stateVariables.count = payload;
-    } else if (target === "spawn") {
-        if (stateMachine.stateVariables.selected.length) {
-            (stateMachine.stateVariables.selected[0] as RGroup).lonePairs.pop();
-            stateMachine.stateVariables.selected.length = 0;
-        }
-        stateMachine.state = State.PLACING_ATOM;
-        stateMachine.stateVariables.rgroups.push(new RGroup(payload));
+    } else {
+        stateMachine.execute(Action.CANCEL, undefined as any);
+        stateMachine.execute(Action.BUTTON, { target, payload });
     }
 };
 

@@ -1,40 +1,45 @@
 <template>
-  <form name="lone-group-creator" :class="classes">
-    <button @click="spawn(1)" type="button">
+  <form name="lone-group-creator" class="lone-group-creator">
+    <toggle-button @toggle-button="spawn(1)" :on="on1">
       <svg viewBox="-10 -10 20 20">
         <circle cx="0" cy="0" r="2.5"></circle>
       </svg>
-    </button>
-    <button @click="spawn(2)" type="button">
+    </toggle-button>
+    <toggle-button @toggle-button="spawn(2)" :on="on2">
       <svg viewBox="-10 -10 20 20">
         <circle cx="-3" cy="-3" r="2.5"></circle>
         <circle cx="3" cy="3" r="2.5"></circle>
       </svg>
-    </button>
+    </toggle-button>
   </form>
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { State, StateMachine } from "../../state_machine";
+import ToggleButtonVue from "./ToggleButton.vue";
+import { State, StateMachine, Action } from "../../state_machine";
 export default Vue.extend({
+  components: { "toggle-button": ToggleButtonVue },
   props: {
     stateMachine: StateMachine
   },
-  data() {
-    return { count: 2 };
-  },
   computed: {
-    classes(): string[] {
-      const clazzes = ["lone-group-creator"];
-      if (this.stateMachine.state === State.PLACING_LONE_PAIR) {
-        clazzes.push("placing-" + this.count);
-      }
-      return clazzes;
+    on1(): boolean {
+      return (
+        (this.stateMachine.state === State.PLACING_LONE_PAIR ||
+          this.stateMachine.state === State.ANGLING_LONE_PAIR) &&
+        this.stateMachine.stateVariables.count === 1
+      );
+    },
+    on2(): boolean {
+      return (
+        (this.stateMachine.state === State.PLACING_LONE_PAIR ||
+          this.stateMachine.state === State.ANGLING_LONE_PAIR) &&
+        this.stateMachine.stateVariables.count === 2
+      );
     }
   },
   methods: {
     spawn(count: number) {
-      this.count = count;
       this.$emit("button-click", { target: "lone-pair", payload: count });
     }
   }
@@ -46,16 +51,18 @@ export default Vue.extend({
   flex-flow: column wrap;
   height: 100%;
 }
-.lone-group-creator > button {
+.lone-group-creator > * {
   height: 50%;
+  padding: 5px;
+  box-sizing: border-box;
 }
 .lone-group-creator svg {
   height: 100%;
 }
-.placing-1>:nth-child(1) {
+.placing-1 > :nth-child(1) {
   background-color: #0088ff44;
 }
-.placing-2>:nth-child(2) {
+.placing-2 > :nth-child(2) {
   background-color: #0088ff44;
 }
 </style>

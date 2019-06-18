@@ -36,6 +36,9 @@ export default Vue.extend({
   transition-property: opacity;
   transition: opacity 500ms;
 }
+.touch-bar>* {
+  margin: 5px;
+}
 .touch-bar:hover {
   opacity: 1;
 }

@@ -1,11 +1,11 @@
 <template>
   <form name="atom-creator" class="atom-creator">
-    <button type="button" @click="spawn" :title="element.name">
-      <svg viewBox="-5 -5 10 10" overflow="visible">
-        <circle cx="0" cy="0" r="6" fill="transparent" stroke="black" stroke-width="0.5"></circle>
-        <text text-anchor="middle" dominant-baseline="central" font-size="0.5em">{{element.abbrev}}</text>
+    <toggle-button @toggle-button="spawn" :title="element.name" :on="on">
+      <svg viewBox="-5 -5 10 10" overflow="visible" class="atom-picture">
+        <circle cx="0" cy="0" r="5" fill="transparent" stroke="black" stroke-width="0.5"></circle>
+        <text text-anchor="middle" dominant-baseline="central" font-size="5.75">{{element.abbrev}}</text>
       </svg>
-    </button>
+    </toggle-button>
     <select name="atom-selector" id="atom-selector" v-model="element">
       <optgroup label="Recently Used">
         <option
@@ -26,6 +26,7 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
+import ToggleButtonVue from "./ToggleButton.vue";
 import { ChemicalElement, elementCount, element } from "../../models";
 import { State, StateMachine } from "../../state_machine";
 const elements: ChemicalElement[] = [];
@@ -33,6 +34,7 @@ for (let i = 1; i <= elementCount; i++) {
   elements.push(element(i));
 }
 export default Vue.extend({
+  components: { "toggle-button": ToggleButtonVue },
   props: {
     stateMachine: StateMachine
   },
@@ -49,6 +51,9 @@ export default Vue.extend({
         rev.push(this.recentlyUsed[i]);
       }
       return rev;
+    },
+    on(): boolean {
+      return this.stateMachine.state === State.PLACING_ATOM;
     }
   },
   watch: {
@@ -85,12 +90,19 @@ export default Vue.extend({
   flex-flow: column wrap;
   height: 100%;
 }
-.atom-creator > button {
+.atom-creator > :first-child {
   height: 50%;
   width: 25%;
   align-self: center;
+  display: flex;
+  justify-content: center;
 }
-.atom-creator svg {
-  height: calc(100% - 6px);
+.atom-picture {
+  height: 100%;
+  padding: 2.5px;
+  box-sizing: border-box;
+}
+.atom-picture text {
+  user-select: none;
 }
 </style>
