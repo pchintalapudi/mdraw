@@ -62,7 +62,6 @@ import {
   StraightArrow,
   CurvedArrow
 } from "../models";
-import { saveFile, loadFile } from "../files";
 import RGroupVue from "@/components/molecules/RGroup.vue";
 import BondVue from "@/components/molecules/Bond.vue";
 import LonePairSimulatorVue from "@/components/widgets/LonePairSimulator.vue";
@@ -89,10 +88,6 @@ export default Vue.extend({
       stateMachine: new StateMachine(),
       clipboard: "",
       omit: false,
-      dialogging: false,
-      saving: "",
-      loading: false,
-      deserializeOnSave: false,
       lastElement: element(6)
     };
   },
@@ -253,72 +248,67 @@ export default Vue.extend({
         payload: bond
       });
     },
-    newFile() {
-      this.dialogging = false;
-    },
     handleKey(event: KeyboardEvent) {
-      if (!this.dialogging) {
-        if (event.key === "Escape") {
-          this.stateMachine.execute(Action.CANCEL, {
-            target: "",
-            payload: undefined
-          });
-        } else if (event.key === "z" && event.ctrlKey) {
-          this.stateMachine.undo(this.stateMachine);
-        } else if (
-          ((event.key === "z" || event.key === "Z") &&
-            event.ctrlKey &&
-            event.shiftKey) ||
-          (event.key === "y" && event.ctrlKey)
-        ) {
-          this.stateMachine.redo(this.stateMachine);
-        } else if (event.key === "Delete") {
-          this.stateMachine.deleteSelected();
-        } else if (event.key === "x" && event.ctrlKey) {
-          this.clipboard = this.stateMachine.copySelected();
-          this.stateMachine.deleteSelected();
-        } else if (event.key === "c" && event.ctrlKey) {
-          this.clipboard = this.stateMachine.copySelected();
-        } else if (event.key === "v" && event.ctrlKey) {
-          this.stateMachine.loadData(this.clipboard, false);
-        } else if ((event.key === "s" || event.key === "S") && event.ctrlKey) {
-          //Save
-        } else if (event.key === "o" && event.ctrlKey) {
-          //Open
-        } else if (event.key === "o") {
-          this.omit = !this.omit;
-        } else if (event.key === "i" && event.ctrlKey) {
-          //Load
-        } else if (event.key === "-") {
-          const selected = this.selected.filter(
-            r => r instanceof RGroup
-          ) as RGroup[];
-          selected.forEach(r => r.charge--);
-          this.stateMachine.log(
-            _ => selected.forEach(r => r.charge++),
-            _ => {
-              selected.forEach(r => r.charge--);
-            }
-          );
-        } else if (event.key === "+") {
-          const selected = this.selected.filter(
-            r => r instanceof RGroup
-          ) as RGroup[];
-          selected.forEach(r => r.charge++);
-          this.stateMachine.log(
-            _ => selected.forEach(r => r.charge--),
-            _ => {
-              selected.forEach(r => r.charge++);
-            }
-          );
-        } else if (event.key === " ") {
-          this.handleButtonClick({
-            target: "spawn",
-            payload: this.lastElement
-          });
-        } else return;
-        event.preventDefault();
-      }
+      if (event.key === "Escape") {
+        this.stateMachine.execute(Action.CANCEL, {
+          target: "",
+          payload: undefined
+        });
+      } else if (event.key === "z" && event.ctrlKey) {
+        this.stateMachine.undo(this.stateMachine);
+      } else if (
+        ((event.key === "z" || event.key === "Z") &&
+          event.ctrlKey &&
+          event.shiftKey) ||
+        (event.key === "y" && event.ctrlKey)
+      ) {
+        this.stateMachine.redo(this.stateMachine);
+      } else if (event.key === "Delete") {
+        this.stateMachine.deleteSelected();
+      } else if (event.key === "x" && event.ctrlKey) {
+        this.clipboard = this.stateMachine.copySelected();
+        this.stateMachine.deleteSelected();
+      } else if (event.key === "c" && event.ctrlKey) {
+        this.clipboard = this.stateMachine.copySelected();
+      } else if (event.key === "v" && event.ctrlKey) {
+        this.stateMachine.loadData(this.clipboard, false);
+      } else if ((event.key === "s" || event.key === "S") && event.ctrlKey) {
+        //Save
+      } else if (event.key === "o" && event.ctrlKey) {
+        //Open
+      } else if (event.key === "o") {
+        this.omit = !this.omit;
+      } else if (event.key === "i" && event.ctrlKey) {
+        //Load
+      } else if (event.key === "-") {
+        const selected = this.selected.filter(
+          r => r instanceof RGroup
+        ) as RGroup[];
+        selected.forEach(r => r.charge--);
+        this.stateMachine.log(
+          _ => selected.forEach(r => r.charge++),
+          _ => {
+            selected.forEach(r => r.charge--);
+          }
+        );
+      } else if (event.key === "+") {
+        const selected = this.selected.filter(
+          r => r instanceof RGroup
+        ) as RGroup[];
+        selected.forEach(r => r.charge++);
+        this.stateMachine.log(
+          _ => selected.forEach(r => r.charge--),
+          _ => {
+            selected.forEach(r => r.charge++);
+          }
+        );
+      } else if (event.key === " ") {
+        this.handleButtonClick({
+          target: "spawn",
+          payload: this.lastElement
+        });
+      } else return;
+      event.preventDefault();
     }
   }
 });
