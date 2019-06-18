@@ -44,7 +44,7 @@
       <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow"></curved-arrow-vue>
       <lone-pair-simulator-vue v-if="simulateLonePair" :position="ipos0" :count="count"></lone-pair-simulator-vue>
       <arrow-simulator-vue v-if="simulateArrow" :position="ipos0"></arrow-simulator-vue>
-      <angler-vue :offset="offset" :angle="angle" :bond="bond" v-if="angling"></angler-vue>
+      <angler-vue :offset="offset" :angle="angle" :bond="bonds[bonds.length - 1]" v-if="angling"></angler-vue>
       <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
     </svg>
     <touchbar-vue class="touch-bar" :state-machine="stateMachine" @button-click="handleButtonClick"></touchbar-vue>

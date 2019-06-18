@@ -144,6 +144,7 @@ const cancelBondPlacement: Transform = (stateMachine, _) => {
     stateMachine.stateVariables.bonds.pop()!.start.bonds.delete(stateMachine.stateVariables.rgroups.pop()!);
     stateMachine.state = State.IDLE;
     stateMachine.stateVariables.lastAngle = 0;
+    stateMachine.stateVariables.lastPlaced = 0;
 };
 
 export default function () {
