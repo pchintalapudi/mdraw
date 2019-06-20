@@ -58,25 +58,25 @@ export default Vue.extend({
     bezierCoefficients(): BezierCurve[] {
       const rawCurve = deepCopy(this.arrow.computedCurve);
       if (this.arrow.rawPoints[0] instanceof RGroup) {
-        rawCurve[0][0] = shrink(
+        rawCurve[0].splice(0, 1, shrink(
           rawCurve[0][0],
           rawCurve[0][1],
           (this.arrow.rawPoints[0] as RGroup).payload.abbrev.length === 1
             ? 15
             : 25
-        );
+        ));
       }
       if (
         this.arrow.rawPoints[this.arrow.rawPoints.length - 1] instanceof RGroup
       ) {
-        rawCurve[rawCurve.length - 1][3] = shrink(
+        rawCurve[rawCurve.length - 1].splice(3, 1, shrink(
           rawCurve[rawCurve.length - 1][3],
           rawCurve[rawCurve.length - 1][2],
           (this.arrow.rawPoints[this.arrow.rawPoints.length - 1] as RGroup)
             .payload.abbrev.length === 1
             ? 15
             : 25
-        );
+        ));
       }
       return rawCurve;
     },
