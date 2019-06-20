@@ -1,16 +1,12 @@
 <template>
   <div class="root">
-    <toggle-button @toggle-button="startArrow(false)" :on="onStraight">
-      <svg viewBox="-10 -10 20 20">
-        <line x1="-10" y1="0" x2="5" y2="0" style="stroke:black;fill:transparent;"></line>
-        <polygon points="5,3.5 5,-3.5 10,0"></polygon>
-      </svg>
+    <toggle-button @toggle-button="startArrow(false)" :on="onStraight" viewBox="-10 -10 20 20">
+      <line x1="-10" y1="0" x2="5" y2="0" style="stroke:black;fill:transparent;"></line>
+      <polygon points="5,3.5 5,-3.5 10,0"></polygon>
     </toggle-button>
-    <toggle-button @toggle-button="startArrow(true)">
-      <svg viewBox="-10 -10 20 20">
-        <path d="M -10,2.5 Q 0,-7.5 10,2.5" style="stroke:black; fill:transparent;"></path>
-        <polygon points="5,2 5,-2 10,0" transform="translate(2.5, -4) rotate(40)"></polygon>
-      </svg>
+    <toggle-button @toggle-button="startArrow(true)" viewBox="-10 -10 20 20">
+      <path d="M -10,2.5 Q 0,-7.5 10,2.5" style="stroke:black; fill:transparent;"></path>
+      <polygon points="5,2 5,-2 10,0" transform="translate(2.5, -4) rotate(40)"></polygon>
     </toggle-button>
   </div>
 </template>
@@ -57,8 +53,5 @@ export default Vue.extend({
   height: 50%;
   padding: 5px;
   box-sizing: border-box;
-}
-.root svg {
-  height: 100%;
 }
 </style>

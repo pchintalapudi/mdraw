@@ -1,7 +1,7 @@
 <template>
-  <div :class="classes" @click.stop="$emit('toggle-button')">
+  <svg :class="classes" @click.stop="$emit('toggle-button')">
     <slot></slot>
-  </div>
+  </svg>
 </template>
 <script lang="ts">
 import Vue from "vue";

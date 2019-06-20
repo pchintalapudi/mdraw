@@ -1,15 +1,11 @@
 <template>
   <form name="lone-group-creator" class="lone-group-creator">
-    <toggle-button @toggle-button="spawn(1)" :on="on1">
-      <svg viewBox="-10 -10 20 20">
-        <circle cx="0" cy="0" r="2.5"></circle>
-      </svg>
+    <toggle-button @toggle-button="spawn(1)" :on="on1" viewBox="-10 -10 20 20">
+      <circle cx="0" cy="0" r="2.5"></circle>
     </toggle-button>
-    <toggle-button @toggle-button="spawn(2)" :on="on2">
-      <svg viewBox="-10 -10 20 20">
-        <circle cx="-3" cy="-3" r="2.5"></circle>
-        <circle cx="3" cy="3" r="2.5"></circle>
-      </svg>
+    <toggle-button @toggle-button="spawn(2)" :on="on2" viewBox="-10 -10 20 20">
+      <circle cx="-3" cy="-3" r="2.5"></circle>
+      <circle cx="3" cy="3" r="2.5"></circle>
     </toggle-button>
   </form>
 </template>
@@ -55,14 +51,5 @@ export default Vue.extend({
   height: 50%;
   padding: 5px;
   box-sizing: border-box;
-}
-.lone-group-creator svg {
-  height: 100%;
-}
-.placing-1 > :nth-child(1) {
-  background-color: #0088ff44;
-}
-.placing-2 > :nth-child(2) {
-  background-color: #0088ff44;
 }
 </style>
