@@ -8,6 +8,9 @@ const buttonAtomPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "spawn") {
         const rgs = stateMachine.stateVariables.rgroups;
         rgs[rgs.length - 1].payload = payload;
+    } else {
+        stateMachine.execute(Action.CANCEL, undefined as any);
+        stateMachine.execute(Action.BUTTON, { target, payload });
     }
 };
 

@@ -57,6 +57,11 @@ const cancelDrawingCurvedArrow: Transform = (stateMachine) => {
     stateMachine.state = State.IDLE;
 };
 
+const buttonCurvedArrow: Transform = (stateMachine, { target, payload }) => {
+    stateMachine.execute(Action.CANCEL, undefined as any);
+    if (target !== "curved-arrow") stateMachine.execute(Action.BUTTON, { target, payload });
+};
+
 export default function () {
     registerTransform(State.PLACING_CURVED_ARROW, Action.MOUSE_DOWN, mouseDownPlacingCurvedArrow);
     registerTransform(State.PLACING_CURVED_ARROW, Action.MOUSE_MOVE, mouseMovePlacingCurvedArrow);
@@ -64,10 +69,12 @@ export default function () {
     registerTransform(State.PLACING_CURVED_ARROW, Action.CANCEL, cancelPlacingCurvedArrow);
     registerTransform(State.PLACING_CURVED_ARROW, Action.CLICK, mouseDownPlacingCurvedArrow);
     registerTransform(State.PLACING_CURVED_ARROW, Action.DOUBLE_CLICK, mouseDownPlacingCurvedArrow);
+    registerTransform(State.PLACING_CURVED_ARROW, Action.BUTTON, buttonCurvedArrow);
     registerTransform(State.DRAWING_CURVED_ARROW, Action.MOUSE_DOWN, mouseDownPlacingCurvedArrow);
     registerTransform(State.DRAWING_CURVED_ARROW, Action.MOUSE_MOVE, mouseMoveDrawingCurvedArrow);
     registerTransform(State.DRAWING_CURVED_ARROW, Action.MOUSE_UP, mouseUpDrawingCurvedArrow);
     registerTransform(State.DRAWING_CURVED_ARROW, Action.CANCEL, cancelDrawingCurvedArrow);
     registerTransform(State.DRAWING_CURVED_ARROW, Action.CLICK, mouseDownPlacingCurvedArrow);
     registerTransform(State.DRAWING_CURVED_ARROW, Action.DOUBLE_CLICK, mouseDownPlacingCurvedArrow);
+    registerTransform(State.DRAWING_CURVED_ARROW, Action.BUTTON, buttonCurvedArrow);
 }

@@ -3,7 +3,7 @@ import { Bond, BondState } from "@/models";
 import { State, Action, StateMachine } from "..";
 
 const bondClick: Transform = (stateMachine, { target, payload }) => {
-    if (target === "bond") {
+    if (target === "bond" && stateMachine.stateVariables.count === -1) {
         const bond = payload as Bond;
         const oldState = bond.state;
         let newState: BondState;
@@ -44,6 +44,7 @@ const bondClick: Transform = (stateMachine, { target, payload }) => {
         stateMachine.log(undo, redo);
         bond.state = newState;
     }
+    stateMachine.stateVariables.count = 0;
 };
 
 const bondDoubleClick: Transform = (stateMachine, { target, payload }) => {

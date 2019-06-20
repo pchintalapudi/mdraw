@@ -25,6 +25,8 @@ const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
         );
         stateMachine.stateVariables.itime = Date.now();
         stateMachine.state = State.MOVING_ATOM;
+    } else if (target === "bond") {
+        stateMachine.stateVariables.count = -1;
     }
 };
 
