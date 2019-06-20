@@ -1,32 +1,20 @@
 import bezierSpline from "@freder/bezier-spline";
 import { IDGenerator } from "./globals";
-import { Bond } from ".";
 interface Point { readonly x: number; readonly y: number; id?: number; }
 type ArrayPoint = [number, number];
 type BezierCurve = [ArrayPoint, ArrayPoint, ArrayPoint, ArrayPoint];
 
 export class CurvedArrow {
 
-    public rawPoints: Point[] = [];
+    public points: Point[] = [];
 
     constructor(start: Point, end: Point, public id = IDGenerator.nextID) {
-        this.rawPoints.push(start);
-        this.rawPoints.push(end);
+        this.points.push(start);
+        this.points.push(end);
     }
 
     get draggablePoints() {
-        return this.rawPoints.slice(1, this.rawPoints.length - 1);
-    }
-
-    get points() {
-        const newPoints = [...this.rawPoints];
-        if (this.rawPoints[0] instanceof Bond) {
-            //Splice in the appropriate offset point
-        }
-        if (this.rawPoints[this.rawPoints.length - 1] instanceof Bond) {
-            //Splice in the appropriate offset point
-        }
-        return newPoints;
+        return this.points.slice(1, this.points.length - 1);
     }
 
     get computedCurve(): BezierCurve[] {
@@ -37,13 +25,13 @@ export class CurvedArrow {
     }
 
     public contains(point: Point) {
-        return point === this.rawPoints[0] || point === this.rawPoints[this.rawPoints.length - 1];
+        return point === this.points[0] || point === this.points[this.points.length - 1];
     }
 
     public serialize() {
         return `
-        ${this.id}@${this.rawPoints[0].id!}@${this.rawPoints[this.rawPoints.length - 1].id!}
-        @${this.rawPoints.slice(0, this.rawPoints.length - 1).map(p => `${p.x}*${p.y}`).join("&")}
+        ${this.id}@${this.points[0].id!}@${this.points[this.points.length - 1].id!}
+        @${this.points.slice(0, this.points.length - 1).map(p => `${p.x}*${p.y}`).join("&")}
         `;
     }
 
@@ -58,7 +46,7 @@ export class CurvedArrow {
         }
         pointsInternal.push(idMap.get(+parts[2])!);
         const arrow = new CurvedArrow(undefined as any, undefined as any);
-        arrow.rawPoints = pointsInternal;
+        arrow.points = pointsInternal;
         return arrow;
     }
 }

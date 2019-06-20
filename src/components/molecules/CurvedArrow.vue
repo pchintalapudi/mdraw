@@ -36,18 +36,10 @@ function deepCopy(curves: BezierCurve[]): BezierCurve[] {
 }
 
 function shrink(start: ArrayPoint, end: ArrayPoint, dist: number): ArrayPoint {
-  const a1 = start[0],
-    a2 = start[1];
-  const b1 = end[0],
-    b2 = end[1];
-  const v1 = b1 - a1,
-    v2 = b2 - a2;
+  const v1 = end[0] - start[0];
+  const v2 = end[1] - start[1];
   const d = Math.hypot(v1, v2);
-  const u1 = v1 / d,
-    u2 = v2 / d;
-  const f1 = a1 + u1 * dist,
-    f2 = a2 + u2 * dist;
-  return [f1, f2];
+  return [start[0] + (v1 / d) * dist, start[1] + (v2 / d) * dist];
 }
 export default Vue.extend({
   props: { arrow: Object as PropType<CurvedArrow> },
@@ -57,26 +49,32 @@ export default Vue.extend({
     },
     bezierCoefficients(): BezierCurve[] {
       const rawCurve = deepCopy(this.arrow.computedCurve);
-      if (this.arrow.rawPoints[0] instanceof RGroup) {
-        rawCurve[0].splice(0, 1, shrink(
-          rawCurve[0][0],
-          rawCurve[0][1],
-          (this.arrow.rawPoints[0] as RGroup).payload.abbrev.length === 1
-            ? 15
-            : 25
-        ));
+      if (this.arrow.points[0] instanceof RGroup) {
+        rawCurve[0].splice(
+          0,
+          1,
+          shrink(
+            rawCurve[0][0],
+            rawCurve[0][1],
+            (this.arrow.points[0] as RGroup).payload.abbrev.length === 1
+              ? 15
+              : 25
+          )
+        );
       }
-      if (
-        this.arrow.rawPoints[this.arrow.rawPoints.length - 1] instanceof RGroup
-      ) {
-        rawCurve[rawCurve.length - 1].splice(3, 1, shrink(
-          rawCurve[rawCurve.length - 1][3],
-          rawCurve[rawCurve.length - 1][2],
-          (this.arrow.rawPoints[this.arrow.rawPoints.length - 1] as RGroup)
-            .payload.abbrev.length === 1
-            ? 15
-            : 25
-        ));
+      if (this.arrow.points[this.arrow.points.length - 1] instanceof RGroup) {
+        rawCurve[rawCurve.length - 1].splice(
+          3,
+          1,
+          shrink(
+            rawCurve[rawCurve.length - 1][3],
+            rawCurve[rawCurve.length - 1][2],
+            (this.arrow.points[this.arrow.points.length - 1] as RGroup).payload
+              .abbrev.length === 1
+              ? 15
+              : 25
+          )
+        );
       }
       return rawCurve;
     },
@@ -87,8 +85,8 @@ export default Vue.extend({
       return points;
     },
     endpoint(): ArrayPoint {
-      if (this.arrow.rawPoints.length === 2) {
-        const point = this.arrow.rawPoints[1];
+      if (this.arrow.points.length === 2) {
+        const point = this.arrow.points[1];
         return [point.x, point.y];
       }
       return this.bezierCoefficients[this.bezierCoefficients.length - 1][3];
@@ -118,10 +116,10 @@ export default Vue.extend({
         .join(" ");
     },
     computedPath(): string {
-      if (this.arrow.rawPoints.length === 2) {
-        return `M ${this.arrow.rawPoints[0].x} ${this.arrow.rawPoints[0].y} L ${
-          this.arrow.rawPoints[1].x
-        } ${this.arrow.rawPoints[1].y}`;
+      if (this.arrow.points.length === 2) {
+        return `M ${this.arrow.points[0].x} ${this.arrow.points[0].y} L ${
+          this.arrow.points[1].x
+        } ${this.arrow.points[1].y}`;
       }
       return `
         M ${this.bezierCoefficients[0][0][0]} ${

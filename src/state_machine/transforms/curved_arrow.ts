@@ -38,7 +38,7 @@ const mouseUpDrawingCurvedArrow: Transform = (stateMachine, { target, payload })
     if (cas[cas.length - 1].contains(payload)) return;
     if (target !== "surface") {
         const ca = cas[cas.length - 1];
-        ca.rawPoints[ca.rawPoints.length - 1] = payload;
+        ca.points[ca.points.length - 1] = payload;
         const undo = (sm: StateMachine) => {
             sm.stateVariables.curvedArrows.pop();
         };
@@ -48,7 +48,7 @@ const mouseUpDrawingCurvedArrow: Transform = (stateMachine, { target, payload })
         stateMachine.log(undo, redo);
         stateMachine.state = State.IDLE;
     } else {
-        cas[cas.length - 1].rawPoints.push(stateMachine.stateVariables.ipos[0] = { x: payload.x, y: payload.y });
+        cas[cas.length - 1].points.push(stateMachine.stateVariables.ipos[0] = { x: payload.x, y: payload.y });
     }
 };
 
