@@ -19,7 +19,7 @@ class StateMachineBase extends History {
     set state(state: State) {
         if (this._state !== state) {
             // tslint:disable-next-line: no-console
-            console.debug(`Changed from ${State[this._state]} to ${State[state]}`);
+            // console.debug(`Changed from ${State[this._state]} to ${State[state]}`);
             this._state = state;
         }
     }

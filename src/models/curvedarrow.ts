@@ -1,6 +1,6 @@
 import bezierSpline from "@freder/bezier-spline";
 import { IDGenerator } from "./globals";
-import { Bond } from "@/models";
+import { Bond } from ".";
 interface Point { readonly x: number; readonly y: number; id?: number; }
 type ArrayPoint = [number, number];
 type BezierCurve = [ArrayPoint, ArrayPoint, ArrayPoint, ArrayPoint];
@@ -30,12 +30,10 @@ export class CurvedArrow {
     }
 
     get computedCurve(): BezierCurve[] {
-        const points = [];
-        for (const point of this.points) {
-            points.push([point.x, point.y]);
-        }
-        return bezierSpline.getSegments(
-            bezierSpline.combinePoints(points, bezierSpline.getControlPoints(points)));
+        const val = bezierSpline.getSegments(
+            bezierSpline.combinePoints(this.points.map(p => [p.x, p.y]),
+                bezierSpline.getControlPoints(this.points.map(p => [p.x, p.y]))));
+        return val;
     }
 
     public contains(point: Point) {

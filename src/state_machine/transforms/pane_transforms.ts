@@ -1,6 +1,6 @@
 import { Transform, registerTransform } from "../transitions";
 import { State, Action, StateMachine } from "..";
-import { RGroup, StraightArrow } from "@/models";
+import { RGroup, StraightArrow } from "../../models";
 
 const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
@@ -55,6 +55,12 @@ const mouseUpSelecting: Transform = (stateMachine, { target, payload }) => {
 
 const cancelIdle: Transform = (stateMachine, { }) => {
     stateMachine.stateVariables.selected.length = 0;
+    stateMachine.state = State.IDLE;
+};
+
+const buttonSelecting: Transform = (stateMachine, payload) => {
+    stateMachine.execute(Action.CANCEL, undefined as any);
+    stateMachine.execute(Action.BUTTON, payload);
 };
 
 // tslint:disable-next-line: no-empty
@@ -65,6 +71,7 @@ export default function () {
     registerTransform(State.SELECTING, Action.MOUSE_MOVE, mouseMoveSelecting);
     registerTransform(State.SELECTING, Action.MOUSE_UP, mouseUpSelecting);
     registerTransform(State.SELECTING, Action.CANCEL, cancelIdle);
+    registerTransform(State.SELECTING, Action.BUTTON, buttonSelecting);
     registerTransform(State.IDLE, Action.MOUSE_DOWN, mouseDownIdle);
     registerTransform(State.IDLE, Action.MOUSE_MOVE, mouseMoveIdle);
     registerTransform(State.IDLE, Action.MOUSE_UP, mouseMoveIdle);

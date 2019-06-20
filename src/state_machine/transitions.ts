@@ -32,7 +32,7 @@ function registerTransform(state: State, action: Action, transform: Transform) {
         console.warn(`Overriding set transform:\nState: ${State[state]}\nAction: ${Action[action]}`);
     } else {
         // tslint:disable-next-line: no-console
-        console.debug(`Set ${State[state]} ${Action[action]}`);
+        // console.debug(`Set ${State[state]} ${Action[action]}`);
     }
     actions[+state][+action] = transform;
 }

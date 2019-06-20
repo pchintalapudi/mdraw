@@ -19,6 +19,7 @@
     "arrow-parens":false,
     "space-before-function-paren":false,
     "comment-format":false,
-    "curly": [true, "ignore-same-line"]
+    "curly": [true, "ignore-same-line"],
+    "one-variable-per-declaration":false
   }
 }
