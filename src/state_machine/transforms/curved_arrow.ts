@@ -38,7 +38,8 @@ const mouseUpDrawingCurvedArrow: Transform = (stateMachine, { target, payload })
     if (cas[cas.length - 1].contains(payload)) return;
     if (target !== "surface") {
         const ca = cas[cas.length - 1];
-        ca.points[ca.points.length - 1] = payload;
+        ca.points.pop();
+        ca.points.push(payload);
         const undo = (sm: StateMachine) => {
             sm.stateVariables.curvedArrows.pop();
         };
