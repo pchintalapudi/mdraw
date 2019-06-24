@@ -34,7 +34,17 @@ export default Vue.extend({
       return this.arrow.draggablePoints;
     },
     bezierCoefficients(): BezierCurve[] {
-      const rawCurve = deepCopy(this.arrow.computedCurve);
+      const rawCurve =
+        this.arrow.points.length === 2
+          ? ([
+              [
+                [this.arrow.points[0].x, this.arrow.points[0].y],
+                [this.arrow.points[1].x, this.arrow.points[1].y],
+                [this.arrow.points[0].x, this.arrow.points[0].y],
+                [this.arrow.points[1].x, this.arrow.points[1].y]
+              ]
+            ] as BezierCurve[])
+          : deepCopy(this.arrow.computedCurve);
       if (this.arrow.points[0] instanceof RGroup) {
         rawCurve[0].splice(
           0,
@@ -86,9 +96,10 @@ export default Vue.extend({
           shrink(
             rawCurve[rawCurve.length - 1][3],
             cp,
-            getBondDistance(this.arrow.points[
-              this.arrow.points.length - 1
-            ] as Bond, false)
+            getBondDistance(
+              this.arrow.points[this.arrow.points.length - 1] as Bond,
+              false
+            )
           )
         );
       }
@@ -126,11 +137,6 @@ export default Vue.extend({
         .join(" ");
     },
     computedPath(): string {
-      if (this.arrow.points.length === 2) {
-        return `M ${this.arrow.points[0].x} ${this.arrow.points[0].y} L ${
-          this.arrow.points[1].x
-        } ${this.arrow.points[1].y}`;
-      }
       return `
         M ${this.bezierCoefficients[0][0][0]} ${
         this.bezierCoefficients[0][0][1]
