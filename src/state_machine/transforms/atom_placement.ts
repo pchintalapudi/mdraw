@@ -14,7 +14,7 @@ const buttonAtomPlacement: Transform = (stateMachine, { target, payload }) => {
     }
 };
 
-const mouseMoveAtomPlacement: Transform = (stateMachine, { target, payload }) => {
+const mouseMoveAtomPlacement: Transform = (stateMachine, { payload }) => {
     const rgs = stateMachine.stateVariables.rgroups;
     const rg = rgs[rgs.length - 1];
     rg.x = payload.x;
@@ -52,7 +52,12 @@ const mouseDownAtomPlacement: Transform = () => { };
 
 const buttonBondPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "spawn") {
-        buttonAtomPlacement(stateMachine, { target, payload });
+        if (payload !== stateMachine.stateVariables.rgroups[stateMachine.stateVariables.rgroups.length - 1].payload) {
+            buttonAtomPlacement(stateMachine, { target, payload });
+        }
+    } else {
+        stateMachine.execute(Action.CANCEL, undefined as any);
+        stateMachine.execute(Action.BUTTON, { target, payload });
     }
 };
 

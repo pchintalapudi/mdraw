@@ -27,15 +27,16 @@ const cancelPlacingCurvedArrow: Transform = (stateMachine) => {
     stateMachine.state = State.IDLE;
 };
 
-const mouseMoveDrawingCurvedArrow: Transform = (stateMachine, { target, payload }) => {
-    stateMachine.stateVariables.ipos[0].x = payload.x;
-    stateMachine.stateVariables.ipos[0].y = payload.y;
+const mouseMoveDrawingCurvedArrow: Transform = (stateMachine, { payload }) => {
+    const cas = stateMachine.stateVariables.curvedArrows;
+    cas[cas.length - 1].points.pop();
+    cas[cas.length - 1].points.push(payload);
 };
 
 const mouseUpDrawingCurvedArrow: Transform = (stateMachine, { target, payload }) => {
     mouseMoveDrawingCurvedArrow(stateMachine, { target, payload });
     const cas = stateMachine.stateVariables.curvedArrows;
-    if (cas[cas.length - 1].contains(payload)) return;
+    if (cas[cas.length - 1].points[0] === payload) return;
     if (target !== "surface") {
         const ca = cas[cas.length - 1];
         ca.points.pop();
@@ -49,7 +50,7 @@ const mouseUpDrawingCurvedArrow: Transform = (stateMachine, { target, payload })
         stateMachine.log(undo, redo);
         stateMachine.state = State.IDLE;
     } else {
-        cas[cas.length - 1].points.push(stateMachine.stateVariables.ipos[0] = { x: payload.x, y: payload.y });
+        cas[cas.length - 1].points.push(payload);
     }
 };
 
