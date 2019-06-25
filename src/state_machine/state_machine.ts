@@ -51,4 +51,12 @@ export class StateMachine extends StateMachineBase {
         this.lastAction = action;
         actions[+this.state][+action](this, payload);
     }
+
+    public undo() {
+        this.undo_internal(this);
+    }
+
+    public redo() {
+        this.redo_internal(this);
+    }
 }

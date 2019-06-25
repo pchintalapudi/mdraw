@@ -22,22 +22,6 @@ export default class {
         return this.idx < this.stack.length - 1;
     }
 
-    public undo(sm: StateMachine) {
-        if (this.canUndo) {
-            sm.execute(Action.CANCEL, undefined as any);
-            sm.stateVariables.selected.length = 0;
-            this.stack[this.idx--].undo(sm);
-        }
-    }
-
-    public redo(sm: StateMachine) {
-        if (this.canRedo) {
-            sm.execute(Action.CANCEL, undefined as any);
-            sm.stateVariables.selected.length = 0;
-            this.stack[++this.idx].redo(sm);
-        }
-    }
-
     public drop(frameCount: number) {
         this.stack.length = (this.idx = Math.max(this.idx - frameCount, -1)) + 1;
     }
@@ -48,5 +32,21 @@ export default class {
 
     get saved() {
         return this.savedAction === this.stack[this.idx];
+    }
+
+    protected undo_internal(sm: StateMachine) {
+        if (this.canUndo) {
+            sm.execute(Action.CANCEL, undefined as any);
+            sm.stateVariables.selected.length = 0;
+            this.stack[this.idx--].undo(sm);
+        }
+    }
+
+    protected redo_internal(sm: StateMachine) {
+        if (this.canRedo) {
+            sm.execute(Action.CANCEL, undefined as any);
+            sm.stateVariables.selected.length = 0;
+            this.stack[++this.idx].redo(sm);
+        }
     }
 }

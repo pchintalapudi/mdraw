@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <svg-vue :class="classes">
+    <svg-vue :class="classes" :state-machine="stateMachine">
       <molecule-vue :state-machine="stateMachine" :omit="omit" :d3="d3"></molecule-vue>
       <widget-vue :state-machine="stateMachine"></widget-vue>
     </svg-vue>
@@ -10,19 +10,12 @@
 <script lang="ts">
 import Vue from "vue";
 import { StateMachine, Action, State, init_transforms } from "../state_machine";
-import {
-  RGroup,
-  Bond,
-  ChemicalElement,
-  SelectionRectangle,
-  element,
-  StraightArrow,
-  CurvedArrow
-} from "../models";
+import { element } from "../models";
 import MoleculeVue from "@/components/molecules/MoleculeView.vue";
 import WidgetVue from "@/components/widgets/WidgetView.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
-import SVGVue from "@/components/molecules/SVGView.vue";
+import SVGVue from "@/components/SVGVue.vue";
+import { data, keyHandler } from "./utils";
 export default Vue.extend({
   components: {
     "svg-vue": SVGVue,
@@ -30,22 +23,17 @@ export default Vue.extend({
     "widget-vue": WidgetVue,
     "touchbar-vue": TouchBarVue
   },
-  data() {
-    return {
-      stateMachine: new StateMachine(),
-      clipboard: "",
-      omit: false,
-      lastElement: element(6),
-      lockout: false,
-      d3: true
-    };
-  },
+  data,
   mounted() {
     init_transforms();
-    window.addEventListener("keydown", this.handleKey);
+    window.addEventListener(
+      "keydown",
+      (this.keyHandler = (ev: KeyboardEvent) =>
+        keyHandler(this.$data as ReturnType<typeof data>, ev))
+    );
   },
   beforeDestroy() {
-    window.removeEventListener("keydown", this.handleKey);
+    window.removeEventListener("keydown", this.keyHandler);
   },
   computed: {
     //For debugging
@@ -58,70 +46,6 @@ export default Vue.extend({
         clazzes.push("omit");
       }
       return clazzes;
-    }
-  },
-  methods: {
-    handleKey(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        this.stateMachine.execute(Action.CANCEL, {
-          target: "",
-          payload: undefined
-        });
-      } else if (event.key === "z" && event.ctrlKey) {
-        this.stateMachine.undo(this.stateMachine);
-      } else if (
-        ((event.key === "z" || event.key === "Z") &&
-          event.ctrlKey &&
-          event.shiftKey) ||
-        (event.key === "y" && event.ctrlKey)
-      ) {
-        this.stateMachine.redo(this.stateMachine);
-      } else if (event.key === "Delete") {
-        this.stateMachine.deleteSelected();
-      } else if (event.key === "x" && event.ctrlKey) {
-        this.clipboard = this.stateMachine.copySelected();
-        this.stateMachine.deleteSelected();
-      } else if (event.key === "c" && event.ctrlKey) {
-        this.clipboard = this.stateMachine.copySelected();
-      } else if (event.key === "v" && event.ctrlKey) {
-        this.stateMachine.loadData(this.clipboard, false);
-      } else if ((event.key === "s" || event.key === "S") && event.ctrlKey) {
-        //Save
-      } else if (event.key === "o" && event.ctrlKey) {
-        //Open
-      } else if (event.key === "o") {
-        this.omit = !this.omit;
-      } else if (event.key === "i" && event.ctrlKey) {
-        //Load
-      } else if (event.key === "-") {
-        const selected = this.selected.filter(
-          r => r instanceof RGroup
-        ) as RGroup[];
-        selected.forEach(r => r.charge--);
-        this.stateMachine.log(
-          _ => selected.forEach(r => r.charge++),
-          _ => {
-            selected.forEach(r => r.charge--);
-          }
-        );
-      } else if (event.key === "+") {
-        const selected = this.selected.filter(
-          r => r instanceof RGroup
-        ) as RGroup[];
-        selected.forEach(r => r.charge++);
-        this.stateMachine.log(
-          _ => selected.forEach(r => r.charge--),
-          _ => {
-            selected.forEach(r => r.charge++);
-          }
-        );
-      } else if (event.key === " ") {
-        this.handleButtonClick({
-          target: "spawn",
-          payload: this.lastElement
-        });
-      } else return;
-      event.preventDefault();
     }
   }
 });
