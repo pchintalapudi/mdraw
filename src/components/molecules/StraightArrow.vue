@@ -1,15 +1,15 @@
 <template>
   <g :transform="`translate(${x}, ${y}) rotate(${angle})`">
-    <line
-      x1="0"
-      y1="0"
-      :x2="dist"
-      y2="0"
-      :style="`fill:transparent;stroke:${selected?'blue':'black'};`"
-    ></line>
+    <rect
+      x="0"
+      :y="d3 ? -5 : -0.5"
+      :width="dist"
+      :height="d3 ? 10 : 1"
+      :style="`fill:${d3 ? 'url(#d3bond)' : 'transparent'};stroke:${d3 ? 'transparent' : selected?'blue':'black'};`"
+    ></rect>
     <polygon
-      :points="`${dist},3.5, ${dist}, -3.5, ${dist + 10},0`"
-      :style="`fill:${selected?'blue':'black'};stroke:transparent;`"
+      :points="`${dist},${d3 ? 10.5 : 3.5}, ${dist}, ${d3 ? -10.5 : -3.5}, ${dist + (d3 ? 20 : 10)},0`"
+      :style="`fill:${d3 ? 'url(#d3bond)' : selected?'blue':'black'};stroke:transparent;`"
     ></polygon>
   </g>
 </template>
@@ -17,7 +17,11 @@
 import Vue, { PropType } from "vue";
 import { StraightArrow } from "@/models";
 export default Vue.extend({
-  props: { arrow: Object as PropType<StraightArrow>, selected: Boolean },
+  props: {
+    arrow: Object as PropType<StraightArrow>,
+    selected: Boolean,
+    d3: Boolean
+  },
   computed: {
     dist(): number {
       return this.arrow.dist;

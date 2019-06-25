@@ -26,7 +26,7 @@
         fy="36%"
       >
         <stop offset="0%" :stop-color="'#' + color"></stop>
-        <stop offset="100%" sstop-color="#444"></stop>
+        <stop offset="100%" stop-color="#444"></stop>
       </radialGradient>
     </defs>
     <slot></slot>

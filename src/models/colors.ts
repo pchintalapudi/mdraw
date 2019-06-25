@@ -1,5 +1,6 @@
 import { RGroup } from "@/models";
 enum ElementColor {
+    HYDROGEN = "ffffff",
     OXYGEN = "e32636",
     FLUORINE = "66ff00",
     CHLORINE = "6f0",
