@@ -4,7 +4,7 @@
       <toggle-button
         v-for="(element, idx) in recent"
         :key="element.number"
-        @toggle-button="spawn"
+        @toggle-button="create(element)"
         :title="element.name"
         :on="on && !idx"
         viewBox="-5 -5 10 10"
@@ -83,6 +83,10 @@ export default Vue.extend({
         target: "spawn",
         payload: this.selected
       });
+    },
+    create(el: ChemicalElement) {
+      if (el === this.selected) this.spawn();
+      else this.selected = el;
     }
   }
 });
@@ -92,7 +96,7 @@ export default Vue.extend({
   display: flex;
   flex-flow: column wrap;
   height: 100%;
-  width: 25%;
+  width: 30%;
   justify-content: space-evenly;
 }
 .atom-creator > :first-child {

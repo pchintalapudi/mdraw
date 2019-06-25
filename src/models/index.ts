@@ -5,6 +5,7 @@ export * from "./selectionrectangle";
 export * from "./lonepair";
 export * from "./straightarrow";
 export * from "./curvedarrow";
+export * from "./colors";
 
 export function element(atomicNumber: number) {
     return element_array[atomicNumber - 1];

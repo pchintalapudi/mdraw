@@ -16,8 +16,18 @@
         <stop offset="100%" stop-color="gray"></stop>
       </linearGradient>
       <pattern id="patchy-d3bond" width="5" height="10" patternUnits="userSpaceOnUse">
-        <rect fill="url(#d3bond)" x="0" y="0" width="4" height="10"></rect>
+        <rect fill="url(#d3bond)" x="0" y="0" width="3" height="10"></rect>
       </pattern>
+      <radialGradient
+        v-for="color in colors"
+        :key="color"
+        :id="color + '-gradient'"
+        fx="36%"
+        fy="36%"
+      >
+        <stop offset="0%" :stop-color="'#' + color"></stop>
+        <stop offset="100%" sstop-color="#444"></stop>
+      </radialGradient>
     </defs>
     <slot></slot>
   </svg>
@@ -25,8 +35,14 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import { StateMachine, Action } from "@/state_machine";
+import { colors } from "@/models";
 export default Vue.extend({
   props: { stateMachine: Object as PropType<StateMachine> },
+  computed: {
+    colors() {
+      return colors;
+    }
+  },
   methods: {
     handleMouseMove(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_MOVE, {

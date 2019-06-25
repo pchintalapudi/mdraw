@@ -7,21 +7,21 @@
     @pointermove.stop="pointerMove"
   >
     <circle
-      :r="abbrev.length == 1 ? 15 : 25"
+      :r="d3 ? 17.5 : abbrev.length == 1 ? 15 : 25"
       :cx="contentWidth / 2"
       :cy="-contentHeight / 4"
       fill="transparent"
     />
     <circle
-      :r="abbrev.length == 1 ? 10 : 20"
+      :r="d3 ? 12.5 : abbrev.length == 1 ? 10 : 20"
       :cx="contentWidth / 2"
       :cy="-contentHeight / 4"
-      fill="white"
+      :fill="d3 ? `url(#${color}-gradient)` : 'white'"
     />
-    <text class="abbrev" ref="content">{{abbrev}}</text>
+    <text v-if="!d3" class="abbrev" ref="content">{{abbrev}}</text>
     <text
       class="charge"
-      v-if="charge"
+      v-if="!d3 && charge"
       ref="charge"
       :x="contentWidth / 2 + 7.5"
       :y="-contentHeight / 2 - chargeHeight / 8"
@@ -36,16 +36,16 @@
   </g>
 </template>
 <script lang='ts'>
-import Vue, {PropType} from "vue";
+import Vue, { PropType } from "vue";
 import LonePairVue from "@/components/molecules/LonePair.vue";
-import { RGroup, LonePair } from "../../models";
-import { element } from "../../models/index";
+import { RGroup, LonePair, element, getColor } from "@/models";
 export default Vue.extend({
   props: {
     rgroup: Object as PropType<RGroup>,
     transparent: Boolean,
     selected: Boolean,
-    omitting: Boolean
+    omitting: Boolean,
+    d3: Boolean
   },
   components: { "lone-pair-vue": LonePairVue },
   data() {
@@ -136,6 +136,9 @@ export default Vue.extend({
         clazzes.push("omittable");
       }
       return clazzes;
+    },
+    color(): string {
+      return getColor(this.rgroup);
     }
   },
   methods: {
