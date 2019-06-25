@@ -187,4 +187,8 @@ export default Vue.extend({
 .omittable .charge {
   visibility: visible;
 }
+
+text {
+  user-select: none;
+}
 </style>

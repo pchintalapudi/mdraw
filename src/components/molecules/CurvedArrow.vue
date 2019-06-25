@@ -1,5 +1,5 @@
 <template>
-  <g>
+  <g :display="d3 ? 'none' : false">
     <path :d="computedPath" style="fill:transparent;stroke:black;pointer-events:none;"></path>
     <polygon
       :transform="`translate(${endpoint[0]}, ${endpoint[1]}) rotate(${endpointAngle})`"
@@ -28,7 +28,7 @@ import {
   getBondDistance
 } from "../utils";
 export default Vue.extend({
-  props: { arrow: Object as PropType<CurvedArrow> },
+  props: { arrow: Object as PropType<CurvedArrow>, d3: Boolean },
   computed: {
     points(): Array<{ x: number; y: number }> {
       return this.arrow.draggablePoints;

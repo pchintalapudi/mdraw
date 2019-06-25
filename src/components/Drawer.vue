@@ -1,53 +1,10 @@
 <template>
   <div class="wrapper">
-    <svg
-      overflow="auto"
-      @pointermove.stop="handleMouseMove"
-      @pointerdown.stop="handleMouseDown"
-      @pointerup.stop="handleMouseUp"
-      :class="classes"
-    >
-      <defs>
-        <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
-          <line stroke="black" stroke-width="4px" y2="10"></line>
-        </pattern>
-      </defs>
-      <straight-arrow-vue
-        v-for="arrow in straightArrows"
-        :key="arrow.id"
-        :arrow="arrow"
-        :selected="selected.includes(arrow)"
-      ></straight-arrow-vue>
-      <bond-vue
-        v-for="bond in bonds"
-        :key="bond.id"
-        :bond="bond"
-        :transparent="transparent.includes(bond)"
-        @click-bond="handleBondClick"
-        @dblclick-bond="handleBondDblClick"
-        @dmouse="handleMouseDownBond"
-        @mmouse="handleMouseMoveBond"
-        @umouse="handleMouseUpBond"
-        :omitting="omit"
-      ></bond-vue>
-      <rgroup-vue
-        v-for="rgroup in rgroups"
-        :key="rgroup.id"
-        :rgroup="rgroup"
-        @dmouse="handleMouseDownRGroup"
-        @mmouse="handleMouseMoveRGroup"
-        @umouse="handleMouseUpRGroup"
-        :transparent="transparent.includes(rgroup)"
-        :selected="selected.includes(rgroup)"
-        :omitting="omit"
-      ></rgroup-vue>
-      <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow"></curved-arrow-vue>
-      <lone-pair-simulator-vue v-if="simulateLonePair" :position="ipos0" :count="count"></lone-pair-simulator-vue>
-      <arrow-simulator-vue v-if="simulateArrow" :position="ipos0"></arrow-simulator-vue>
-      <angler-vue :offset="offset" :angle="angle" :bond="bonds[bonds.length - 1]" v-if="angling"></angler-vue>
-      <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
-    </svg>
-    <touchbar-vue class="touch-bar" :state-machine="stateMachine" @button-click="handleButtonClick"></touchbar-vue>
+    <svg-vue :class="classes">
+      <molecule-vue :state-machine="stateMachine" :omit="omit" :d3="d3"></molecule-vue>
+      <widget-vue :state-machine="stateMachine"></widget-vue>
+    </svg-vue>
+    <touchbar-vue class="touch-bar" :state-machine="stateMachine"></touchbar-vue>
   </div>
 </template>
 <script lang="ts">
@@ -62,33 +19,25 @@ import {
   StraightArrow,
   CurvedArrow
 } from "../models";
-import RGroupVue from "@/components/molecules/RGroup.vue";
-import BondVue from "@/components/molecules/Bond.vue";
-import LonePairSimulatorVue from "@/components/widgets/LonePairSimulator.vue";
-import ArrowSimulatorVue from "@/components/widgets/ArrowSimulator.vue";
-import StraightArrowVue from "@/components/molecules/StraightArrow.vue";
-import CurvedArrowVue from "@/components/molecules/CurvedArrow.vue";
+import MoleculeVue from "@/components/molecules/MoleculeView.vue";
+import WidgetVue from "@/components/widgets/WidgetView.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
-import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
-import AnglerVue from "@/components/widgets/Angler.vue";
+import SVGVue from "@/components/molecules/SVGView.vue";
 export default Vue.extend({
   components: {
-    "bond-vue": BondVue,
-    "rgroup-vue": RGroupVue,
-    "straight-arrow-vue": StraightArrowVue,
-    "curved-arrow-vue": CurvedArrowVue,
-    "arrow-simulator-vue": ArrowSimulatorVue,
-    "lone-pair-simulator-vue": LonePairSimulatorVue,
-    "touchbar-vue": TouchBarVue,
-    "selection-rectangle-vue": SelectionRectangleVue,
-    "angler-vue": AnglerVue
+    "svg-vue": SVGVue,
+    "molecule-vue": MoleculeVue,
+    "widget-vue": WidgetVue,
+    "touchbar-vue": TouchBarVue
   },
   data() {
     return {
       stateMachine: new StateMachine(),
       clipboard: "",
       omit: false,
-      lastElement: element(6)
+      lastElement: element(6),
+      lockout: false,
+      d3: true
     };
   },
   mounted() {
@@ -99,70 +48,9 @@ export default Vue.extend({
     window.removeEventListener("keydown", this.handleKey);
   },
   computed: {
-    rgroups(): RGroup[] {
-      return this.stateMachine.stateVariables.rgroups;
-    },
-    bonds(): Bond[] {
-      return this.stateMachine.stateVariables.bonds;
-    },
-    straightArrows(): StraightArrow[] {
-      return this.stateMachine.stateVariables.straightArrows;
-    },
-    curvedArrows(): CurvedArrow[] {
-      return this.stateMachine.stateVariables.curvedArrows;
-    },
-    selectionBox(): SelectionRectangle {
-      return this.stateMachine.stateVariables.selectionBox;
-    },
-    selecting(): boolean {
-      return this.stateMachine.state === State.SELECTING;
-    },
-    selected(): Array<{ x: number; y: number; id: number }> {
-      return this.stateMachine.stateVariables.selected;
-    },
-    state(): State {
-      return this.stateMachine.state;
-    },
     //For debugging
     stateName(): string {
       return State[this.stateMachine.state];
-    },
-    angling(): boolean {
-      return this.stateMachine.state === State.PLACING_ATOM_AND_BOND;
-    },
-    offset(): number {
-      return this.stateMachine.stateVariables.lastPlaced;
-    },
-    angle(): number {
-      return this.stateMachine.stateVariables.lastAngle - this.offset;
-    },
-    transparent(): Array<{ x: number; y: number; id: number } | Bond> {
-      const transp = [];
-      if (
-        this.stateMachine.state === State.PLACING_ATOM ||
-        this.stateMachine.state === State.PLACING_ATOM_AND_BOND
-      ) {
-        transp.push(this.rgroups[this.rgroups.length - 1]);
-        transp.push(...this.bonds);
-      } else if (this.stateMachine.state === State.MOVING_ATOM) {
-        transp.push(...this.selected);
-        transp.push(...this.bonds);
-      } else if (
-        this.stateMachine.state === State.PLACING_LONE_PAIR ||
-        this.stateMachine.state === State.SELECTING
-      ) {
-        transp.push(...this.bonds);
-      } else if (this.stateMachine.state === State.ANGLING_LONE_PAIR) {
-        transp.push(...this.rgroups);
-        transp.push(...this.bonds);
-      }
-      return transp;
-    },
-    ipos0(): { x: number; y: number } {
-      return this.stateMachine.stateVariables.ipos[0];
-    },
-    count(): number {
-      return this.stateMachine.stateVariables.count;
     },
     classes(): string[] {
       const clazzes = ["surface"];
@@ -170,84 +58,9 @@ export default Vue.extend({
         clazzes.push("omit");
       }
       return clazzes;
-    },
-    simulateLonePair(): boolean {
-      return (
-        this.stateMachine.state === State.PLACING_LONE_PAIR &&
-        !this.stateMachine.stateVariables.selected.length
-      );
-    },
-    simulateArrow(): boolean {
-      return (
-        this.stateMachine.state === State.PLACING_STRAIGHT_ARROW ||
-        this.stateMachine.state === State.PLACING_CURVED_ARROW
-      );
     }
   },
   methods: {
-    handleButtonClick(payload: { target: string; payload: ChemicalElement }) {
-      this.stateMachine.execute(Action.BUTTON, payload);
-      if (payload.target === "spawn") {
-        this.lastElement = payload.payload;
-      }
-    },
-    handleMouseMove(payload: PointerEvent) {
-      this.stateMachine.execute(Action.MOUSE_MOVE, {
-        target: "surface",
-        payload
-      });
-    },
-    handleMouseUp(payload: PointerEvent) {
-      this.stateMachine.execute(Action.MOUSE_UP, {
-        target: "surface",
-        payload
-      });
-    },
-    handleMouseDown(payload: PointerEvent) {
-      this.stateMachine.execute(Action.MOUSE_DOWN, {
-        target: "surface",
-        payload
-      });
-    },
-    handleMouseDownRGroup(payload: { target: string; payload: RGroup }) {
-      this.stateMachine.execute(Action.MOUSE_DOWN, payload);
-    },
-    handleMouseUpRGroup(payload: { target: string; payload: RGroup }) {
-      this.stateMachine.execute(Action.MOUSE_UP, payload);
-    },
-    handleMouseMoveRGroup(payload: { target: string; payload: RGroup }) {
-      this.stateMachine.execute(Action.MOUSE_MOVE, payload);
-    },
-    handleMouseDownBond(bond: Bond) {
-      this.stateMachine.execute(Action.MOUSE_DOWN, {
-        target: "bond",
-        payload: bond
-      });
-    },
-    handleMouseUpBond(bond: Bond) {
-      this.stateMachine.execute(Action.MOUSE_UP, {
-        target: "bond",
-        payload: bond
-      });
-    },
-    handleMouseMoveBond(bond: Bond) {
-      this.stateMachine.execute(Action.MOUSE_MOVE, {
-        target: "bond",
-        payload: bond
-      });
-    },
-    handleBondClick(bond: Bond) {
-      this.stateMachine.execute(Action.CLICK, {
-        target: "bond",
-        payload: bond
-      });
-    },
-    handleBondDblClick(bond: Bond) {
-      this.stateMachine.execute(Action.DOUBLE_CLICK, {
-        target: "bond",
-        payload: bond
-      });
-    },
     handleKey(event: KeyboardEvent) {
       if (event.key === "Escape") {
         this.stateMachine.execute(Action.CANCEL, {

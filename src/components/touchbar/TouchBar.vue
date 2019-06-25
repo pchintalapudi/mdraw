@@ -15,7 +15,7 @@ import Vue, { PropType } from "vue";
 import AtomCreatorVue from "./AtomCreator.vue";
 import LonePairCreatorVue from "./LonePairCreator.vue";
 import ArrowCreatorVue from "./ArrowCreator.vue";
-import { StateMachine, State } from "../../state_machine";
+import { StateMachine, State, Action } from "../../state_machine";
 type StyleProperty = [string, string];
 export default Vue.extend({
   props: { stateMachine: Object as PropType<StateMachine> },
@@ -38,17 +38,29 @@ export default Vue.extend({
         !(sv.rgroups.length || sv.straightArrows.length)
       );
     },
+    mouseTransparent(): boolean {
+      return (
+        this.stateMachine.state === State.SELECTING ||
+        this.stateMachine.state === State.MOVING_ATOM
+      );
+    },
     style(): string {
       const styles: StyleProperty[] = [];
-      if (this.transparent && !this.overrideTransparent) {
+      if (
+        (this.transparent && !this.overrideTransparent) ||
+        this.mouseTransparent
+      ) {
         styles.push(["opacity", "0.1"]);
+      }
+      if (this.mouseTransparent) {
+        styles.push(["pointer-events", "none"]);
       }
       return styles.map(sp => sp.join(":")).join(";");
     }
   },
   methods: {
     cascade(payload: { target: string; payload: any }) {
-      this.$emit("button-click", payload);
+      this.stateMachine.execute(Action.BUTTON, payload);
     },
     mouseEnterEvent() {
       this.transparent = false;
