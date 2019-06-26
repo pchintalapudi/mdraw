@@ -91,6 +91,12 @@ export function keyHandler(vmdata: ReturnType<typeof data>, event: KeyboardEvent
         case " ":
             stateMachine.execute(Action.BUTTON, { target: "spawn", payload: vmdata.lastElement });
             break;
+        case "d":
+            if (event.ctrlKey) {
+                vmdata.omit = false;
+                vmdata.d3 = !vmdata.d3;
+            }
+            return;
     }
     event.preventDefault();
 }

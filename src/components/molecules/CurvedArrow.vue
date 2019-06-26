@@ -19,14 +19,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import { RGroup, Bond, CurvedArrow } from "@/models";
-import {
-  ArrayPoint,
-  BezierCurve,
-  deepCopy,
-  shrink,
-  bondControlPoint,
-  getBondDistance
-} from "../utils";
+import { ArrayPoint, BezierCurve } from "@/utils";
 export default Vue.extend({
   props: { arrow: Object as PropType<CurvedArrow>, d3: Boolean },
   computed: {
@@ -34,82 +27,9 @@ export default Vue.extend({
       return this.arrow.draggablePoints;
     },
     bezierCoefficients(): BezierCurve[] {
-      const rawCurve =
-        this.arrow.points.length === 2
-          ? ([
-              [
-                [this.arrow.points[0].x, this.arrow.points[0].y],
-                [this.arrow.points[1].x, this.arrow.points[1].y],
-                [this.arrow.points[0].x, this.arrow.points[0].y],
-                [this.arrow.points[1].x, this.arrow.points[1].y]
-              ]
-            ] as BezierCurve[])
-          : deepCopy(this.arrow.computedCurve);
-      if (this.arrow.points[0] instanceof RGroup) {
-        rawCurve[0].splice(
-          0,
-          1,
-          shrink(
-            rawCurve[0][0],
-            rawCurve[0][1],
-            (this.arrow.points[0] as RGroup).payload.abbrev.length === 1
-              ? 10
-              : 15
-          )
-        );
-      } else if (this.arrow.points[0] instanceof Bond) {
-        const cp = bondControlPoint(rawCurve[0][1], this.arrow
-          .points[0] as Bond);
-        rawCurve[0].splice(
-          0,
-          2,
-          shrink(
-            rawCurve[0][0],
-            cp,
-            getBondDistance(this.arrow.points[0] as Bond, true)
-          ),
-          cp
-        );
-      }
-      if (this.arrow.points[this.arrow.points.length - 1] instanceof RGroup) {
-        rawCurve[rawCurve.length - 1].splice(
-          3,
-          1,
-          shrink(
-            rawCurve[rawCurve.length - 1][3],
-            rawCurve[rawCurve.length - 1][2],
-            (this.arrow.points[this.arrow.points.length - 1] as RGroup).payload
-              .abbrev.length === 1
-              ? 15
-              : 25
-          )
-        );
-      } else if (
-        this.arrow.points[this.arrow.points.length - 1] instanceof Bond
-      ) {
-        const cp = bondControlPoint(rawCurve[rawCurve.length - 1][2], this.arrow
-          .points[this.arrow.points.length - 1] as Bond);
-        rawCurve[rawCurve.length - 1].splice(
-          2,
-          2,
-          cp,
-          shrink(
-            rawCurve[rawCurve.length - 1][3],
-            cp,
-            getBondDistance(
-              this.arrow.points[this.arrow.points.length - 1] as Bond,
-              false
-            )
-          )
-        );
-      }
-      return rawCurve;
+      return this.arrow.curve;
     },
     endpoint(): ArrayPoint {
-      if (this.arrow.points.length === 2) {
-        const point = this.arrow.points[1];
-        return [point.x, point.y];
-      }
       return this.bezierCoefficients[this.bezierCoefficients.length - 1][3];
     },
     endpointAngle(): number {

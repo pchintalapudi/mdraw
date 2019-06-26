@@ -2,7 +2,7 @@ import State from "./state";
 import StateVariables from "./state_variables";
 import Action from "./actions";
 import { actions } from "./transitions";
-import History from "./undo_redo";
+import { History } from "./extensions";
 import { save, load, deleteSelected as delSel } from "./marshal_unmarshal";
 
 class StateMachineBase extends History {

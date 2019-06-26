@@ -5,7 +5,7 @@ type Operation = (sm: StateMachine) => void;
 
 interface Frame { undo: Operation; redo: Operation; }
 
-export default class {
+export class History {
     private stack: Frame[] = [];
     private idx: number = -1;
     private savedAction = null as null | Frame;
