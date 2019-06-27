@@ -9,7 +9,7 @@ export default Vue.extend({
   props: { on: Boolean },
   computed: {
     classes(): string[] {
-      const clazzes = ["root"];
+      const clazzes = ["button"];
       if (this.on) clazzes.push("on");
       return clazzes;
     }
@@ -17,20 +17,23 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
-.root {
+.button {
   background-color: transparent;
   transition: background-color 250ms;
 }
-.root.on {
+.button.on {
   background-color: #0088ff33;
 }
-.root:hover {
+.button:hover {
   background-color: #0088ff44;
 }
-.root.on:hover {
+.button.on:hover {
   background-color: #0088ff66;
 }
-.root:active {
+.button:active {
   background-color: #0088ff88;
+}
+.button>* {
+  pointer-events: none;
 }
 </style>

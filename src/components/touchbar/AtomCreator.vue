@@ -5,17 +5,17 @@
         v-for="(element, idx) in recent"
         :key="element.number"
         @toggle-button="create(element)"
-        :title="element.name"
         :on="on && !idx"
         viewBox="-5 -5 10 10"
         overflow="visible"
         class="atom-picture"
       >
+      <title>{{element.name}}</title>
         <circle cx="0" cy="0" r="5" fill="transparent" stroke="black" stroke-width="0.5"></circle>
         <text text-anchor="middle" dominant-baseline="central" font-size="5.75">{{element.abbrev}}</text>
       </toggle-button>
     </div>
-    <select name="atom-selector" id="atom-selector" v-model="selected">
+    <select name="atom-selector" id="atom-selector" v-model="selected" title="Select an element">
       <option
         v-for="el in choices"
         :key="el.number"

@@ -1,9 +1,11 @@
 <template>
   <form name="lone-group-creator" class="lone-group-creator">
     <toggle-button @toggle-button="spawn(1)" :on="on1" viewBox="-10 -10 20 20">
+      <title>Radical Electron</title>
       <circle cx="0" cy="0" r="2.5"></circle>
     </toggle-button>
     <toggle-button @toggle-button="spawn(2)" :on="on2" viewBox="-10 -10 20 20">
+      <title>Lone Pair</title>
       <circle cx="-3" cy="-3" r="2.5"></circle>
       <circle cx="3" cy="3" r="2.5"></circle>
     </toggle-button>
