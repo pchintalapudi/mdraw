@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <svg-vue :class="classes" :state-machine="stateMachine">
-      <molecule-vue :state-machine="stateMachine" :omit="omit" :d3="d3"></molecule-vue>
+      <molecule-vue :state-machine="stateMachine" :omit="omit" :d3="d3" id="molecules"></molecule-vue>
       <widget-vue :state-machine="stateMachine"></widget-vue>
     </svg-vue>
     <touchbar-vue class="touch-bar" :state-machine="stateMachine"></touchbar-vue>
@@ -31,9 +31,11 @@ export default Vue.extend({
       (this.keyHandler = (ev: KeyboardEvent) =>
         keyHandler(this.$data as ReturnType<typeof data>, ev))
     );
+    window.addEventListener("resize", this.stateMachine.viewbox.listener);
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.keyHandler);
+    window.removeEventListener("resize", this.stateMachine.viewbox.listener);
   },
   computed: {
     //For debugging

@@ -4,62 +4,54 @@
     @pointermove.stop="handleMouseMove"
     @pointerdown.stop="handleMouseDown"
     @pointerup.stop="handleMouseUp"
+    :viewBox="viewBox"
+    ref="svg"
   >
-    <defs>
-      <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
-        <line stroke="black" stroke-width="4px" y2="10"></line>
-      </pattern>
-      <linearGradient id="d3bond" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="lightgray"></stop>
-        <stop offset="50%" stop-color="gray"></stop>
-        <stop offset="90%" stop-color="lightgray"></stop>
-        <stop offset="100%" stop-color="gray"></stop>
-      </linearGradient>
-      <pattern id="patchy-d3bond" width="5" height="10" patternUnits="userSpaceOnUse">
-        <rect fill="url(#d3bond)" x="0" y="0" width="3" height="10"></rect>
-      </pattern>
-      <radialGradient
-        v-for="color in colors"
-        :key="color"
-        :id="color + '-gradient'"
-        fx="36%"
-        fy="36%"
-      >
-        <stop offset="0%" :stop-color="'#' + color"></stop>
-        <stop offset="100%" stop-color="#444"></stop>
-      </radialGradient>
-    </defs>
+    <defs-vue></defs-vue>
     <slot></slot>
   </svg>
 </template>
 <script lang="ts">
 import Vue, { PropType } from "vue";
+import DefsVue from "./defs/Defs.vue";
 import { StateMachine, Action } from "@/state_machine";
-import { colors } from "@/models";
 export default Vue.extend({
+  components: { "defs-vue": DefsVue },
   props: { stateMachine: Object as PropType<StateMachine> },
+  data() {
+    return { svg: (undefined as any) as SVGGraphicsElement };
+  },
+  mounted() {
+    this.svg = this.$refs.svg as SVGGraphicsElement;
+  },
   computed: {
-    colors() {
-      return colors;
+    viewBox(): number[] {
+      return this.stateMachine.viewbox.viewport;
     }
   },
   methods: {
+    transformPoint(payload: PointerEvent) {
+      const pt = (this.svg as any).createSVGPoint() as SVGPoint;
+      pt.x = payload.x;
+      pt.y = payload.y;
+      return pt.matrixTransform(this.svg.getScreenCTM()!.inverse());
+    },
     handleMouseMove(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_MOVE, {
         target: "surface",
-        payload
+        payload: this.transformPoint(payload)
       });
     },
     handleMouseUp(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_UP, {
         target: "surface",
-        payload
+        payload: this.transformPoint(payload)
       });
     },
     handleMouseDown(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_DOWN, {
         target: "surface",
-        payload
+        payload: this.transformPoint(payload)
       });
     }
   }

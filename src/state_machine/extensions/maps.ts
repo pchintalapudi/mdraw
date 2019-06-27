@@ -3,16 +3,9 @@ import { RGroup, Bond, StraightArrow, CurvedArrow } from "@/models";
 type BBox = [number, number, number, number];
 
 export class MapStruct {
-    public static createMapStruct(rgroups: RGroup[], bonds: Bond[],
-                                  straightArrows: StraightArrow[], curvedArrows: CurvedArrow[]) {
-        const ms = new MapStruct(rgroups, bonds, straightArrows, curvedArrows);
-        const listener = (_: UIEvent) => {
-            ms.viewWidth = window.innerWidth;
-            ms.viewHeight = window.innerHeight;
-        };
-        window.addEventListener("resize", listener);
-        return [ms, listener];
-    }
+
+    private static empty: BBox = [0, 0, 0, 0];
+
     public zoomFactor = 1;
     public viewX = 0;
     public viewY = 0;
@@ -20,14 +13,20 @@ export class MapStruct {
     public viewHeight: number;
 
     constructor(private rgroups: RGroup[],
-                private bonds: Bond[],
-                private straightArrows: StraightArrow[],
-                private curvedArrows: CurvedArrow[]) {
+        private bonds: Bond[],
+        private straightArrows: StraightArrow[],
+        private curvedArrows: CurvedArrow[]) {
+        this.viewWidth = window.innerWidth;
+        this.viewHeight = window.innerHeight;
+    }
+
+    public readonly listener = (_: UIEvent) => {
         this.viewWidth = window.innerWidth;
         this.viewHeight = window.innerHeight;
     }
 
     private get rgroupBox(): BBox {
+        if (!this.rgroups.length) return MapStruct.empty;
         let minx, miny, maxx, maxy = maxx = miny = minx = 0;
         for (const rgroup of this.rgroups) {
             minx = Math.min(minx, rgroup.x);
@@ -39,6 +38,7 @@ export class MapStruct {
     }
 
     private get straightArrowBox(): BBox {
+        if (!this.straightArrows.length) return MapStruct.empty;
         let minx, miny, maxx, maxy = maxx = miny = minx = 0;
         for (const sa of this.straightArrows) {
             const end = [(sa.dist + 20) * Math.cos(sa.angle * Math.PI / 180) + sa.x,
@@ -52,6 +52,7 @@ export class MapStruct {
     }
 
     private get curvedArrowBox(): BBox {
+        if (!this.curvedArrows.length) return MapStruct.empty;
         let minx, miny, maxx, maxy = maxx = miny = minx = 0;
         for (const ca of this.curvedArrows) {
             for (const curve of ca.curve) {
@@ -67,6 +68,7 @@ export class MapStruct {
     }
 
     private get bondBox(): BBox {
+        if (!this.bonds.length) return MapStruct.empty;
         let minx, miny, maxx, maxy = maxx = miny = minx = 0;
         for (const bond of this.bonds) {
             minx = Math.min(minx, bond.start.x, bond.end.x);
@@ -94,5 +96,9 @@ export class MapStruct {
         const minbox = this.rawViewBox;
         return [Math.min(0, minbox[0]), Math.min(0, minbox[1]),
         Math.max(this.viewWidth, minbox[2]), Math.max(this.viewHeight, minbox[3])];
+    }
+
+    get viewport(): BBox {
+        return [this.viewX, this.viewY, this.viewWidth, this.viewHeight];
     }
 }

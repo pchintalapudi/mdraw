@@ -8,7 +8,7 @@ export function data() {
         omit: false,
         lastElement: element(6),
         lockout: false,
-        d3: true,
+        d3: false,
         keyHandler: undefined as any
     };
 }
@@ -95,6 +95,7 @@ export function keyHandler(vmdata: ReturnType<typeof data>, event: KeyboardEvent
             if (event.ctrlKey) {
                 vmdata.omit = false;
                 vmdata.d3 = !vmdata.d3;
+                break;
             }
             return;
     }
