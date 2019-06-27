@@ -10,6 +10,8 @@ enum State {
     MOVING_ATOM,
     SELECTING,
     ROTATING,
+    MAPPING,
+    PANNING,
     IDLE,
     __COUNT__,
 }

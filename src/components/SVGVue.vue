@@ -4,7 +4,7 @@
     @pointermove.stop="handleMouseMove"
     @pointerdown.stop="handleMouseDown"
     @pointerup.stop="handleMouseUp"
-    :viewBox="viewBox"
+    :viewBox="viewport"
     ref="svg"
   >
     <defs-vue></defs-vue>
@@ -25,8 +25,11 @@ export default Vue.extend({
     this.svg = this.$refs.svg as SVGGraphicsElement;
   },
   computed: {
-    viewBox(): number[] {
+    viewport(): number[] {
       return this.stateMachine.viewbox.viewport;
+    },
+    viewBox(): number[] {
+      return this.stateMachine.viewbox.viewBox;
     }
   },
   methods: {
@@ -37,10 +40,27 @@ export default Vue.extend({
       return pt.matrixTransform(this.svg.getScreenCTM()!.inverse());
     },
     handleMouseMove(payload: PointerEvent) {
+      const pt = this.transformPoint(payload);
       this.stateMachine.execute(Action.MOUSE_MOVE, {
         target: "surface",
-        payload: this.transformPoint(payload)
+        payload: pt
       });
+      const shift: [boolean, boolean, boolean, boolean] = [
+        pt.x - this.viewport[0] < 50,
+        pt.y - this.viewport[1] < 50,
+        this.viewport[0] + this.viewport[2] - pt.x < 50,
+        this.viewport[1] + this.viewport[3] - pt.y < 50
+      ];
+      if (shift[0]) {
+        this.stateMachine.viewbox.viewX -= 10;
+      } else if (shift[2]) {
+        this.stateMachine.viewbox.viewX += 10;
+      }
+      if (shift[1]) {
+        this.stateMachine.viewbox.viewY -= 10;
+      } else if (shift[3]) {
+        this.stateMachine.viewbox.viewY += 10;
+      }
     },
     handleMouseUp(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_UP, {

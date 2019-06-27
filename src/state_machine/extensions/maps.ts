@@ -13,9 +13,9 @@ export class MapStruct {
     public viewHeight: number;
 
     constructor(private rgroups: RGroup[],
-        private bonds: Bond[],
-        private straightArrows: StraightArrow[],
-        private curvedArrows: CurvedArrow[]) {
+                private bonds: Bond[],
+                private straightArrows: StraightArrow[],
+                private curvedArrows: CurvedArrow[]) {
         this.viewWidth = window.innerWidth;
         this.viewHeight = window.innerHeight;
     }
@@ -85,10 +85,10 @@ export class MapStruct {
         Math.max(...boxes.map(b => b[2])), Math.max(...boxes.map(b => b[3]))];
         minbox[2] -= minbox[0];
         minbox[3] -= minbox[1];
-        minbox[0] -= 50;
-        minbox[1] -= 50;
-        minbox[2] += 100;
-        minbox[3] += 100;
+        minbox[0] -= 20;
+        minbox[1] -= 20;
+        minbox[2] += 40;
+        minbox[3] += 40;
         return minbox as BBox;
     }
 
