@@ -8,7 +8,7 @@
         <title>Go Home</title>
       </toggle-button>
       <toggle-button :on="panning" viewBox="-10 -10 20 20">
-        <title>{{panning ? 'Start' : 'Stop'}} Panning</title>
+        <title>{{panning ? 'Stop' : 'Start'}} Panning</title>
       </toggle-button>
     </div>
   </form>

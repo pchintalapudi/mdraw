@@ -6,6 +6,7 @@
     @pointerup.stop="pointerUp"
     @pointermove.stop="pointerMove"
   >
+    <title>{{name}}</title>
     <circle
       :r="d3 ? 17.5 : abbrev.length == 1 ? 15 : 25"
       :cx="contentWidth / 2"
@@ -179,7 +180,7 @@ export default Vue.extend({
   cursor: default;
 }
 
-.selected > :first-child {
+.selected > circle:first-of-type {
   fill: #0088ff44;
 }
 
