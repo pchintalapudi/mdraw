@@ -6,6 +6,11 @@
     <div class="buttons">
       <toggle-button @toggle-button="goHome" :on="false" viewBox="-10 -10 20 20">
         <title>Go Home</title>
+        <path
+          d="M -6.25 0 L 0 -6.25 L 6.25 0 L 4.25 0 L 4.25 6.25 L 1.25 6.25 L 1.25 1.25 L -1.25 1.25 L -1.25 6.25 L -4.25 6.25 L -4.25 0 Z"
+          fill="transparent"
+          stroke="black"
+        ></path>
       </toggle-button>
       <toggle-button :on="panning" viewBox="-10 -10 20 20">
         <title>{{panning ? 'Stop' : 'Start'}} Panning</title>

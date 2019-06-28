@@ -27,7 +27,7 @@ export class MapStruct {
 
     private get rgroupBox(): BBox {
         if (!this.rgroups.length) return MapStruct.empty;
-        let minx, miny, maxx, maxy = maxx = miny = minx = 0;
+        let minx, miny = minx = 30, maxx, maxy = maxx = -30;
         for (const rgroup of this.rgroups) {
             minx = Math.min(minx, rgroup.x);
             miny = Math.min(miny, rgroup.y);
@@ -39,7 +39,7 @@ export class MapStruct {
 
     private get straightArrowBox(): BBox {
         if (!this.straightArrows.length) return MapStruct.empty;
-        let minx, miny, maxx, maxy = maxx = miny = minx = 0;
+        let minx, miny = minx = 0, maxx, maxy = maxx = 0;
         for (const sa of this.straightArrows) {
             const end = [(sa.dist + 20) * Math.cos(sa.angle * Math.PI / 180) + sa.x,
             (sa.dist + 20) * Math.sin(sa.angle * Math.PI / 180) + sa.y];
@@ -53,7 +53,7 @@ export class MapStruct {
 
     private get curvedArrowBox(): BBox {
         if (!this.curvedArrows.length) return MapStruct.empty;
-        let minx, miny, maxx, maxy = maxx = miny = minx = 0;
+        let minx, miny = minx = 5, maxx, maxy = maxx = -5;
         for (const ca of this.curvedArrows) {
             for (const curve of ca.curve) {
                 for (const point of curve) {
@@ -69,7 +69,7 @@ export class MapStruct {
 
     private get bondBox(): BBox {
         if (!this.bonds.length) return MapStruct.empty;
-        let minx, miny, maxx, maxy = maxx = miny = minx = 0;
+        let minx, miny = minx = 10, maxx, maxy = maxx = -10;
         for (const bond of this.bonds) {
             minx = Math.min(minx, bond.start.x, bond.end.x);
             miny = Math.min(miny, bond.start.y, bond.end.y);
@@ -79,16 +79,12 @@ export class MapStruct {
         return [minx - 10, miny - 10, maxx + 10, maxy + 10];
     }
 
-    private get rawViewBox(): BBox {
+    get rawViewBox(): BBox {
         const boxes = [this.rgroupBox, this.straightArrowBox, this.curvedArrowBox, this.bondBox];
         const minbox = [Math.min(...boxes.map(b => b[0])), Math.min(...boxes.map(b => b[1])),
         Math.max(...boxes.map(b => b[2])), Math.max(...boxes.map(b => b[3]))];
         minbox[2] -= minbox[0];
         minbox[3] -= minbox[1];
-        minbox[0] -= 20;
-        minbox[1] -= 20;
-        minbox[2] += 40;
-        minbox[3] += 40;
         return minbox as BBox;
     }
 

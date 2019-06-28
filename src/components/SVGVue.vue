@@ -84,6 +84,7 @@ export default Vue.extend({
           );
           this.stateMachine.viewbox.viewX -= dist;
           this.mx -= dist;
+          this.handleMouseMove({ x: this.mx, y: this.my }, true);
         }, 25);
       } else {
         window.clearInterval(this.shiftIntervals[0]);
@@ -98,6 +99,7 @@ export default Vue.extend({
           );
           this.stateMachine.viewbox.viewY -= dist;
           this.my -= dist;
+          this.handleMouseMove({ x: this.mx, y: this.my }, true);
         }, 25);
       } else {
         window.clearInterval(this.shiftIntervals[1]);
@@ -108,10 +110,14 @@ export default Vue.extend({
         this.shiftIntervals[2] = window.setInterval(() => {
           const dist = Math.min(
             10,
-            this.viewBox[0] + this.viewBox[2] - this.stateMachine.viewbox.viewX
+            this.viewBox[0] +
+              this.viewBox[2] -
+              (this.stateMachine.viewbox.viewX +
+                this.stateMachine.viewbox.viewWidth)
           );
           this.stateMachine.viewbox.viewX += dist;
           this.mx += dist;
+          this.handleMouseMove({ x: this.mx, y: this.my }, true);
         }, 25);
       } else {
         window.clearInterval(this.shiftIntervals[2]);
@@ -122,10 +128,14 @@ export default Vue.extend({
         this.shiftIntervals[3] = window.setInterval(() => {
           const dist = Math.min(
             10,
-            this.viewBox[1] + this.viewBox[3] - this.stateMachine.viewbox.viewY
+            this.viewBox[1] +
+              this.viewBox[3] -
+              (this.stateMachine.viewbox.viewY +
+                this.stateMachine.viewbox.viewHeight)
           );
           this.stateMachine.viewbox.viewY += dist;
           this.my += dist;
+          this.handleMouseMove({ x: this.mx, y: this.my }, true);
         }, 25);
       } else {
         window.clearInterval(this.shiftIntervals[3]);
@@ -133,14 +143,14 @@ export default Vue.extend({
     }
   },
   methods: {
-    transformPoint(payload: PointerEvent) {
+    transformPoint(payload: { x: number; y: number }) {
       const pt = (this.svg as any).createSVGPoint() as SVGPoint;
       pt.x = payload.x;
       pt.y = payload.y;
       return pt.matrixTransform(this.svg.getScreenCTM()!.inverse());
     },
-    handleMouseMove(payload: PointerEvent) {
-      const pt = this.transformPoint(payload);
+    handleMouseMove(payload: { x: number; y: number }, transformed = false) {
+      const pt = transformed ? payload : this.transformPoint(payload);
       this.stateMachine.execute(Action.MOUSE_MOVE, {
         target: "surface",
         payload: pt
