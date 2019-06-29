@@ -50,7 +50,7 @@ export class StateMachine extends StateMachineBase {
         return save(this.stateVariables, false);
     }
 
-    public execute(action: Action, payload: { target: string, payload: any }) {
+    public execute(action: Action, payload: { target: string, payload: any, event?: PointerEvent }) {
         this.lastAction = action;
         actions[+this.state][+action](this, payload);
     }

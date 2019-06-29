@@ -8,18 +8,17 @@ const handleButton: Transform = (stateMachine, { target, payload }) => {
         stateMachine.stateVariables.rgroups.push(new RGroup(payload));
     } else if (target === "lone-pair") {
         stateMachine.state = State.PLACING_LONE_PAIR;
-        stateMachine.stateVariables.selected.length = 0;
         stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
         stateMachine.stateVariables.count = payload;
     } else if (target === "straight-arrow") {
         stateMachine.state = State.PLACING_STRAIGHT_ARROW;
-        stateMachine.stateVariables.selected.length = 0;
         stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
     } else if (target === "curved-arrow") {
         stateMachine.state = State.PLACING_CURVED_ARROW;
-        stateMachine.stateVariables.selected.length = 0;
         stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
-        stateMachine.stateVariables.count = 0;
+    } else if (target === "panning") {
+        stateMachine.state = State.PANNING;
+        stateMachine.stateVariables.ipos.length = 0;
     }
 };
 

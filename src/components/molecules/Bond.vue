@@ -2,11 +2,11 @@
   <g
     :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`"
     :class="classes"
-    @pointerdown.stop="$emit('dmouse', {target:'bond', payload:bond})"
-    @pointermove.stop="$emit('mmouse', {target:'bond', payload:bond})"
-    @pointerup.stop="$emit('umouse', {target:'bond', payload:bond})"
-    @click.stop="$emit('click-bond', {target:'bond', payload:bond})"
-    @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond})"
+    @pointerdown.stop="$emit('dmouse', {target:'bond', payload:bond, event:$event})"
+    @pointermove.stop="$emit('mmouse', {target:'bond', payload:bond, event:$event})"
+    @pointerup.stop="$emit('umouse', {target:'bond', payload:bond, event:$event})"
+    @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
+    @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
   >
     <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
     <rect

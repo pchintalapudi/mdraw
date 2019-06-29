@@ -12,7 +12,11 @@
           stroke="black"
         ></path>
       </toggle-button>
-      <toggle-button :on="panning" viewBox="-10 -10 20 20">
+      <toggle-button
+        :on="panning"
+        @toggle-button="$emit('button-click', {target:'panning'})"
+        viewBox="-10 -10 20 20"
+      >
         <title>{{panning ? 'Stop' : 'Start'}} Panning</title>
       </toggle-button>
     </div>

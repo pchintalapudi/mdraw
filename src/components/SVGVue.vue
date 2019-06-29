@@ -5,6 +5,7 @@
     @pointerup.stop="handleMouseUp"
     :viewBox="viewport"
     ref="svg"
+    :cursor="cursor"
   >
     <defs-vue></defs-vue>
     <slot></slot>
@@ -79,6 +80,20 @@ export default Vue.extend({
         this.scrollRight ||
         this.scrollBottom
       );
+    },
+    grabbing(): boolean {
+      return this.stateMachine.stateVariables.ipos.length !== 0;
+    },
+    cursor(): string {
+      if (this.stateMachine.state === State.PANNING) {
+        if (this.grabbing) {
+          return "grabbing";
+        } else {
+          return "grab";
+        }
+      } else {
+        return "default";
+      }
     }
   },
   watch: {
@@ -101,7 +116,8 @@ export default Vue.extend({
       const pt = transformed ? payload : this.transformPoint(payload);
       this.stateMachine.execute(Action.MOUSE_MOVE, {
         target: "surface",
-        payload: pt
+        payload: pt,
+        event: payload instanceof PointerEvent ? payload : undefined
       });
       this.mx = pt.x;
       this.my = pt.y;
@@ -109,13 +125,15 @@ export default Vue.extend({
     handleMouseUp(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_UP, {
         target: "surface",
-        payload: this.transformPoint(payload)
+        payload: this.transformPoint(payload),
+        event: payload
       });
     },
     handleMouseDown(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_DOWN, {
         target: "surface",
-        payload: this.transformPoint(payload)
+        payload: this.transformPoint(payload),
+        event: payload
       });
     },
     scroll() {

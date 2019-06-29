@@ -3,7 +3,7 @@ import State from "./state";
 import { StateMachine } from "./index";
 const actions: Transform[][] = [];
 
-function identity(stateMachine: StateMachine, payload: { target: string, payload: any }) {
+function identity(stateMachine: StateMachine, payload: { target: string, payload: any, event?: PointerEvent }) {
     // tslint:disable-next-line: no-console
     console.warn("Unregistered transformation");
     // tslint:disable-next-line: no-console

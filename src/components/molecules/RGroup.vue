@@ -145,15 +145,15 @@ export default Vue.extend({
   methods: {
     pointerDown(event: PointerEvent) {
       const rgroup = this.rgroup;
-      this.$emit("dmouse", { target: "rgroup", payload: rgroup });
+      this.$emit("dmouse", { target: "rgroup", payload: rgroup, event });
     },
     pointerUp(event: PointerEvent) {
       const rgroup = this.rgroup;
-      this.$emit("umouse", { target: "rgroup", payload: rgroup });
+      this.$emit("umouse", { target: "rgroup", payload: rgroup, event });
     },
     pointerMove(event: PointerEvent) {
       const rgroup = this.rgroup;
-      this.$emit("mmouse", { target: "rgroup", payload: rgroup });
+      this.$emit("mmouse", { target: "rgroup", payload: rgroup, event });
     },
     softOmittable(): boolean {
       return this.rgroup.softOmittable;

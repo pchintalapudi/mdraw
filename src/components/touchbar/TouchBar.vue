@@ -8,7 +8,7 @@
     <atom-creator-vue :state-machine="stateMachine" @button-click="cascade"></atom-creator-vue>
     <lone-pair-creator-vue :state-machine="stateMachine" @button-click="cascade"></lone-pair-creator-vue>
     <arrow-creator-vue :state-machine="stateMachine" @button-click="cascade"></arrow-creator-vue>
-    <maps-vue :state-machine="stateMachine"></maps-vue>
+    <maps-vue :state-machine="stateMachine" @button-click="cascade"></maps-vue>
   </span>
 </template>
 <script lang="ts">
