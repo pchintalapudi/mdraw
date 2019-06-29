@@ -92,6 +92,7 @@ export default Vue.extend({
   max-height: 10%;
   transition-property: opacity;
   transition: opacity 500ms;
+  z-index: 2;
 }
 .touch-bar > * {
   margin: 5px;

@@ -1,6 +1,5 @@
 <template>
   <svg
-    overflow="auto"
     @pointermove.stop="handleMouseMove"
     @pointerdown.stop="handleMouseDown"
     @pointerup.stop="handleMouseUp"
@@ -23,7 +22,7 @@ export default Vue.extend({
       svg: (undefined as any) as SVGGraphicsElement,
       mx: this.stateMachine.viewbox.viewWidth / 2,
       my: this.stateMachine.viewbox.viewHeight / 2,
-      shiftIntervals: [0, 0, 0, 0]
+      autoscroller: 0
     };
   },
   mounted() {
@@ -72,73 +71,22 @@ export default Vue.extend({
             this.stateMachine.viewbox.viewHeight -
             50
       );
+    },
+    needsScroll(): boolean {
+      return (
+        this.scrollLeft ||
+        this.scrollTop ||
+        this.scrollRight ||
+        this.scrollBottom
+      );
     }
   },
   watch: {
-    scrollLeft(next: boolean) {
+    needsScroll(next) {
       if (next) {
-        this.shiftIntervals[0] = window.setInterval(() => {
-          const dist = Math.min(
-            10,
-            this.stateMachine.viewbox.viewX - this.viewBox[0]
-          );
-          this.stateMachine.viewbox.viewX -= dist;
-          this.mx -= dist;
-          this.handleMouseMove({ x: this.mx, y: this.my }, true);
-        }, 25);
+        this.autoscroller = window.setInterval(() => this.scroll(), 25);
       } else {
-        window.clearInterval(this.shiftIntervals[0]);
-      }
-    },
-    scrollTop(next: boolean) {
-      if (next) {
-        this.shiftIntervals[1] = window.setInterval(() => {
-          const dist = Math.min(
-            10,
-            this.stateMachine.viewbox.viewY - this.viewBox[1]
-          );
-          this.stateMachine.viewbox.viewY -= dist;
-          this.my -= dist;
-          this.handleMouseMove({ x: this.mx, y: this.my }, true);
-        }, 25);
-      } else {
-        window.clearInterval(this.shiftIntervals[1]);
-      }
-    },
-    scrollRight(next: boolean) {
-      if (next) {
-        this.shiftIntervals[2] = window.setInterval(() => {
-          const dist = Math.min(
-            10,
-            this.viewBox[0] +
-              this.viewBox[2] -
-              (this.stateMachine.viewbox.viewX +
-                this.stateMachine.viewbox.viewWidth)
-          );
-          this.stateMachine.viewbox.viewX += dist;
-          this.mx += dist;
-          this.handleMouseMove({ x: this.mx, y: this.my }, true);
-        }, 25);
-      } else {
-        window.clearInterval(this.shiftIntervals[2]);
-      }
-    },
-    scrollBottom(next: boolean) {
-      if (next) {
-        this.shiftIntervals[3] = window.setInterval(() => {
-          const dist = Math.min(
-            10,
-            this.viewBox[1] +
-              this.viewBox[3] -
-              (this.stateMachine.viewbox.viewY +
-                this.stateMachine.viewbox.viewHeight)
-          );
-          this.stateMachine.viewbox.viewY += dist;
-          this.my += dist;
-          this.handleMouseMove({ x: this.mx, y: this.my }, true);
-        }, 25);
-      } else {
-        window.clearInterval(this.shiftIntervals[3]);
+        window.clearInterval(this.autoscroller);
       }
     }
   },
@@ -169,6 +117,48 @@ export default Vue.extend({
         target: "surface",
         payload: this.transformPoint(payload)
       });
+    },
+    scroll() {
+      const defaultDist = 10;
+      if (this.scrollLeft) {
+        const dist = Math.min(
+          defaultDist,
+          this.stateMachine.viewbox.viewX - this.viewBox[0]
+        );
+        this.stateMachine.viewbox.viewX -= dist;
+        this.mx -= dist;
+      }
+      if (this.scrollTop) {
+        const dist = Math.min(
+          defaultDist,
+          this.stateMachine.viewbox.viewY - this.viewBox[1]
+        );
+        this.stateMachine.viewbox.viewY -= dist;
+        this.my -= dist;
+      }
+      if (this.scrollRight) {
+        const dist = Math.min(
+          defaultDist,
+          this.viewBox[0] +
+            this.viewBox[2] -
+            (this.stateMachine.viewbox.viewX +
+              this.stateMachine.viewbox.viewWidth)
+        );
+        this.stateMachine.viewbox.viewX += dist;
+        this.mx += dist;
+      }
+      if (this.scrollBottom) {
+        const dist = Math.min(
+          defaultDist,
+          this.viewBox[1] +
+            this.viewBox[3] -
+            (this.stateMachine.viewbox.viewY +
+              this.stateMachine.viewbox.viewHeight)
+        );
+        this.stateMachine.viewbox.viewY += dist;
+        this.my += dist;
+      }
+      this.handleMouseMove({ x: this.mx, y: this.my }, true);
     }
   }
 });
