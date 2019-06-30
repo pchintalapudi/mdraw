@@ -126,7 +126,7 @@ export default Vue.extend({
       });
     },
     scroll() {
-      const defaultDist = 10;
+      const defaultDist = 15;
       if (this.scrollLeft) {
         const dist = Math.max(
           Math.min(defaultDist, this.viewPort.startX - this.viewBox.startX),
