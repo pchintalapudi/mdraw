@@ -1,7 +1,12 @@
 <template>
   <transition name="fade">
     <div v-if="openDialog" class="root" @pointerdown.stop="pointerDown" @pointerup.stop="pointerUp">
-      <component :is="openDialog" :state-machine="stateMachine" @stop-cancel="stopCancel"></component>
+      <component
+        :is="openDialog"
+        :pointer-up="triggered"
+        :state-machine="stateMachine"
+        @stop-cancel="stopCancel"
+      ></component>
     </div>
   </transition>
 </template>
@@ -13,7 +18,7 @@ export default Vue.extend({
   components: { "mapping-vue": MinimapVue },
   props: { stateMachine: StateMachine },
   data() {
-    return { mouseDown: false };
+    return { mouseDown: false, triggered: false };
   },
   computed: {
     openDialog(): string {
@@ -32,6 +37,8 @@ export default Vue.extend({
     pointerUp() {
       if (this.mouseDown) {
         this.cancel();
+      } else {
+        this.triggered = !this.triggered;
       }
     },
     stopCancel() {

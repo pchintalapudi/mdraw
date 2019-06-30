@@ -1,16 +1,12 @@
 <template>
   <div class="map">
     <svg
-      :viewBox="viewBox.serialized"
+      :viewBox="maxBox"
       @pointerdown.stop="pointerDown"
       @pointermove.stop="pointerMove"
       @pointerup.stop="pointerUp"
       @click.stop
       ref="svg"
-      height="100%"
-      width="100%"
-      x="0"
-      y="0"
     >
       <use href="#molecules"></use>
       <rect
@@ -33,13 +29,31 @@ export default Vue.extend({
   mounted() {
     this.svg = this.$refs.svg as SVGGraphicsElement;
   },
-  props: { stateMachine: Object as PropType<StateMachine> },
+  props: { stateMachine: Object as PropType<StateMachine>, triggered: Boolean },
+  watch: {
+    triggered() {
+      this.stateMachine.execute(Action.MOUSE_UP, {
+        target: "",
+        payload: {
+          x: this.viewPort.startX + this.viewPort.width / 2,
+          y: this.viewPort.startY + this.viewPort.height / 2
+        }
+      });
+    }
+  },
   computed: {
     viewBox(): BoundingBox {
       return this.stateMachine.view.viewBox;
     },
     viewPort(): ViewPort {
       return this.stateMachine.view.viewPort;
+    },
+    maxBox(): number[] {
+      const startX = Math.min(this.viewBox.startX, this.viewPort.startX),
+        startY = Math.min(this.viewBox.startY, this.viewPort.startY);
+      const width = Math.max(this.viewBox.endX, this.viewPort.endX) - startX;
+      const height = Math.max(this.viewBox.endY, this.viewPort.endY) - startY;
+      return [startX, startY, width, height];
     }
   },
   methods: {
@@ -82,8 +96,14 @@ export default Vue.extend({
   pointer-events: none;
 }
 .map {
-  max-height: 80%;
-  max-width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map > svg {
   background-color: white;
+  max-height: 80vh;
+  max-width: 80vw;
 }
 </style>

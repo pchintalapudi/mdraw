@@ -128,33 +128,33 @@ export default Vue.extend({
     scroll() {
       const defaultDist = 10;
       if (this.scrollLeft) {
-        const dist = Math.min(
-          defaultDist,
-          this.viewPort.startX - this.viewBox.startX
+        const dist = Math.max(
+          Math.min(defaultDist, this.viewPort.startX - this.viewBox.startX),
+          0
         );
         this.viewPort.startX -= dist;
         this.mx -= dist;
       }
       if (this.scrollTop) {
-        const dist = Math.min(
-          defaultDist,
-          this.viewPort.startY - this.viewBox.startY
+        const dist = Math.max(
+          Math.min(defaultDist, this.viewPort.startY - this.viewBox.startY),
+          0
         );
         this.viewPort.startY -= dist;
         this.my -= dist;
       }
       if (this.scrollRight) {
-        const dist = Math.min(
-          defaultDist,
-          this.viewBox.endX - this.viewPort.endX
+        const dist = Math.max(
+          Math.min(defaultDist, this.viewBox.endX - this.viewPort.endX),
+          0
         );
         this.viewPort.startX += dist;
         this.mx += dist;
       }
       if (this.scrollBottom) {
-        const dist = Math.min(
-          defaultDist,
-          this.viewBox.endY - this.viewPort.startY
+        const dist = Math.max(
+          Math.min(defaultDist, this.viewBox.endY - this.viewPort.startY),
+          0
         );
         this.viewPort.startY += dist;
         this.my += dist;
