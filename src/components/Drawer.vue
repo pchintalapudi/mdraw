@@ -4,7 +4,10 @@
       <molecule-vue :state-machine="stateMachine" :omit="omit" :d3="d3" id="molecules"></molecule-vue>
       <widget-vue :state-machine="stateMachine"></widget-vue>
     </svg-vue>
-    <touchbar-vue class="touch-bar" :state-machine="stateMachine"></touchbar-vue>
+    <span class="touch-bar-spacer">
+      <touchbar-vue class="touch-bar" :state-machine="stateMachine"></touchbar-vue>
+    </span>
+    <dialog-vue :state-machine="stateMachine"></dialog-vue>
   </div>
 </template>
 <script lang="ts">
@@ -16,12 +19,14 @@ import WidgetVue from "@/components/widgets/WidgetView.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SVGVue from "@/components/SVGVue.vue";
 import { data, keyHandler } from "./utils";
+import DialogVue from "@/components/dialogs/Dialog.vue";
 export default Vue.extend({
   components: {
     "svg-vue": SVGVue,
     "molecule-vue": MoleculeVue,
     "widget-vue": WidgetVue,
-    "touchbar-vue": TouchBarVue
+    "touchbar-vue": TouchBarVue,
+    "dialog-vue": DialogVue
   },
   data,
   mounted() {
@@ -31,11 +36,14 @@ export default Vue.extend({
       (this.keyHandler = (ev: KeyboardEvent) =>
         keyHandler(this.$data as ReturnType<typeof data>, ev))
     );
-    window.addEventListener("resize", this.stateMachine.viewbox.listener);
+    window.addEventListener("resize", this.stateMachine.view.viewPort.listener);
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.keyHandler);
-    window.removeEventListener("resize", this.stateMachine.viewbox.listener);
+    window.removeEventListener(
+      "resize",
+      this.stateMachine.view.viewPort.listener
+    );
   },
   computed: {
     //For debugging
@@ -53,15 +61,21 @@ export default Vue.extend({
 });
 </script>
 <style>
-.touch-bar {
+.touch-bar-spacer {
   position: fixed;
   max-height: 200px;
   height: 10vh;
   min-height: 2em;
+  width: 100%;
   bottom: 5%;
-  left: 100px;
-  right: 100px;
-  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+.touch-bar {
+  height: 100%;
+  padding: 5px;
 }
 .surface {
   height: 100%;

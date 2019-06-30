@@ -96,7 +96,6 @@ export default Vue.extend({
   display: flex;
   flex-flow: column wrap;
   height: 100%;
-  width: 30%;
   justify-content: space-evenly;
 }
 .atom-creator > :first-child {

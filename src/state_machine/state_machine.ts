@@ -2,15 +2,14 @@ import State from "./state";
 import StateVariables from "./state_variables";
 import Action from "./actions";
 import { actions } from "./transitions";
-import { History } from "./extensions";
+import { History, MapStruct } from "./extensions";
 import { save, load, deleteSelected as delSel } from "./marshal_unmarshal";
-import { MapStruct } from "./extensions/maps";
 
 class StateMachineBase extends History {
 
     public stateVariables = new StateVariables();
     public lastAction = Action.__COUNT__;
-    public viewbox = new MapStruct(this.stateVariables.rgroups, this.stateVariables.bonds,
+    public view = new MapStruct(this.stateVariables.rgroups, this.stateVariables.bonds,
         this.stateVariables.straightArrows, this.stateVariables.curvedArrows);
     // tslint:disable-next-line: variable-name
     private _state = State.IDLE;

@@ -55,9 +55,7 @@ export default Vue.extend({
       ) {
         styles.push(["opacity", "0.1"]);
       }
-      if (this.mouseTransparent) {
-        styles.push(["pointer-events", "none"]);
-      }
+      styles.push(["pointer-events", this.mouseTransparent ? "none" : "all"]);
       return styles.map(sp => sp.join(":")).join(";");
     }
   },
@@ -89,10 +87,8 @@ export default Vue.extend({
   justify-content: center;
   align-items: center;
   background-color: #00000011;
-  max-height: 10%;
   transition-property: opacity;
   transition: opacity 500ms;
-  z-index: 2;
 }
 .touch-bar > * {
   margin: 5px;

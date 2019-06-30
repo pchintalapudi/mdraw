@@ -7,6 +7,7 @@ import register_lone_pairs from "./lone_pair";
 import register_straight_arrows from "./straight_arrow";
 import register_curved_arrows from "./curved_arrow";
 import register_panning from "./panning";
+import register_mapping from "./mapping";
 
 function init() {
     register_pane_transforms();
@@ -18,6 +19,7 @@ function init() {
     register_straight_arrows();
     register_curved_arrows();
     register_panning();
+    register_mapping();
 }
 
 export { init as init_transforms };

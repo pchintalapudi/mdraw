@@ -3,7 +3,7 @@
     @pointermove.stop="handleMouseMove"
     @pointerdown.stop="handleMouseDown"
     @pointerup.stop="handleMouseUp"
-    :viewBox="viewport"
+    :viewBox="viewPort.serialized"
     ref="svg"
     :cursor="cursor"
   >
@@ -15,14 +15,15 @@
 import Vue, { PropType } from "vue";
 import DefsVue from "./defs/Defs.vue";
 import { StateMachine, Action, State } from "@/state_machine";
+import { ViewPort, BoundingBox } from "@/state_machine/extensions";
 export default Vue.extend({
   components: { "defs-vue": DefsVue },
   props: { stateMachine: Object as PropType<StateMachine> },
   data() {
     return {
       svg: (undefined as any) as SVGGraphicsElement,
-      mx: this.stateMachine.viewbox.viewWidth / 2,
-      my: this.stateMachine.viewbox.viewHeight / 2,
+      mx: this.stateMachine.view.viewPort.width / 2,
+      my: this.stateMachine.view.viewPort.height / 2,
       autoscroller: 0
     };
   },
@@ -30,11 +31,11 @@ export default Vue.extend({
     this.svg = this.$refs.svg as SVGGraphicsElement;
   },
   computed: {
-    viewport(): number[] {
-      return this.stateMachine.viewbox.viewport;
+    viewPort(): ViewPort {
+      return this.stateMachine.view.viewPort;
     },
-    viewBox(): number[] {
-      return this.stateMachine.viewbox.viewBox;
+    viewBox(): BoundingBox {
+      return this.stateMachine.view.viewBox;
     },
     autoscroll(): boolean {
       switch (this.stateMachine.state) {
@@ -50,28 +51,16 @@ export default Vue.extend({
       }
     },
     scrollLeft(): boolean {
-      return this.autoscroll && this.mx < this.stateMachine.viewbox.viewX + 50;
+      return this.autoscroll && this.mx < this.viewPort.startX + 50;
     },
     scrollTop(): boolean {
-      return this.autoscroll && this.my < this.stateMachine.viewbox.viewY + 50;
+      return this.autoscroll && this.my < this.viewPort.startY + 50;
     },
     scrollRight(): boolean {
-      return (
-        this.autoscroll &&
-        this.mx >
-          this.stateMachine.viewbox.viewX +
-            this.stateMachine.viewbox.viewWidth -
-            50
-      );
+      return this.autoscroll && this.mx > this.viewPort.endX - 50;
     },
     scrollBottom(): boolean {
-      return (
-        this.autoscroll &&
-        this.my >
-          this.stateMachine.viewbox.viewY +
-            this.stateMachine.viewbox.viewHeight -
-            50
-      );
+      return this.autoscroll && this.my > this.viewPort.endY - 50;
     },
     needsScroll(): boolean {
       return (
@@ -141,39 +130,33 @@ export default Vue.extend({
       if (this.scrollLeft) {
         const dist = Math.min(
           defaultDist,
-          this.stateMachine.viewbox.viewX - this.viewBox[0]
+          this.viewPort.startX - this.viewBox.startX
         );
-        this.stateMachine.viewbox.viewX -= dist;
+        this.viewPort.startX -= dist;
         this.mx -= dist;
       }
       if (this.scrollTop) {
         const dist = Math.min(
           defaultDist,
-          this.stateMachine.viewbox.viewY - this.viewBox[1]
+          this.viewPort.startY - this.viewBox.startY
         );
-        this.stateMachine.viewbox.viewY -= dist;
+        this.viewPort.startY -= dist;
         this.my -= dist;
       }
       if (this.scrollRight) {
         const dist = Math.min(
           defaultDist,
-          this.viewBox[0] +
-            this.viewBox[2] -
-            (this.stateMachine.viewbox.viewX +
-              this.stateMachine.viewbox.viewWidth)
+          this.viewBox.endX - this.viewPort.endX
         );
-        this.stateMachine.viewbox.viewX += dist;
+        this.viewPort.startX += dist;
         this.mx += dist;
       }
       if (this.scrollBottom) {
         const dist = Math.min(
           defaultDist,
-          this.viewBox[1] +
-            this.viewBox[3] -
-            (this.stateMachine.viewbox.viewY +
-              this.stateMachine.viewbox.viewHeight)
+          this.viewBox.endY - this.viewPort.startY
         );
-        this.stateMachine.viewbox.viewY += dist;
+        this.viewPort.startY += dist;
         this.my += dist;
       }
       this.handleMouseMove({ x: this.mx, y: this.my }, true);
