@@ -97,4 +97,26 @@ body {
   padding: 0;
   margin: 0;
 }
+
+.button,
+.cancel-button {
+  background-color: transparent;
+  transition: background-color 200ms;
+}
+
+.button:hover {
+  background-color: #0088ff44;
+}
+
+.button:active {
+  background-color: #0088ff88;
+}
+
+.cancel-button:hover {
+  background-color: #ff220044;
+}
+
+.cancel-button:hover {
+  background-color: #ff220088;
+}
 </style>
