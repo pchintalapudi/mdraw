@@ -1,1 +1,1 @@
-declare module '@freder/bezier-spline';
+declare module "@freder/bezier-spline";

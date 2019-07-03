@@ -123,4 +123,8 @@ body {
 .cancel-button:hover {
   background-color: #ff220088;
 }
+
+.transparent {
+  pointer-events: none;
+}
 </style>

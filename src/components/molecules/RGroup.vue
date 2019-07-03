@@ -170,7 +170,6 @@ export default Vue.extend({
   color: inherit;
 }
 
-.transparent,
 .omittable.soft.override.transparent {
   pointer-events: none;
 }

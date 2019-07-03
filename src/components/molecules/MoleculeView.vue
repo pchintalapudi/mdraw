@@ -71,25 +71,23 @@ export default Vue.extend({
     selected(): Array<RGroup | StraightArrow> {
       return this.stateMachine.stateVariables.selected;
     },
-    transparent(): Array<{ x: number; y: number; id: number } | Bond> {
+    transparent(): Array<RGroup | Bond | StraightArrow | CurvedArrow> {
       const transp = [];
-      if (
-        this.stateMachine.state === State.PLACING_ATOM ||
-        this.stateMachine.state === State.PLACING_ATOM_AND_BOND
-      ) {
-        transp.push(this.rgroups[this.rgroups.length - 1]);
-        transp.push(...this.bonds);
-      } else if (this.stateMachine.state === State.MOVING_ATOM) {
-        transp.push(...this.selected);
-        transp.push(...this.bonds);
-      } else if (
-        this.stateMachine.state === State.PLACING_LONE_PAIR ||
-        this.stateMachine.state === State.SELECTING
-      ) {
-        transp.push(...this.bonds);
-      } else if (this.stateMachine.state === State.ANGLING_LONE_PAIR) {
-        transp.push(...this.rgroups);
-        transp.push(...this.bonds);
+      switch (this.stateMachine.state) {
+        case State.PLACING_ATOM:
+        case State.PLACING_ATOM_AND_BOND:
+          transp.push(this.rgroups[this.rgroups.length - 1]);
+        case State.PLACING_LONE_PAIR:
+        case State.SELECTING:
+          transp.push(...this.bonds);
+          break;
+        case State.MOVING_ATOM:
+          transp.push(...this.selected);
+          transp.push(...this.bonds);
+          break;
+        case State.ANGLING_LONE_PAIR:
+          transp.push(...this.rgroups);
+          transp.push(...this.bonds);
       }
       return transp;
     }

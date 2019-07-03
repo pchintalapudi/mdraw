@@ -21,7 +21,11 @@ import Vue, { PropType } from "vue";
 import { RGroup, Bond, CurvedArrow } from "@/models";
 import { ArrayPoint, BezierCurve } from "@/utils";
 export default Vue.extend({
-  props: { arrow: Object as PropType<CurvedArrow>, d3: Boolean },
+  props: {
+    arrow: Object as PropType<CurvedArrow>,
+    d3: Boolean,
+    transparent: Boolean
+  },
   computed: {
     points(): Array<{ x: number; y: number }> {
       return this.arrow.draggablePoints;
@@ -58,9 +62,12 @@ export default Vue.extend({
     },
     computedPath(): string {
       return `
-        M ${this.bezierCoefficients[0][0][0]} ${
-        this.bezierCoefficients[0][0][1]
-      } ${this.mappedCoeffs}`;
+        M ${this.bezierCoefficients[0][0][0]} ${this.bezierCoefficients[0][0][1]} ${this.mappedCoeffs}`;
+    },
+    classes(): string[] {
+      const clazzes = [] as string[];
+      if (this.transparent) clazzes.push("transparent");
+      return clazzes;
     }
   }
 });

@@ -20,7 +20,8 @@ export default Vue.extend({
   props: {
     arrow: Object as PropType<StraightArrow>,
     selected: Boolean,
-    d3: Boolean
+    d3: Boolean,
+    transparent: Boolean
   },
   computed: {
     dist(): number {
@@ -34,6 +35,11 @@ export default Vue.extend({
     },
     angle(): number {
       return this.arrow.angle;
+    },
+    classes(): string[] {
+      const classes = [] as string[];
+      if (this.transparent) classes.push("transparent");
+      return classes;
     }
   }
 });

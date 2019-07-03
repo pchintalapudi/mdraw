@@ -6,10 +6,10 @@
       @toggle-button="$emit('button-click', {target:'mapping'})"
     >
       <title>MiniMap</title>
-      <svg height="40" width="40" x="-20" y="-20" :viewBox="viewBox.serialized">
-        <use href="#molecules"></use>
+      <svg height="40" width="40" x="-20" y="-20" :viewBox="viewPort.serialized">
+        <use href="#molecules" />
       </svg>
-      <use href="#pan-arrow" transform="translate(0, -10)"/>
+      <use href="#pan-arrow" transform="translate(0, -10)" />
       <use href="#pan-arrow" transform="translate(10, 0) rotate(90, 0, 0)"></use>
       <use href="#pan-arrow" transform="translate(0, 10) rotate(180, 0, 0)"></use>
       <use href="#pan-arrow" transform="translate(-10, 0) rotate(-90, 0, 0)"></use>
@@ -58,14 +58,13 @@ export default Vue.extend({
     panning(): boolean {
       return this.stateMachine.state === State.PANNING;
     },
-    viewBox(): ViewPort {
+    viewPort(): ViewPort {
       return this.stateMachine.view.viewPort;
     }
   },
   methods: {
     goHome() {
-      this.stateMachine.view.viewPort.startX = 0;
-      this.stateMachine.view.viewPort.startY = 0;
+      this.stateMachine.view.viewPort.scrollTo(0, 0);
     }
   }
 });

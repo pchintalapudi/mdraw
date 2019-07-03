@@ -24,10 +24,12 @@ const handleButton: Transform = (stateMachine, { target, payload }) => {
         case "panning":
             stateMachine.state = State.PANNING;
             stateMachine.stateVariables.ipos.length = 0;
+            stateMachine.view.viewPort.stopEasing();
             break;
         case "mapping":
             stateMachine.state = State.MAPPING;
             stateMachine.stateVariables.ipos.length = 0;
+            stateMachine.view.viewPort.stopEasing();
             break;
     }
 };

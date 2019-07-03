@@ -42,14 +42,6 @@
       />
     </template>
     <template v-else-if="bond.bondOrder == 3">
-      <!-- <line
-        y1="5"
-        y2="5"
-        :x1="doubleStartLeft"
-        :x2="doubleEndLeft"
-        class="triple bond"
-        :stroke="d3 ? 'url(#d3bond)' : 'black'"
-      />-->
       <rect
         :x="doubleStartLeft"
         :width="doubleEndLeft - doubleStartLeft"
@@ -58,14 +50,6 @@
         stroke="transparent"
         :fill="d3 ? 'url(#d3bond)' : 'black'"
       />
-      <!-- <line
-        y1="0"
-        y2="0"
-        x1="0"
-        :x2="dist"
-        class="triple bond"
-        :stroke="d3 ? 'url(#d3bond)' : 'black'"
-      />-->
       <rect
         x="0"
         :y="-height / 2"
@@ -74,14 +58,6 @@
         stroke="transparent"
         :fill="d3 ? 'url(#d3bond)' : 'black'"
       />
-      <!-- <line
-        y1="-5"
-        y2="-5"
-        :x1="doubleStartRight"
-        :x2="doubleEndRight"
-        class="triple bond"
-        :stroke="d3 ? 'url(#d3bond)' : 'black'"
-      />-->
       <rect
         :x="doubleStartRight"
         :width="doubleEndRight - doubleStartRight"
@@ -252,8 +228,7 @@ export default Vue.extend({
   pointer-events: all;
 }
 
-.transparent .clickme,
-.transparent {
+.transparent .clickme {
   pointer-events: none;
 }
 </style>

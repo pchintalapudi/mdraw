@@ -88,7 +88,7 @@ export default Vue.extend({
   watch: {
     needsScroll(next) {
       if (next) {
-        this.autoscroller = window.setInterval(() => this.scroll(), 25);
+        this.autoscroller = window.setInterval(() => this.scroll(), 12.5);
       } else {
         window.clearInterval(this.autoscroller);
       }
@@ -126,7 +126,7 @@ export default Vue.extend({
       });
     },
     scroll() {
-      const defaultDist = 15;
+      const defaultDist = 7.5;
       if (this.scrollLeft) {
         const dist = Math.max(
           Math.min(defaultDist, this.viewPort.startX - this.viewBox.startX),
