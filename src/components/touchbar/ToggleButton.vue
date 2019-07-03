@@ -9,7 +9,7 @@ export default Vue.extend({
   props: { on: Boolean },
   computed: {
     classes(): string[] {
-      const clazzes = ["button"];
+      const clazzes = ["toggle-button"];
       if (this.on) clazzes.push("on");
       return clazzes;
     }
@@ -17,23 +17,23 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
-.button {
+.toggle-button {
   background-color: transparent;
   transition: background-color 250ms;
 }
-.button.on {
+.toggle-button.on {
   background-color: #0088ff33;
 }
-.button:hover {
+.toggle-button:hover {
   background-color: #0088ff44;
 }
-.button.on:hover {
+.toggle-button.on:hover {
   background-color: #0088ff66;
 }
-.button:active {
+.toggle-button:active {
   background-color: #0088ff88;
 }
-.button>* {
+.toggle-button > * {
   pointer-events: none;
 }
 </style>

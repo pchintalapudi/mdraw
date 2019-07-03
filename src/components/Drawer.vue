@@ -102,6 +102,10 @@ body {
 .cancel-button {
   background-color: transparent;
   transition: background-color 200ms;
+  padding: 5px 10px;
+  border-radius: 5px;
+  user-select: none;
+  cursor: pointer;
 }
 
 .button:hover {

@@ -1,5 +1,6 @@
 import { StateMachine, Action } from "@/state_machine";
 import { element, RGroup } from "@/models";
+import { io } from "@/io";
 
 export function data() {
     return {
@@ -49,18 +50,28 @@ export function keyHandler(vmdata: ReturnType<typeof data>, event: KeyboardEvent
         case "s":
             if (!event.ctrlKey) return;
             if (!event.shiftKey) {
-                //TODO: Save here!!!
+                if (!stateMachine.saved) {
+                    io.getFile(true, true, true).then(file => {
+                        if (file !== null) return io.write(file, stateMachine.getSaveData(), false);
+                    }).then(() => stateMachine.markSaved());
+                }
                 break;
             }
         case "S":
             if (event.ctrlKey && event.shiftKey) {
-                //TODO: Save as here!!!
+                io.getFile(true).then(file => {
+                    if (file !== null) return io.write(file, stateMachine.getSaveData(), false);
+                }).then(() => stateMachine.markSaved());
                 break;
             }
             return;
         case "o":
             if (event.ctrlKey) {
-                //TODO: Open a new file here!!!
+                io.getFile(false).then((file: string | null) => {
+                    return file !== null ? io.read(file, false) : null;
+                }).then((read: string | null) => {
+                    if (read !== null) stateMachine.loadData(read, true);
+                });
                 break;
             } else {
                 vmdata.omit = !vmdata.omit;
@@ -68,7 +79,11 @@ export function keyHandler(vmdata: ReturnType<typeof data>, event: KeyboardEvent
             }
         case "i":
             if (event.ctrlKey) {
-                //TODO: Import a file here!!!
+                io.getFile(false).then((file: string | null) => {
+                    return file !== null ? io.read(file, false) : null;
+                }).then((read: string | null) => {
+                    if (read !== null) stateMachine.loadData(read, false);
+                });
                 break;
             }
             return;

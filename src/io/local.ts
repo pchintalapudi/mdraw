@@ -36,12 +36,21 @@ function spawnConfirmationDialog(selectedFile: string, resolve: (value: any) => 
 
 export class LocalIO extends IO {
 
-    public async getFile(write: boolean, choose?: boolean) {
+    private prevFile = null as string | null;
+
+    public async getFile(write: boolean, saveFile = true, def = false) {
+        if (def && this.prevFile !== null) return Promise.resolve(this.prevFile);
         const fileNameStr = await this.read(FILE_NAME_FILE, false);
         if (fileNameStr === null && !write) await this.write(FILE_NAME_FILE, "", false);
         const fileNames = fileNameStr ? fileNameStr.split(" ") : [];
         let resolve: (value: any) => void, reject: (error: any) => void;
-        const promise = new Promise<string | null>((rs, rj) => { resolve = rs; reject = rj; });
+        const promise = new Promise<string | null>((rs, rj) => {
+            reject = rj;
+            resolve = saveFile ? (value: any) => {
+                if (value !== null) this.prevFile = value;
+                rs(value);
+            } : rs;
+        });
         const root = document.createElement("div");
         try {
             root.setAttribute("style", "position:fixed;top:0;left:0;right:0;bottom:0;\
@@ -53,10 +62,10 @@ export class LocalIO extends IO {
             const backing = document.createElement("div");
             root.appendChild(backing);
             backing.setAttribute("style", "position:fixed;top:10vh;left:10vw;\
-            bottom:10vh;right:10vw;background-color:white");
-            backing.onclick = Event.prototype.stopPropagation;
+            bottom:10vh;right:10vw;background-color:white;display:flex;flex-flow:column nowrap;");
+            backing.onclick = (ev) => ev.stopPropagation();
             const files = document.createElement("div");
-            files.setAttribute("style", "overflow:auto");
+            files.setAttribute("style", "overflow:auto;flex:1;");
             let selectedFile = "";
             const fileElements: HTMLElement[] = [];
             const clickHandler = (name: string, element: HTMLElement) => {
@@ -95,6 +104,7 @@ export class LocalIO extends IO {
                 files.appendChild(element);
                 return element;
             }));
+            backing.appendChild(files);
             const buttons = document.createElement("span");
             backing.appendChild(buttons);
             buttons.setAttribute("style", "display:flex;flex-flow:row-reverse wrap;");
@@ -116,7 +126,7 @@ export class LocalIO extends IO {
             buttons.appendChild(successButton);
             cancelButton.onclick = () => resolve(null);
             Promise.resolve().then(() => root.style.opacity = "1");
-            document.body.appendChild(backing);
+            document.body.appendChild(root);
         } catch (error) {
             reject!(error);
         }

@@ -24,11 +24,11 @@ export class IframeIO extends IO {
         window.onmessage = this.initPort;
     }
 
-    public async getFile() {
+    public async getFile(write: boolean, saveFile = true, def = false) {
         let resolve: (value: any) => void, reject: (reason: any) => void;
         const promise = new Promise<string | null>((rs, rj) => { resolve = rs; reject = rj; });
         this.responseMap.set(this.id, { resolve: resolve!, reject: reject! });
-        this.sendMessage({ type: "getFile", id: this.id++ });
+        this.sendMessage({ type: "getFile", data: `${write}|${saveFile}|${!!def}`, id: this.id++ });
         return promise;
     }
 

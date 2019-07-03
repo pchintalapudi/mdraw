@@ -3,7 +3,7 @@ export abstract class IO {
 
     private stateMachine?: StateMachine;
 
-    public async abstract getFile(write: boolean, choose?:boolean): Promise<string | null>;
+    public async abstract getFile(write: boolean, saveFile?: boolean, def?: boolean): Promise<string | null>;
 
     public async abstract write(filename: string, data: string, session: boolean): Promise<void>;
 
