@@ -1,5 +1,11 @@
 <template>
-  <g class="lone-pair" :transform="`translate(${tx}, ${ty}) rotate(${angle}, ${rcx}, 0)`">
+  <g
+    class="lone-pair"
+    :transform="`translate(${tx}, ${ty}) rotate(${angle}, ${rcx}, 0)`"
+    @pointerdown.stop="mouseDown"
+    @pointermove.stop="mouseMove"
+    @pointerup.stop="mouseUp"
+  >
     <circle v-if="count === 1" cx="0" cy="0" r="2"></circle>
     <template v-else>
       <circle cx="0" cy="-3" r="2" fill="black"></circle>
@@ -31,6 +37,29 @@ export default Vue.extend({
     },
     rcx(): number {
       return this.omitting ? -8 : -this.dist - 4;
+    }
+  },
+  methods: {
+    mouseDown(event: PointerEvent) {
+      this.$emit("cascade-down", {
+        target: "lone-pair",
+        payload: this.lonepair,
+        event
+      });
+    },
+    mouseMove(event: PointerEvent) {
+      this.$emit("cascade-move", {
+        target: "lone-pair",
+        payload: this.lonepair,
+        event
+      });
+    },
+    mouseUp(event: PointerEvent) {
+      this.$emit("cascade-up", {
+        target: "lone-pair",
+        payload: this.lonepair,
+        event
+      });
     }
   }
 });

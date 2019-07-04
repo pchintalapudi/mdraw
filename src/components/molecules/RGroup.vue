@@ -33,6 +33,9 @@
       :lonepair="lp"
       :dist="radius"
       :omitting="omitting"
+      @cascade-down="cascadeDown"
+      @cascade-move="cascadeMove"
+      @cascade-up="cascadeUp"
     ></lone-pair-vue>
   </g>
 </template>
@@ -96,19 +99,11 @@ export default Vue.extend({
     netHeight(): number {
       return this.contentHeight + (this.charge ? this.chargeHeight / 2 : 0);
     },
-    innerViewBox(): string {
-      return `0 ${this.charge ? -this.chargeHeight / 2 : 0} ${this.netWidth} ${
-        this.netHeight
-      }`;
-    },
     radius(): number {
       return Math.hypot(
         this.netWidth - this.contentWidth / 2,
         this.netHeight / 2
       );
-    },
-    outerViewBox(): string {
-      return `${-this.radius} ${-this.radius} ${this.radius} ${this.radius}`;
     },
     chargeText(): string {
       switch (this.charge) {
@@ -160,6 +155,23 @@ export default Vue.extend({
     },
     omittable(): boolean {
       return this.rgroup.omittable;
+    },
+    cascadeDown(payload: {
+      target: string;
+      payload: any;
+      event: PointerEvent;
+    }) {
+      this.$emit("dmouse", payload);
+    },
+    cascadeMove(payload: {
+      target: string;
+      payload: any;
+      event: PointerEvent;
+    }) {
+      this.$emit("mmouse", payload);
+    },
+    cascadeUp(payload: { target: string; payload: any; event: PointerEvent }) {
+      this.$emit("umouse", payload);
     }
   }
 });

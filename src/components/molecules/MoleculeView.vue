@@ -90,6 +90,15 @@ export default Vue.extend({
           transp.push(...this.bonds);
       }
       return transp;
+    },
+    transmitLonePair(): boolean {
+      switch (this.stateMachine.state) {
+        default:
+          return false;
+        case State.PLACING_CURVED_ARROW:
+        case State.DRAWING_CURVED_ARROW:
+          return true;
+      }
     }
   },
   methods: {
@@ -100,12 +109,24 @@ export default Vue.extend({
       this.stateMachine.execute(Action.DOUBLE_CLICK, payload);
     },
     handleMouseUp(payload: { target: string; payload: any }) {
+      if (!this.transmitLonePair && payload.target === "lone-pair") {
+        payload.target = "rgroup";
+        payload.payload = payload.payload.rgroup;
+      }
       this.stateMachine.execute(Action.MOUSE_UP, payload);
     },
     handleMouseDown(payload: { target: string; payload: any }) {
+      if (!this.transmitLonePair && payload.target === "lone-pair") {
+        payload.target = "rgroup";
+        payload.payload = payload.payload.rgroup;
+      }
       this.stateMachine.execute(Action.MOUSE_DOWN, payload);
     },
     handleMouseMove(payload: { target: string; payload: any }) {
+      if (!this.transmitLonePair && payload.target === "lone-pair") {
+        payload.target = "rgroup";
+        payload.payload = payload.payload.rgroup;
+      }
       this.stateMachine.execute(Action.MOUSE_MOVE, payload);
     }
   }
