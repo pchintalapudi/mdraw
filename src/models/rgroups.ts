@@ -65,6 +65,10 @@ class RGroup {
             this.bonds.keys().next().value.payload.name === "Carbon"
         );
     }
+
+    get radius() {
+        return this.payload.abbrev.length * 5 + 5;
+    }
 }
 
 export { ChemicalElement, Payload, RGroup };

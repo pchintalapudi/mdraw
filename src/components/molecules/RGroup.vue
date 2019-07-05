@@ -1,31 +1,32 @@
 <template>
   <g
     :class="classes"
-    :transform="`translate(${x - contentWidth / 2} ${y + contentHeight / 4})`"
+    :transform="`translate(${x} ${y})`"
     @pointerdown.stop="pointerDown"
     @pointerup.stop="pointerUp"
     @pointermove.stop="pointerMove"
   >
     <title>{{name}}</title>
+    <circle :r="d3 ? 17.5 : abbrev.length * 5 + 10" fill="transparent" />
     <circle
-      :r="d3 ? 17.5 : abbrev.length == 1 ? 15 : 25"
-      :cx="contentWidth / 2"
-      :cy="-contentHeight / 4"
-      fill="transparent"
-    />
-    <circle
-      :r="d3 ? 12.5 : abbrev.length == 1 ? 10 : 20"
-      :cx="contentWidth / 2"
-      :cy="-contentHeight / 4"
+      :r="d3 ? 12.5 : abbrev.length * 5 + 5"
       :fill="d3 ? `url(#${color}-gradient)` : 'white'"
     />
-    <text v-if="!d3" class="abbrev" ref="content">{{abbrev}}</text>
+    <text
+      v-if="!d3"
+      class="abbrev"
+      ref="content"
+      text-anchor="middle"
+      dominant-baseline="central"
+    >{{abbrev}}</text>
     <text
       class="charge"
       v-if="!d3 && charge"
+      :x="abbrev.length * 5 + 2.5"
+      y="-5"
+      font-size="small"
       ref="charge"
-      :x="contentWidth / 2 + 7.5"
-      :y="-contentHeight / 2 - chargeHeight / 8"
+      text-anchor="start"
     >{{chargeText}}</text>
     <lone-pair-vue
       v-for="lp in lonePairs"
@@ -81,29 +82,8 @@ export default Vue.extend({
     charge(): number {
       return this.rgroup.charge;
     },
-    contentWidth(): number {
-      return this.contentElement ? this.contentElement.getBBox().width : 0;
-    },
-    contentHeight(): number {
-      return this.contentElement ? this.contentElement.getBBox().height : 0;
-    },
-    chargeWidth(): number {
-      return this.chargeElement ? this.chargeElement.getBBox().width : 0;
-    },
-    chargeHeight(): number {
-      return this.chargeElement ? this.chargeElement.getBBox().height : 0;
-    },
-    netWidth(): number {
-      return this.contentWidth + (this.charge ? this.chargeWidth + 2 : 0);
-    },
-    netHeight(): number {
-      return this.contentHeight + (this.charge ? this.chargeHeight / 2 : 0);
-    },
     radius(): number {
-      return Math.hypot(
-        this.netWidth - this.contentWidth / 2,
-        this.netHeight / 2
-      );
+      return this.rgroup.radius;
     },
     chargeText(): string {
       switch (this.charge) {

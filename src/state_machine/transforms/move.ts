@@ -21,7 +21,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
     const rgs = sel[sel.length - 1];
     const ipos = stateMachine.stateVariables.ipos;
     const dist = Math.hypot(rgs.x - ipos[ipos.length - 1].x, rgs.y - ipos[ipos.length - 1].y);
-    if ((Date.now() - 250 < stateMachine.stateVariables.itime && dist < 75) || dist < 15) {
+    if (Date.now() - 250 < stateMachine.stateVariables.itime && dist < 75) {
         cancelMoving(stateMachine, undefined as any);
         if (rgs instanceof RGroup) {
             stateMachine.state = State.PLACING_ATOM_AND_BOND;
@@ -37,23 +37,29 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
         if (target === "surface") {
             const initialPositions = [...ipos];
             const finalPositions = sel.map(r => ({ x: r.x, y: r.y }));
-            const moved = [...sel];
-            const undo = (_: StateMachine) => {
-                for (let i = 0; i < moved.length; i++) {
-                    moved[i].x = initialPositions[i].x;
-                    moved[i].y = initialPositions[i].y;
+            const it = initialPositions[initialPositions.length - 1], fn = finalPositions[finalPositions.length - 1];
+            if (Math.hypot(it.x - fn.x, it.y - fn.y) > 5) {
+                const moved = [...sel];
+                const undo = (_: StateMachine) => {
+                    for (let i = 0; i < moved.length; i++) {
+                        moved[i].x = initialPositions[i].x;
+                        moved[i].y = initialPositions[i].y;
+                    }
+                };
+                const redo = (_: StateMachine) => {
+                    for (let i = 0; i < moved.length; i++) {
+                        moved[i].x = finalPositions[i].x;
+                        moved[i].y = finalPositions[i].y;
+                    }
+                };
+                stateMachine.log(undo, redo);
+            } else {
+                for (let i = 0; i < sel.length; i++) {
+                    sel[i].x = initialPositions[i].x;
+                    sel[i].y = initialPositions[i].y;
                 }
-            };
-            const redo = (_: StateMachine) => {
-                for (let i = 0; i < moved.length; i++) {
-                    moved[i].x = finalPositions[i].x;
-                    moved[i].y = finalPositions[i].y;
-                }
-            };
-            stateMachine.log(undo, redo);
-            if (sel.length === 1) {
-                sel.length = 0;
             }
+            sel.length = (sel.length - 1) && sel.length || 0;
             stateMachine.state = State.IDLE;
         } else if (target === "rgroup" && rgs instanceof RGroup) {
             // Merging

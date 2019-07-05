@@ -7,8 +7,8 @@
     ref="svg"
     :cursor="cursor"
   >
-    <defs-vue></defs-vue>
-    <slot></slot>
+    <defs-vue />
+    <slot />
   </svg>
 </template>
 <script lang="ts">
@@ -16,6 +16,7 @@ import Vue, { PropType } from "vue";
 import DefsVue from "./defs/Defs.vue";
 import { StateMachine, Action, State } from "@/state_machine";
 import { ViewPort, BoundingBox } from "@/state_machine/extensions";
+import { Constants } from "@/utils";
 export default Vue.extend({
   components: { "defs-vue": DefsVue },
   props: { stateMachine: Object as PropType<StateMachine> },
@@ -51,16 +52,28 @@ export default Vue.extend({
       }
     },
     scrollLeft(): boolean {
-      return this.autoscroll && this.mx < this.viewPort.startX + 50;
+      return (
+        this.autoscroll &&
+        this.mx < this.viewPort.startX + Constants.screenScrollWidth
+      );
     },
     scrollTop(): boolean {
-      return this.autoscroll && this.my < this.viewPort.startY + 50;
+      return (
+        this.autoscroll &&
+        this.my < this.viewPort.startY + Constants.screenScrollWidth
+      );
     },
     scrollRight(): boolean {
-      return this.autoscroll && this.mx > this.viewPort.endX - 50;
+      return (
+        this.autoscroll &&
+        this.mx > this.viewPort.endX - Constants.screenScrollWidth
+      );
     },
     scrollBottom(): boolean {
-      return this.autoscroll && this.my > this.viewPort.endY - 50;
+      return (
+        this.autoscroll &&
+        this.my > this.viewPort.endY - Constants.screenScrollWidth
+      );
     },
     needsScroll(): boolean {
       return (
@@ -88,7 +101,10 @@ export default Vue.extend({
   watch: {
     needsScroll(next) {
       if (next) {
-        this.autoscroller = window.setInterval(() => this.scroll(), 12.5);
+        this.autoscroller = window.setInterval(
+          () => this.scroll(),
+          Constants.frameTime
+        );
       } else {
         window.clearInterval(this.autoscroller);
       }
@@ -126,7 +142,7 @@ export default Vue.extend({
       });
     },
     scroll() {
-      const defaultDist = 7.5;
+      const defaultDist = Constants.scrollDistance;
       if (this.scrollLeft) {
         const dist = Math.max(
           Math.min(defaultDist, this.viewPort.startX - this.viewBox.startX),

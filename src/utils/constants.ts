@@ -13,6 +13,6 @@ function getFontSize() {
     return +computedFontSize.slice(0, computedFontSize.length - 2);
 }
 
-const constants = new Constants(50, 7.5, 12.5, 50, getFontSize());
+const constants = new Constants(50, 7.5, 12.5, 50, getFontSize() * 1.1);
 
 export { constants as Constants };

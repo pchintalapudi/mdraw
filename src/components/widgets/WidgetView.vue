@@ -24,7 +24,10 @@ export default Vue.extend({
   props: { stateMachine: Object as PropType<StateMachine> },
   computed: {
     simulateLonePair(): boolean {
-      return this.stateMachine.state === State.PLACING_LONE_PAIR;
+      return (
+        this.stateMachine.state === State.PLACING_LONE_PAIR &&
+        !this.stateMachine.stateVariables.selected.length
+      );
     },
     count(): number {
       return this.stateMachine.stateVariables.count;

@@ -1,7 +1,7 @@
 <template>
   <g
     class="lone-pair"
-    :transform="`translate(${tx}, ${ty}) rotate(${angle}, ${rcx}, 0)`"
+    :transform="`translate(${tx}, 0) rotate(${angle}, ${-tx}, 0)`"
     @pointerdown.stop="mouseDown"
     @pointermove.stop="mouseMove"
     @pointerup.stop="mouseUp"
@@ -19,7 +19,6 @@ import { LonePair, RGroup } from "../../models";
 export default Vue.extend({
   props: {
     lonepair: Object as PropType<LonePair>,
-    dist: Number,
     omitting: Boolean
   },
   computed: {
@@ -30,13 +29,7 @@ export default Vue.extend({
       return this.lonepair.angle;
     },
     tx(): number {
-      return this.omitting ? 12 : this.dist + 9;
-    },
-    ty(): number {
-      return -5;
-    },
-    rcx(): number {
-      return this.omitting ? -8 : -this.dist - 4;
+      return this.lonepair.radius;
     }
   },
   methods: {

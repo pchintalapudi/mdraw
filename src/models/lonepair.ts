@@ -14,12 +14,14 @@ class LonePair {
         return [+parts[0], new LonePair(rg, +parts[1], parseFloat(parts[2]))];
     }
 
+    get radius() { return this.rgroup.radius + 2.5; }
+
     get x() {
-        return this.rgroup.x + 15 * Math.cos(this.angle * Math.PI / 180);
+        return this.rgroup.x + this.radius * Math.cos(this.angle * Math.PI / 180);
     }
 
     get y() {
-        return this.rgroup.y - 15 * Math.sin(this.angle * Math.PI / 180);
+        return this.rgroup.y - this.radius * Math.sin(this.angle * Math.PI / 180);
     }
 }
 
