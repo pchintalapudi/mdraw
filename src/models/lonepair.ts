@@ -21,7 +21,7 @@ class LonePair {
     }
 
     get y() {
-        return this.rgroup.y - this.radius * Math.sin(this.angle * Math.PI / 180);
+        return this.rgroup.y + this.radius * Math.sin(this.angle * Math.PI / 180);
     }
 }
 

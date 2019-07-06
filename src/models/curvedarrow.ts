@@ -1,7 +1,6 @@
 import bezierSpline from "@freder/bezier-spline";
 import { IDGenerator } from "./globals";
-import { RGroup, Bond } from "@/models";
-import { bondControlPoint, ArrayPoint, BezierCurve, deepCopy, getBondDistance, shrink } from "@/utils";
+import { ArrayPoint, BezierCurve, adjustCurve, deepCopy } from "@/utils";
 interface Point { readonly x: number; readonly y: number; id?: number; }
 
 export class CurvedArrow {
@@ -30,68 +29,13 @@ export class CurvedArrow {
                 ? ([
                     [
                         [this.points[0].x, this.points[0].y],
-                        [this.points[1].x, this.points[1].y],
                         [this.points[0].x, this.points[0].y],
+                        [this.points[1].x, this.points[1].y],
                         [this.points[1].x, this.points[1].y]
-                    ]
-                ] as BezierCurve[])
+                    ] as BezierCurve
+                ])
                 : deepCopy(this.computedCurve);
-        if (this.points[0] instanceof RGroup) {
-            rawCurve[0].splice(
-                0,
-                1,
-                shrink(
-                    rawCurve[0][0],
-                    rawCurve[0][1],
-                    (this.points[0] as RGroup).payload.abbrev.length === 1
-                        ? 10
-                        : 15
-                )
-            );
-        } else if (this.points[0] instanceof Bond) {
-            const cp = bondControlPoint(rawCurve[0][1], this.points[0] as Bond);
-            rawCurve[0].splice(
-                0,
-                2,
-                shrink(
-                    rawCurve[0][0],
-                    cp,
-                    getBondDistance(this.points[0] as Bond, true)
-                ),
-                cp
-            );
-        }
-        if (this.points[this.points.length - 1] instanceof RGroup) {
-            rawCurve[rawCurve.length - 1].splice(
-                3,
-                1,
-                shrink(
-                    rawCurve[rawCurve.length - 1][3],
-                    rawCurve[rawCurve.length - 1][2],
-                    (this.points[this.points.length - 1] as RGroup).payload
-                        .abbrev.length === 1
-                        ? 15
-                        : 25
-                )
-            );
-        } else if (
-            this.points[this.points.length - 1] instanceof Bond
-        ) {
-            const cp = bondControlPoint(rawCurve[rawCurve.length - 1][2], this.points[this.points.length - 1] as Bond);
-            rawCurve[rawCurve.length - 1].splice(
-                2,
-                2,
-                cp,
-                shrink(
-                    rawCurve[rawCurve.length - 1][3],
-                    cp,
-                    getBondDistance(
-                        this.points[this.points.length - 1] as Bond,
-                        false
-                    )
-                )
-            );
-        }
+        adjustCurve(rawCurve, this);
         return rawCurve;
     }
 

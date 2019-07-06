@@ -8,7 +8,7 @@
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
   >
-    <line class="clickme" x1="0" y1="0" :x2="dist" y2="0"/>
+    <line class="clickme" x1="0" y1="0" :x2="dist" y2="0" />
     <rect
       v-if="showSingleLine"
       x="0"
@@ -21,7 +21,7 @@
     <polygon
       v-else-if="bond.bondOrder == 1"
       :style="`fill: ${isApproachingBond ? 'black' : 'url(#patchy)'};stroke:transparent`"
-      :points="`0,0 ${this.dist - 10},5 ${this.dist - 10},-5`"
+      :points="`0,0 ${polygonX},5 ${polygonX},-5`"
     ></polygon>
     <template v-else-if="bond.bondOrder == 2">
       <rect
@@ -195,6 +195,11 @@ export default Vue.extend({
         !this.d3
         ? this.dist * (1 - this.shortenEnd)
         : this.dist;
+    },
+    polygonX(): number {
+      return this.rgroupOmittable(false) && this.omitting
+        ? this.dist
+        : this.dist - this.bond.end.radius;
     }
   },
   methods: {

@@ -6,6 +6,7 @@
     @pointermove.stop="mouseMove"
     @pointerup.stop="mouseUp"
   >
+    <circle r="5" fill="transparent"></circle>
     <circle v-if="count === 1" cx="0" cy="0" r="2"></circle>
     <template v-else>
       <circle cx="0" cy="-3" r="2" fill="black"></circle>
@@ -60,5 +61,8 @@ export default Vue.extend({
 <style>
 .lone-pair {
   visibility: visible;
+}
+.lone-pair > circle:not(:first-child) {
+  pointer-events: none;
 }
 </style>

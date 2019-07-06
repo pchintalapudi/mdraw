@@ -1,10 +1,15 @@
-import { RGroup, StraightArrow, Bond, CurvedArrow } from "@/models";
+import { RGroup, StraightArrow, Bond, CurvedArrow, LonePair } from "@/models";
 import { StateMachine } from "../state_machine";
 
 export function deleteSelected(stateMachine: StateMachine) {
     const rgroups: Set<RGroup> = new Set();
     const straightArrows: Set<StraightArrow> = new Set();
+    const lonePairs: Set<LonePair> = new Set();
     for (const selected of stateMachine.stateVariables.selected) {
+        if (selected instanceof RGroup) {
+            rgroups.add(selected);
+            selected.lonePairs.forEach(lp => lonePairs.add(lp));
+        }
         (selected instanceof RGroup ? rgroups : straightArrows).add(selected as any);
     }
     const bonds: Set<Bond> = new Set();
@@ -12,8 +17,8 @@ export function deleteSelected(stateMachine: StateMachine) {
     const curvedArrows: Set<CurvedArrow> = new Set();
     for (const c of stateMachine.stateVariables.curvedArrows) {
         search:
-        for (const set of [rgroups, bonds]) {
-            for (const e of Array.from(set as any) as RGroup[] | Bond[]) {
+        for (const set of [rgroups, bonds, lonePairs]) {
+            for (const e of Array.from(set as any) as RGroup[] | Bond[] | LonePair[]) {
                 if (c.contains(e)) {
                     curvedArrows.add(c);
                     break search;
