@@ -10,67 +10,60 @@ export function inferAngles(rgroup: RGroup, entityCount: integer) {
         case 0:
             return [];
         case 1:
-            switch (rgroup.bonds.size) {
+            switch (rgroup.bonds.size + rgroup.lonePairs.length) {
                 case 0:
                     return [0];
                 case 1: {
-                    const bond = rgroup.bonds.values().next().value;
-                    return bond.bondOrder === 3 ?
-                        [normalize(bond.getAngle(rgroup) + Math.PI)]
-                        : [normalize(bond.getAngle(rgroup) + Math.PI / 3 * 2)];
+                    if (rgroup.bonds.size) {
+                        const bond = rgroup.bonds.values().next().value;
+                        return bond.bondOrder === 3 ?
+                            [normalize(bond.getAngle(rgroup) + Math.PI)]
+                            : [normalize(bond.getAngle(rgroup) + Math.PI / 3 * 2)];
+                    } else {
+                        return [rgroup.lonePairs[0].angle * Math.PI / 180 + Math.PI];
+                    }
                 }
                 case 2: {
-                    const bonds = [] as number[];
-                    rgroup.bonds.forEach(b => bonds.push(normalize(b.getAngle(rgroup))));
-                    const range = bonds[1] - bonds[0];
+                    const angles = [] as number[];
+                    rgroup.bonds.forEach(b => angles.push(normalize(b.getAngle(rgroup))));
+                    rgroup.lonePairs.forEach(r => angles.push(normalize(r.angle * Math.PI / 180)));
+                    const range = angles[1] - angles[0];
                     return Math.abs(range) < Math.PI
-                        ? [normalize(bonds[0] + range / 2 + Math.PI)] : [normalize(bonds[0] + range / 2)];
+                        ? [normalize(angles[0] + range / 2 + Math.PI)] : [normalize(angles[0] + range / 2)];
                 }
                 default: {
-                    const bonds = [] as number[];
-                    rgroup.bonds.forEach(b => bonds.push(normalize(b.getAngle(rgroup))));
-                    bonds.sort((a, b) => a - b);
+                    const angles = [] as number[];
+                    rgroup.bonds.forEach(b => angles.push(normalize(b.getAngle(rgroup))));
+                    rgroup.lonePairs.forEach(r => angles.push(normalize(r.angle * Math.PI / 180)));
+                    angles.sort((a, b) => a - b);
                     const ranges = [[0, -1]] as Array<[number, number]>;
-                    bonds.forEach((a, i) => ranges.push([a - ranges[i][0], (i - 1 + bonds.length) % bonds.length]));
-                    ranges.splice(0, 2, [ranges[1][0] + Math.PI * 2 - bonds[bonds.length - 1], bonds.length - 1]);
+                    angles.forEach((a, i) => ranges.push([a - ranges[i][0], (i - 1 + angles.length) % angles.length]));
+                    ranges.splice(0, 2, [ranges[1][0] + Math.PI * 2 - angles[angles.length - 1], angles.length - 1]);
                     ranges.sort((a, b) => b[0] - a[0]);
-                    return [ranges[0][0] + bonds[ranges[0][1]]];
+                    return getAnglesForArc(angles[ranges[0][1]],
+                        angles[(ranges[0][1] + 1) % angles.length], entityCount + 1).slice(1).map(normalize);
                 }
-            }
-        case 2:
-            switch (rgroup.bonds.size) {
-                case 0:
-                    return [0, Math.PI];
-                case 1: {
-                    const angle = rgroup.bonds.values().next().value.getAngle(rgroup);
-                    return [normalize(angle + Math.PI * 2 / 3), normalize(angle + Math.PI * 4 / 3)];
-                }
-                // case 2:
-                //     const angles = [] as number[];
-                //     rgroup.bonds.forEach(b => angles.push(b.getAngle(rgroup)));
-                //     return Math.abs(normalize(angles[1] - angles[0]) - Math.PI) < 0.0001
-                //         ? [normalize(angles[0] + Math.PI / 2), normalize(angles[1] + Math.PI / 2)]
-                //         : [normalize(angles[0] + Math.PI), normalize(angles[1] + Math.PI)];
-                default:
-                    const bonds = [] as number[];
-                    rgroup.bonds.forEach(b => bonds.push(normalize(b.getAngle(rgroup))));
-                    bonds.sort((a, b) => a - b);
-                    const ranges = [[0, -1]] as Array<[number, number]>;
-                    bonds.forEach((a, i) => ranges.push([a - ranges[i][0], (i - 1 + bonds.length) % bonds.length]));
-                    ranges.splice(0, 2, [ranges[1][0] + Math.PI * 2 - bonds[bonds.length - 1], bonds.length - 1]);
-                    ranges.sort((a, b) => b[0] - a[0]);
-                    return getAnglesForArc(bonds[ranges[0][1]],
-                        bonds[(ranges[0][1] + 1) % bonds.length], entityCount + 1).slice(1).map(normalize);
             }
         default:
-            switch (rgroup.bonds.size) {
+            switch (rgroup.bonds.size + rgroup.lonePairs.length) {
                 case 0:
                     return getAnglesForArc(0, Math.PI * 2, entityCount);
                 case 1:
-                    const angle = rgroup.bonds.values().next().value.getAngle(rgroup);
+                    const angle = rgroup.bonds.size
+                        ? rgroup.bonds.values().next().value.getAngle(rgroup)
+                        : rgroup.lonePairs[0].angle * Math.PI / 180;
                     return getAnglesForArc(angle, angle + Math.PI * 2, entityCount + 1).slice(1).map(normalize);
                 default:
-                    return [];
+                    const angles = [] as number[];
+                    rgroup.bonds.forEach(b => angles.push(normalize(b.getAngle(rgroup))));
+                    rgroup.lonePairs.forEach(r => angles.push(normalize(r.angle * Math.PI / 180)));
+                    angles.sort((a, b) => a - b);
+                    const ranges = [[0, -1]] as Array<[number, number]>;
+                    angles.forEach((a, i) => ranges.push([a - ranges[i][0], (i - 1 + angles.length) % angles.length]));
+                    ranges.splice(0, 2, [ranges[1][0] + Math.PI * 2 - angles[angles.length - 1], angles.length - 1]);
+                    ranges.sort((a, b) => b[0] - a[0]);
+                    return getAnglesForArc(angles[ranges[0][1]],
+                        angles[(ranges[0][1] + 1) % angles.length], entityCount + 1).slice(1).map(normalize);
             }
     }
 }

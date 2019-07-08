@@ -26,5 +26,5 @@ export function inferCarbon(atom: RGroup) {
         hydrogens.forEach((h, i) => shiftToAngle(atom, h, angles[i]));
         lonePairs.forEach((lp, i) => lp.angle = angles[hydrogens.length + i]);
     }
-    return [hydrogens, lonePairs] as [RGroup[], LonePair[]];
+    return [hydrogens, lonePairs, 0] as [RGroup[], LonePair[], number];
 }

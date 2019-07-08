@@ -1,6 +1,6 @@
 import { Transform, registerTransform } from "../transitions";
-import { RGroup } from "@/models";
-import { State, Action } from "..";
+import { RGroup, Bond, LonePair } from "@/models";
+import { State, Action, StateMachine } from "..";
 import { infer } from "@/infer";
 
 const handleButton: Transform = (stateMachine, { target, payload }) => {
@@ -34,11 +34,36 @@ const handleButton: Transform = (stateMachine, { target, payload }) => {
             break;
         case "infer":
             stateMachine.stateVariables.selected.length = 0;
+            const addedRGroups = [] as RGroup[];
+            const addedBonds = [] as Bond[];
+            const addedLonePairs = [] as LonePair[];
+            const dcharges = new Map<RGroup, number>();
             stateMachine.stateVariables.rgroups.forEach(r => {
                 const add = infer(r);
-                stateMachine.stateVariables.rgroups.push(...add[0]);
-                stateMachine.stateVariables.bonds.push(...add[0].map(h => h.bonds.get(r)!));
+                addedRGroups.push(...add[0]);
+                addedBonds.push(...add[0].map(h => h.bonds.get(r)!));
+                addedLonePairs.push(...add[1]);
+                dcharges.set(r, add[2]);
             });
+            const oldRGLength = stateMachine.stateVariables.rgroups.length;
+            const oldBondLength = stateMachine.stateVariables.bonds.length;
+            stateMachine.stateVariables.rgroups.push(...addedRGroups);
+            stateMachine.stateVariables.bonds.push(...addedBonds);
+            const undo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups.splice(oldRGLength, addedRGroups.length);
+                sm.stateVariables.bonds.splice(oldBondLength, addedBonds.length);
+                addedBonds.forEach(b => b.start.bonds.delete(b.end));
+                addedLonePairs.forEach(lp => lp.rgroup.lonePairs.pop());
+                dcharges.forEach((c, r) => r.charge -= c);
+            };
+            const redo = (sm: StateMachine) => {
+                sm.stateVariables.rgroups.push(...addedRGroups);
+                sm.stateVariables.bonds.push(...addedBonds);
+                addedBonds.forEach(b => b.start.bonds.set(b.end, b));
+                addedLonePairs.forEach(lp => lp.rgroup.lonePairs.push(lp));
+                dcharges.forEach((c, r) => r.charge += c);
+            };
+            stateMachine.log(undo, redo);
     }
 };
 

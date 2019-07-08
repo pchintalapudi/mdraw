@@ -1,13 +1,15 @@
 import { StateMachine, Action } from "@/state_machine";
-import { element, RGroup } from "@/models";
+import { RGroup } from "@/models";
 import { io } from "@/io";
+
+const ielement = { name: "Carbon", abbrev: "C" }
 
 export function data() {
     return {
         stateMachine: new StateMachine(),
         clipboard: "",
         omit: false,
-        lastElement: element(6),
+        lastElement: ielement,
         lockout: false,
         d3: false,
         keyHandler: undefined as any

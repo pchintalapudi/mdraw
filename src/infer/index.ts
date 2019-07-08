@@ -9,6 +9,6 @@ export function infer(atom: RGroup) {
         case "Carbon":
             return inferCarbon(atom);
         default:
-            return [[], []] as [RGroup[], LonePair[]];
+            return [[], [], 0] as [RGroup[], LonePair[], number];
     }
 }
