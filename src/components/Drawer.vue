@@ -12,13 +12,13 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { StateMachine, Action, State, init_transforms } from "../state_machine";
-import { element } from "../models";
+import { init_transforms } from "../state_machine";
+import { serialize, data, keyHandler, Handler } from "./utils";
+import { io } from "@/io";
 import MoleculeVue from "@/components/molecules/MoleculeView.vue";
 import WidgetVue from "@/components/widgets/WidgetView.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
 import SVGVue from "@/components/SVGVue.vue";
-import { data, keyHandler } from "./utils";
 import DialogVue from "@/components/dialogs/Dialog.vue";
 export default Vue.extend({
   components: {
@@ -29,27 +29,46 @@ export default Vue.extend({
     "dialog-vue": DialogVue
   },
   data,
-  mounted() {
+  async mounted() {
     init_transforms();
-    window.addEventListener(
-      "keydown",
-      (this.keyHandler = (ev: KeyboardEvent) =>
-        keyHandler(this.$data as ReturnType<typeof data>, ev))
-    );
-    window.addEventListener("resize", this.stateMachine.view.viewPort.listener);
+    try {
+      const sessionread = await io.read("session", true);
+      if (sessionread) {
+        const sessiondata = JSON.parse(sessionread);
+        Object.assign(this.$data, sessiondata);
+      }
+    } finally {
+      this.lockout = false;
+      this.handlers.push(
+        [
+          "keydown",
+          (ev: KeyboardEvent) =>
+            keyHandler(this.$data as ReturnType<typeof data>, ev)
+        ] as Handler,
+        ["resize", this.stateMachine.view.viewPort.listener] as Handler,
+        [
+          "beforeunload",
+          (event: Event) => {
+            io.write(
+              "session",
+              serialize(this.$data as ReturnType<typeof data>),
+              true
+            );
+            if (false /*unsaved*/) {
+              event.preventDefault();
+              event.returnValue = true;
+              return "stop pls";
+            }
+          }
+        ] as Handler
+      );
+      this.handlers.forEach(h => window.addEventListener(...h));
+    }
   },
   beforeDestroy() {
-    window.removeEventListener("keydown", this.keyHandler);
-    window.removeEventListener(
-      "resize",
-      this.stateMachine.view.viewPort.listener
-    );
+    this.handlers.forEach(h => window.removeEventListener(...h));
   },
   computed: {
-    //For debugging
-    stateName(): string {
-      return State[this.stateMachine.state];
-    },
     classes(): string[] {
       const clazzes = ["surface"];
       if (this.omit) {

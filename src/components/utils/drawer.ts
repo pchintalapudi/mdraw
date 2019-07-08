@@ -2,7 +2,9 @@ import { StateMachine, Action } from "@/state_machine";
 import { RGroup } from "@/models";
 import { io } from "@/io";
 
-const ielement = { name: "Carbon", abbrev: "C" }
+const ielement = { name: "Carbon", abbrev: "C" };
+
+export type Handler = [string, (ev:Event) => void];
 
 export function data() {
     return {
@@ -10,10 +12,14 @@ export function data() {
         clipboard: "",
         omit: false,
         lastElement: ielement,
-        lockout: false,
+        lockout: true,
         d3: false,
-        keyHandler: undefined as any
+        handlers: [] as Handler[]
     };
+}
+
+export function serialize({ clipboard, omit, lastElement, d3 }: ReturnType<typeof data>) {
+    return JSON.stringify({ clipboard, omit, lastElement, d3 });
 }
 
 export function keyHandler(vmdata: ReturnType<typeof data>, event: KeyboardEvent) {
