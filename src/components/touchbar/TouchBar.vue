@@ -9,6 +9,7 @@
     <lone-pair-creator-vue :state-machine="stateMachine" @button-click="cascade"></lone-pair-creator-vue>
     <arrow-creator-vue :state-machine="stateMachine" @button-click="cascade"></arrow-creator-vue>
     <maps-vue :state-machine="stateMachine" @button-click="cascade"></maps-vue>
+    <infer-vue :state-machine="stateMachine" @button-click="cascade"></infer-vue>
   </span>
 </template>
 <script lang="ts">
@@ -17,6 +18,7 @@ import AtomCreatorVue from "./AtomCreator.vue";
 import LonePairCreatorVue from "./LonePairCreator.vue";
 import ArrowCreatorVue from "./ArrowCreator.vue";
 import MapsVue from "./Maps.vue";
+import InferVue from "./Infer.vue";
 import { StateMachine, State, Action } from "@/state_machine";
 type StyleProperty = [string, string];
 export default Vue.extend({
@@ -25,7 +27,8 @@ export default Vue.extend({
     "atom-creator-vue": AtomCreatorVue,
     "lone-pair-creator-vue": LonePairCreatorVue,
     "arrow-creator-vue": ArrowCreatorVue,
-    "maps-vue": MapsVue
+    "maps-vue": MapsVue,
+    "infer-vue": InferVue
   },
   data() {
     return {

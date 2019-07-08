@@ -1,6 +1,7 @@
 import { Transform, registerTransform } from "../transitions";
 import { RGroup } from "@/models";
 import { State, Action } from "..";
+import { infer } from "@/infer";
 
 const handleButton: Transform = (stateMachine, { target, payload }) => {
     switch (target) {
@@ -31,6 +32,13 @@ const handleButton: Transform = (stateMachine, { target, payload }) => {
             stateMachine.stateVariables.ipos.length = 0;
             stateMachine.view.viewPort.stopEasing();
             break;
+        case "infer":
+            stateMachine.stateVariables.selected.length = 0;
+            stateMachine.stateVariables.rgroups.forEach(r => {
+                const add = infer(r);
+                stateMachine.stateVariables.rgroups.push(...add[0]);
+                stateMachine.stateVariables.bonds.push(...add[0].map(h => h.bonds.get(r)!));
+            });
     }
 };
 

@@ -82,14 +82,11 @@ class Bond {
         return (this.start.y + this.end.y) / 2;
     }
 
-    get offset1(): { x: number, y: number } {
-        const midpoint = [(this.start.x + this.end.x) / 2, (this.start.y + this.end.y) / 2];
-        return { x: 0, y: 0 };
-    }
-
-    get offset2(): { x: number, y: number } {
-        const midpoint = [(this.start.x + this.end.x) / 2, (this.start.y + this.end.y) / 2];
-        return { x: 0, y: 0 };
+    public getAngle(rgroup: RGroup) {
+        const start = rgroup === this.start;
+        const y = this.end.y - this.start.y, x = this.end.x - this.start.x;
+        const angle = Math.atan2(start ? y : -y, start ? x : -x);
+        return angle;
     }
 }
 
