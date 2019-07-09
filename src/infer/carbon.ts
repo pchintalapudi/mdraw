@@ -5,7 +5,7 @@ export function inferCarbon(atom: RGroup) {
     const formalCharge = getFormalCharge(atom, 4);
     const charge = atom.charge;
     const hydrogens = [] as RGroup[];
-    for (let i = 0; i < formalCharge.formalCharge - Math.abs(charge); i++) {
+    for (let i = 0; i < Math.max(Math.min(formalCharge.formalCharge - Math.abs(charge), 4), 0); i++) {
         const h = new RGroup({ name: "Hydrogen", abbrev: "H" });
         h.bonds.set(atom, new Bond(atom, h));
         hydrogens.push(h);

@@ -1,4 +1,4 @@
-import { RGroup } from '@/models';
+import { RGroup } from "@/models";
 
 export function getFormalCharge(atom: RGroup, valence: number) {
     const free = atom.lonePairs.map(lp => lp.count).reduce((a, b) => a + b, 0);
