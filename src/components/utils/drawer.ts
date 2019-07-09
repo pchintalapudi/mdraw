@@ -4,7 +4,7 @@ import { io } from "@/io";
 
 const ielement = { name: "Carbon", abbrev: "C" };
 
-export type Handler = [string, (ev:Event) => void];
+export type Handler = [string, (ev: Event) => void];
 
 export function data() {
     return {

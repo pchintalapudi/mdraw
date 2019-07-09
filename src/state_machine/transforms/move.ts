@@ -1,5 +1,5 @@
 import { Transform, registerTransform } from "../transitions";
-import { RGroup, Bond, element } from "@/models";
+import { RGroup, Bond } from "@/models";
 import { State, Action, StateMachine } from "..";
 
 // tslint:disable-next-line: no-empty
@@ -25,7 +25,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
         cancelMoving(stateMachine, undefined as any);
         if (rgs instanceof RGroup) {
             stateMachine.state = State.PLACING_ATOM_AND_BOND;
-            const rg = new RGroup(element(6), rgs.x, rgs.y);
+            const rg = new RGroup({ name: "Carbon", abbrev: "C" }, rgs.x, rgs.y);
             stateMachine.stateVariables.rgroups.push(rg);
             const bond = new Bond(rgs, rg);
             rgs.bonds.set(rg, bond);
@@ -69,7 +69,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
             const moved = [...sel];
             const idx = stateMachine.stateVariables.rgroups.indexOf(rgs);
             const oldPayload = payload.payload;
-            if (rgs.payload !== element(6)) {
+            if (rgs.payload.name !== "Carbon") {
                 payload.payload = rgs.payload;
             }
             const newPayload = payload.payload;

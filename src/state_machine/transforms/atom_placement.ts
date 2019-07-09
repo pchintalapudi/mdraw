@@ -1,7 +1,7 @@
 import { registerTransform, Transform } from "../transitions";
 import calculateAngle from "./angles";
 import { Constants } from "@/utils";
-import { RGroup, Bond, element } from "@/models";
+import { RGroup, Bond } from "@/models";
 import { State, Action, StateMachine } from "..";
 
 const buttonAtomPlacement: Transform = (stateMachine, { target, payload }) => {
@@ -105,7 +105,7 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
             sm.stateVariables.lastPlaced = lastPlaced;
         };
         stateMachine.log(undo, redo);
-        const rg = new RGroup(element(6), rgc.x, rgc.y);
+        const rg = new RGroup({ name: "Carbon", abbrev: "C" }, rgc.x, rgc.y);
         stateMachine.stateVariables.rgroups.push(rg);
         const bond = new Bond(rgc, rg);
         rgc.bonds.set(rg, bond);
@@ -120,7 +120,7 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
             bond.start.bonds.set(payload, bond);
             payload.bonds.set(bond.start, bond);
             const oldPayload = payload.payload;
-            if (rg.payload !== element(6)) {
+            if (rg.payload.name !== "Carbon") {
                 payload.payload = rg.payload;
             }
             const newPayload = payload.payload;

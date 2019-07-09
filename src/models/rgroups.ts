@@ -1,6 +1,6 @@
 import element_defs from "./elements";
 import { IDGenerator } from "./globals";
-import { Bond, element, LonePair } from "./index";
+import { Bond, LonePair } from "./index";
 
 type ChemicalElement = typeof element_defs[0];
 
@@ -33,24 +33,18 @@ class RGroup {
     }
 
     public serialize() {
-        if ((this.payload as ChemicalElement).number !== undefined) {
-            return `${this.id}@A${(this.payload as ChemicalElement).number}@
+        return `${this.id}@${JSON.stringify(this.payload).replace("@", String.fromCharCode(11))}@
             ${this.x}@${this.y}@${this.charge}@${this.lonePairs.map(lp => lp.serialize()).join("&")}`;
-        }
     }
 
     // tslint:disable-next-line: member-ordering
     public static deserialize(str: string): [number, RGroup, Array<[number, LonePair]>] {
         const parts = str.split("@");
-        if (parts[1][0] === "A") {
-            const rg = new RGroup(element(+parts[1].substring(1)),
-                parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
-            const lonePairs = parts[5].split("&").filter(s => s).map(s => LonePair.deserialize(s, rg));
-            rg.lonePairs = lonePairs.map(l => l[1]);
-            return [+parts[0], rg, lonePairs];
-        } else {
-            return undefined as any;
-        }
+        const rg = new RGroup(JSON.parse(parts[1].replace(String.fromCharCode(11), "@")),
+            parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
+        const lonePairs = parts[5].split("&").filter(s => s).map(s => LonePair.deserialize(s, rg));
+        rg.lonePairs = lonePairs.map(l => l[1]);
+        return [+parts[0], rg, lonePairs];
     }
 
     get softOmittable() {

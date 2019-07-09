@@ -5,7 +5,7 @@
     @mouseenter="mouseEnterEvent"
     @mouseleave="mouseLeaveEvent"
   >
-    <atom-creator-vue :state-machine="stateMachine" @button-click="cascade"></atom-creator-vue>
+    <atom-creator-vue :state-machine="stateMachine" :d3="d3" @button-click="cascade"></atom-creator-vue>
     <lone-pair-creator-vue :state-machine="stateMachine" @button-click="cascade"></lone-pair-creator-vue>
     <arrow-creator-vue :state-machine="stateMachine" @button-click="cascade"></arrow-creator-vue>
     <infer-vue :state-machine="stateMachine" @button-click="cascade"></infer-vue>
@@ -22,7 +22,7 @@ import InferVue from "./Infer.vue";
 import { StateMachine, State, Action } from "@/state_machine";
 type StyleProperty = [string, string];
 export default Vue.extend({
-  props: { stateMachine: Object as PropType<StateMachine> },
+  props: { stateMachine: Object as PropType<StateMachine>, d3: Boolean },
   components: {
     "atom-creator-vue": AtomCreatorVue,
     "lone-pair-creator-vue": LonePairCreatorVue,

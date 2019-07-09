@@ -43,7 +43,7 @@
 <script lang='ts'>
 import Vue, { PropType } from "vue";
 import LonePairVue from "@/components/molecules/LonePair.vue";
-import { RGroup, LonePair, element, getColor } from "@/models";
+import { RGroup, LonePair, getColor } from "@/models";
 export default Vue.extend({
   props: {
     rgroup: Object as PropType<RGroup>,

@@ -31,6 +31,7 @@ export const colors = (() => {
     return colorArr;
 })();
 
-export function getColor(rgroup: RGroup): string {
-    return ElementColor[rgroup.payload.name.toUpperCase() as any] || ElementColor.DEFAULT;
+export function getColor(rgroup: RGroup | string): string {
+    return ElementColor[typeof rgroup === "string" ? rgroup.toUpperCase() : rgroup.payload.name.toUpperCase() as any]
+        || ElementColor.DEFAULT;
 }

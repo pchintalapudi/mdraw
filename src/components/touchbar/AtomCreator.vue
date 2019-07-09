@@ -10,9 +10,23 @@
         overflow="visible"
         class="atom-picture"
       >
-      <title>{{element.name}}</title>
-        <circle cx="0" cy="0" r="5" fill="transparent" stroke="black" stroke-width="0.5"></circle>
-        <text text-anchor="middle" dominant-baseline="central" font-size="5.75">{{element.abbrev}}</text>
+        <title>{{element.name}}</title>
+        <circle
+          cx="0"
+          cy="0"
+          r="5"
+          :fill="d3 ? `url(#${colors[idx]}-gradient)` : 'transparent'"
+          :stroke="d3 ? 'transparent' : 'black'"
+          stroke-width="0.5"
+        ></circle>
+        <text
+          text-anchor="middle"
+          dominant-baseline="central"
+          font-size="5.75"
+          :fill="d3 ? 'white' : 'black'"
+          :stroke="d3 ? 'black' : 'transparent'"
+          stroke-width="0.25"
+        >{{element.abbrev}}</text>
       </toggle-button>
     </div>
     <select name="atom-selector" id="atom-selector" v-model="selected" title="Select an element">
@@ -27,8 +41,9 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import ToggleButtonVue from "./ToggleButton.vue";
-import { ChemicalElement, elementCount, element } from "../../models";
-import { State, StateMachine } from "../../state_machine";
+import { ChemicalElement, elementCount, element } from "@/models";
+import { State, StateMachine } from "@/state_machine";
+import { getColor } from "@/models";
 const elements: ChemicalElement[] = [];
 for (let i = 1; i <= elementCount; i++) {
   elements.push(element(i));
@@ -36,7 +51,8 @@ for (let i = 1; i <= elementCount; i++) {
 export default Vue.extend({
   components: { "toggle-button": ToggleButtonVue },
   props: {
-    stateMachine: StateMachine
+    stateMachine: StateMachine,
+    d3: Boolean
   },
   data() {
     return {
@@ -57,6 +73,9 @@ export default Vue.extend({
     },
     on(): boolean {
       return this.stateMachine.state === State.PLACING_ATOM;
+    },
+    colors(): string[] {
+      return this.recent.map(e => getColor(e.name));
     }
   },
   watch: {
@@ -81,7 +100,7 @@ export default Vue.extend({
       }
       this.$emit("button-click", {
         target: "spawn",
-        payload: this.selected
+        payload: { name: this.selected.name, abbrev: this.selected.abbrev }
       });
     },
     create(el: ChemicalElement) {

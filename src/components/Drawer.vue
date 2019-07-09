@@ -5,7 +5,7 @@
       <widget-vue :state-machine="stateMachine"></widget-vue>
     </svg-vue>
     <span class="touch-bar-spacer">
-      <touchbar-vue class="touch-bar" :state-machine="stateMachine"></touchbar-vue>
+      <touchbar-vue class="touch-bar" :state-machine="stateMachine" :d3="d3"></touchbar-vue>
     </span>
     <dialog-vue :state-machine="stateMachine"></dialog-vue>
   </div>
@@ -29,8 +29,16 @@ export default Vue.extend({
     "dialog-vue": DialogVue
   },
   data,
+  watch: {
+    lockout(next: boolean) {
+      document.documentElement.classList.toggle("lockout", next);
+    }
+  },
   async mounted() {
     init_transforms();
+    if (this.lockout) {
+      document.documentElement.classList.add("lockout");
+    }
     try {
       const sessionread = await io.read("session", true);
       if (sessionread) {
@@ -74,6 +82,9 @@ export default Vue.extend({
       if (this.omit) {
         clazzes.push("omit");
       }
+      if (this.lockout) {
+        clazzes.push("lockout");
+      }
       return clazzes;
     }
   }
@@ -109,6 +120,13 @@ export default Vue.extend({
   visibility: hidden;
   pointer-events: none;
 }
+
+.lockout {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: wait;
+}
+
 html,
 body {
   height: 100%;
