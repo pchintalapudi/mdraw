@@ -37,8 +37,8 @@ export class StateMachine extends StateMachineBase {
         return save(this.stateVariables);
     }
 
-    public loadData(data: string, clear: boolean) {
-        load(data, this, clear);
+    public loadData(data: string, clear: boolean, offset?: number) {
+        load(data, this, clear, offset);
     }
 
     public deleteSelected() {

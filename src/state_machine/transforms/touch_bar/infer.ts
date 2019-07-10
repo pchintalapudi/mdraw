@@ -1,9 +1,9 @@
 import { Transform } from "@/state_machine/transitions";
 import { StateMachine } from "@/state_machine";
-import { infer } from "@/infer";
+import { infer as inferImplicits } from "@/infer";
 import { RGroup, Bond, LonePair } from "@/models";
 
-export const inferImplicits: Transform = (stateMachine, { payload }) => {
+export const infer: Transform = (stateMachine) => {
     stateMachine.stateVariables.selected.length = 0;
     const addedRGroups = [] as RGroup[];
     const addedBonds = [] as Bond[];
@@ -13,7 +13,7 @@ export const inferImplicits: Transform = (stateMachine, { payload }) => {
         ? stateMachine.stateVariables.selected.filter(r => r instanceof RGroup) as RGroup[]
         : stateMachine.stateVariables.rgroups;
     affected.forEach(r => {
-        const add = infer(r);
+        const add = inferImplicits(r);
         addedRGroups.push(...add[0]);
         addedBonds.push(...add[0].map(h => h.bonds.get(r)!));
         addedLonePairs.push(...add[1]);

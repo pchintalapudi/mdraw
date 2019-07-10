@@ -1,6 +1,6 @@
 import register_pane_transforms from "./pane_transforms";
 import register_atom_placement_transforms from "./atom_placement";
-import register_button from "./touch_bar";
+import register_button from "./touch_bar/";
 import register_move from "./move";
 import register_bonds from "./bonds";
 import register_lone_pairs from "./lone_pair";

@@ -14,7 +14,8 @@ export function data() {
         lastElement: ielement,
         lockout: true,
         d3: false,
-        handlers: [] as Handler[]
+        handlers: [] as Handler[],
+        copyOffset: 0
     };
 }
 
@@ -46,6 +47,7 @@ export function keyHandler(vmdata: ReturnType<typeof data>, event: KeyboardEvent
         case "c":
         case "x":
             if (!event.ctrlKey) return;
+            vmdata.copyOffset = 0;
             vmdata.clipboard = stateMachine.copySelected();
             if (event.key === "c") break;
         case "Delete":
@@ -53,7 +55,7 @@ export function keyHandler(vmdata: ReturnType<typeof data>, event: KeyboardEvent
             break;
         case "v":
             if (!event.ctrlKey) return;
-            stateMachine.loadData(vmdata.clipboard, false);
+            stateMachine.loadData(vmdata.clipboard, false, vmdata.copyOffset += 10);
             break;
         case "s":
             if (!event.ctrlKey) return;

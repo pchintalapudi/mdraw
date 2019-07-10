@@ -33,16 +33,16 @@ class RGroup {
     }
 
     public serialize() {
-        return `${this.id}@${JSON.stringify(this.payload).replace("@", String.fromCharCode(11))}@
+        return `${this.id}@${this.payload.name}@${this.payload.abbrev}@
             ${this.x}@${this.y}@${this.charge}@${this.lonePairs.map(lp => lp.serialize()).join("&")}`;
     }
 
     // tslint:disable-next-line: member-ordering
     public static deserialize(str: string): [number, RGroup, Array<[number, LonePair]>] {
         const parts = str.split("@");
-        const rg = new RGroup(JSON.parse(parts[1].replace(String.fromCharCode(11), "@")),
-            parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
-        const lonePairs = parts[5].split("&").filter(s => s).map(s => LonePair.deserialize(s, rg));
+        const rg = new RGroup({ name: parts[1], abbrev: parts[2] },
+            parseFloat(parts[3]), parseFloat(parts[4]), parseFloat(parts[5]));
+        const lonePairs = parts[6].split("&").filter(s => s).map(s => LonePair.deserialize(s, rg));
         rg.lonePairs = lonePairs.map(l => l[1]);
         return [+parts[0], rg, lonePairs];
     }

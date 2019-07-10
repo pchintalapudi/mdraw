@@ -1,7 +1,8 @@
 import { StateMachine, Action } from "..";
 import { RGroup, Bond, LonePair, StraightArrow, CurvedArrow } from "@/models";
 
-export function load(data: string, stateMachine: StateMachine, clear: boolean) {
+export function load(data: string, stateMachine: StateMachine, clear: boolean, offset?: number) {
+    offset = offset || 0;
     if (!data) return;
     const groups = data.split("!").map(s => s.split(",").filter(str => str));
     const entityMap = new Map<number, RGroup | Bond | LonePair>();
@@ -9,6 +10,8 @@ export function load(data: string, stateMachine: StateMachine, clear: boolean) {
     for (const r of groups[0].map(RGroup.deserialize)) {
         entityMap.set(r[0], r[1]);
         r[2].forEach(v => entityMap.set(v[0], v[1]));
+        r[1].x += offset;
+        r[1].y += offset;
         rgroups.push(r[1]);
     }
     const bonds: Bond[] = [];
@@ -17,7 +20,17 @@ export function load(data: string, stateMachine: StateMachine, clear: boolean) {
         entityMap.set(b[0], b[1]);
     }
     const straightArrows: StraightArrow[] = groups[2].map(StraightArrow.deserialize);
+    straightArrows.forEach(s => {
+        s.x += offset!;
+        s.y += offset!;
+    });
     const curvedArrows: CurvedArrow[] = groups[3].map(s => CurvedArrow.deserialize(s, entityMap));
+    curvedArrows.forEach(c => {
+        c.points.slice(1, c.points.length - 1).forEach(p => {
+            (p as any).x += offset!;
+            (p as any).y += offset!;
+        });
+    });
     stateMachine.execute(Action.CANCEL, undefined as any);
     const copy = stateMachine.stateVariables.getCopy(0b1111) as [RGroup[], Bond[], StraightArrow[], CurvedArrow[]];
     if (clear) {
