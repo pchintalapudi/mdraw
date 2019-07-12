@@ -12,9 +12,9 @@
 </template>
 <script lang="ts">
 import Vue from "vue";
-import { init_transforms } from "../state_machine";
-import { serialize, data, keyHandler, Handler } from "./utils";
-import { io } from "@/io";
+import { init_transforms } from "@/state_machine";
+import { serialize, data, keyHandler, init_keybinds, Handler } from "@/utils";
+import io from "@/io";
 import MoleculeVue from "@/components/molecules/MoleculeView.vue";
 import WidgetVue from "@/components/widgets/WidgetView.vue";
 import TouchBarVue from "@/components/touchbar/TouchBar.vue";
@@ -36,6 +36,7 @@ export default Vue.extend({
   },
   async mounted() {
     init_transforms();
+    init_keybinds();
     if (this.lockout) {
       document.documentElement.classList.add("lockout");
     }
@@ -51,7 +52,7 @@ export default Vue.extend({
         [
           "keydown",
           (ev: KeyboardEvent) =>
-            keyHandler(this.$data as ReturnType<typeof data>, ev)
+            keyHandler(ev, this.$data as ReturnType<typeof data>)
         ] as Handler,
         ["resize", this.stateMachine.view.viewPort.listener] as Handler,
         [

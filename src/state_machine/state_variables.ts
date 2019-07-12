@@ -8,6 +8,7 @@ class StateVariables {
     public curvedArrows: CurvedArrow[] = [];
     public lastAngle = 0;
     public lastPlaced = 0;
+    public lastElement = { name: "Carbon", abbrev: "C" };
     public count = 0;
     public selectionBox = new SelectionRectangle();
     public itime = 0;

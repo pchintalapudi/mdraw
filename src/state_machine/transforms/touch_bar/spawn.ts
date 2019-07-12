@@ -5,4 +5,5 @@ import { RGroup } from "@/models";
 export const spawn: Transform = (stateMachine, { payload }) => {
     stateMachine.state = State.PLACING_ATOM;
     stateMachine.stateVariables.rgroups.push(new RGroup(payload));
+    stateMachine.stateVariables.lastElement = payload;
 };
