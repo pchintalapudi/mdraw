@@ -1,14 +1,22 @@
 <template>
   <g
     :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`"
-    :class="classes"
     @pointerdown.stop="$emit('dmouse', {target:'bond', payload:bond, event:$event})"
     @pointermove.stop="$emit('mmouse', {target:'bond', payload:bond, event:$event})"
     @pointerup.stop="$emit('umouse', {target:'bond', payload:bond, event:$event})"
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
+    :style="rootStyle"
   >
-    <line class="clickme" x1="0" y1="0" :x2="dist" y2="0" />
+    <line
+      x1="0"
+      y1="0"
+      :x2="dist"
+      y2="0"
+      :style="`pointer-events:${transparent || (this.omitting && this.omittable()) ? 'none' : 'all'}`"
+      stroke="transparent"
+      stroke-width="25"
+    />
     <rect
       v-if="showSingleLine"
       x="0"
@@ -200,6 +208,13 @@ export default Vue.extend({
       return this.rgroupOmittable(false) && this.omitting
         ? this.dist
         : this.dist - this.bond.end.radius;
+    },
+    rootStyle(): string {
+      return `${
+        this.omitting && this.omittable()
+          ? "visibility:hidden;pointer-events:none;"
+          : ""
+      }`;
     }
   },
   methods: {
@@ -214,26 +229,3 @@ export default Vue.extend({
   }
 });
 </script>
-<style scoped>
-.d3 .double.bond {
-  stroke-width: 7;
-}
-
-.d3 .triple.bond {
-  stroke-width: 5;
-}
-
-.thick {
-  stroke-width: 10;
-}
-
-.clickme {
-  stroke: transparent;
-  stroke-width: 25;
-  pointer-events: all;
-}
-
-.transparent .clickme {
-  pointer-events: none;
-}
-</style>

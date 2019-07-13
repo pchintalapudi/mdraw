@@ -1,11 +1,11 @@
 <template>
   <div class="wrapper">
-    <svg-vue :class="classes" :state-machine="stateMachine">
+    <svg-vue :class="classes" :state-machine="stateMachine" id="svg">
       <molecule-vue :state-machine="stateMachine" :omit="omit" :d3="d3" id="molecules"></molecule-vue>
       <widget-vue :state-machine="stateMachine"></widget-vue>
     </svg-vue>
-    <span class="touch-bar-spacer">
-      <touchbar-vue class="touch-bar" :state-machine="stateMachine" :d3="d3"></touchbar-vue>
+    <span v-if="!printing" class="touch-bar-spacer">
+      <touchbar-vue :printing="printing" :state-machine="stateMachine" :d3="d3"></touchbar-vue>
     </span>
     <dialog-vue :state-machine="stateMachine"></dialog-vue>
   </div>
@@ -28,6 +28,9 @@ export default Vue.extend({
     "touchbar-vue": TouchBarVue,
     "dialog-vue": DialogVue
   },
+  created() {
+    (this.$options as any).handlers = [];
+  },
   data,
   watch: {
     lockout(next: boolean) {
@@ -48,7 +51,7 @@ export default Vue.extend({
       }
     } finally {
       this.lockout = false;
-      this.handlers.push(
+      (this.$options as any).handlers.push(
         [
           "keydown",
           (ev: KeyboardEvent) =>
@@ -69,20 +72,23 @@ export default Vue.extend({
               return "stop pls";
             }
           }
-        ] as Handler
+        ] as Handler,
+        ["beforeprint", () => (this.printing = true)] as Handler,
+        ["afterprint", () => (this.printing = false)] as Handler
       );
-      this.handlers.forEach(h => window.addEventListener(...h));
+      (this.$options as any).handlers.forEach((h: Handler) =>
+        window.addEventListener(...h)
+      );
     }
   },
-  beforeDestroy() {
-    this.handlers.forEach(h => window.removeEventListener(...h));
+  destroyed() {
+    (this.$options as any).handlers.forEach((h: Handler) =>
+      window.removeEventListener(...h)
+    );
   },
   computed: {
     classes(): string[] {
       const clazzes = ["surface"];
-      if (this.omit) {
-        clazzes.push("omit");
-      }
       if (this.lockout) {
         clazzes.push("lockout");
       }
@@ -104,7 +110,7 @@ export default Vue.extend({
   align-items: center;
   pointer-events: none;
 }
-.touch-bar {
+.touch-bar-spacer > * {
   height: 100%;
   padding: 5px;
 }
@@ -116,10 +122,6 @@ export default Vue.extend({
   height: 100%;
   width: 100%;
   display: flex;
-}
-.omit .omittable {
-  visibility: hidden;
-  pointer-events: none;
 }
 
 .lockout {

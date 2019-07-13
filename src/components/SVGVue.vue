@@ -3,7 +3,7 @@
     @pointermove.stop="handleMouseMove"
     @pointerdown.stop="handleMouseDown"
     @pointerup.stop="handleMouseUp"
-    :viewBox="viewPort.serialized"
+    :viewBox="printing ? viewBox.serialized : viewPort.serialized"
     ref="svg"
     :cursor="cursor"
   >
@@ -19,7 +19,7 @@ import { ViewPort, BoundingBox } from "@/state_machine/extensions";
 import { Constants } from "@/utils";
 export default Vue.extend({
   components: { "defs-vue": DefsVue },
-  props: { stateMachine: Object as PropType<StateMachine> },
+  props: { stateMachine: Object as PropType<StateMachine>, printing: Boolean },
   data() {
     return {
       svg: (undefined as any) as SVGGraphicsElement,

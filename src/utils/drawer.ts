@@ -10,8 +10,8 @@ export function data() {
         lockout: true,
         loading: 0,
         d3: false,
-        handlers: [] as Handler[],
-        copyOffset: 0
+        copyOffset: 0,
+        printing: false
     };
 }
 

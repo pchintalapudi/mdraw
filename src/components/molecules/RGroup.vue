@@ -1,13 +1,13 @@
 <template>
   <g
-    :class="classes"
     :transform="`translate(${x} ${y})`"
     @pointerdown.stop="pointerDown"
     @pointerup.stop="pointerUp"
     @pointermove.stop="pointerMove"
+    :style="rootStyle"
   >
     <title>{{name}}</title>
-    <circle :r="d3 ? 17.5 : abbrev.length * 5 + 10" fill="transparent" />
+    <circle :r="d3 ? 17.5 : abbrev.length * 5 + 10" :fill="selected ? '#0088ff44' : 'transparent'" />
     <circle
       :r="d3 ? 12.5 : abbrev.length * 5 + 5"
       :fill="d3 ? `url(#${color}-gradient)` : 'white'"
@@ -18,9 +18,10 @@
       ref="content"
       text-anchor="middle"
       dominant-baseline="central"
+      style="cursor:default;user-select:none;"
     >{{abbrev}}</text>
     <text
-      class="charge"
+      style="visibility:visible;cursor:default;user-select:none;"
       v-if="!d3 && charge"
       :x="abbrev.length * 5 + 2.5"
       y="-5"
@@ -97,6 +98,15 @@ export default Vue.extend({
           return this.charge > 0 ? `${this.charge}+` : `${-this.charge}-`;
       }
     },
+    rootStyle(): string {
+      return `
+      visibility:${
+        this.omitting && (this.omittable() || this.softOmittable())
+          ? "hidden"
+          : "visible"
+      };
+      pointer-events:${this.transparent || this.omittable() ? "none" : "all"};`;
+    },
     classes(): string[] {
       const clazzes: string[] = [];
       if (this.transparent) {
@@ -160,30 +170,5 @@ export default Vue.extend({
 ::selection {
   background-color: transparent;
   color: inherit;
-}
-
-.omittable.soft.override.transparent {
-  pointer-events: none;
-}
-
-.abbrev,
-.charge {
-  cursor: default;
-}
-
-.selected > circle:first-of-type {
-  fill: #0088ff44;
-}
-
-.omittable.soft.override {
-  pointer-events: all;
-}
-
-.omittable .charge {
-  visibility: visible;
-}
-
-text {
-  user-select: none;
 }
 </style>

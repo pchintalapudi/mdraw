@@ -1,16 +1,16 @@
 <template>
   <g
-    class="lone-pair"
+    style="visibility:visible"
     :transform="`translate(${tx}, 0) rotate(${angle}, ${-tx}, 0)`"
     @pointerdown.stop="mouseDown"
     @pointermove.stop="mouseMove"
     @pointerup.stop="mouseUp"
   >
     <circle r="5" fill="transparent"></circle>
-    <circle v-if="count === 1" cx="0" cy="0" r="2"></circle>
+    <circle v-if="count === 1" cx="0" cy="0" r="2" style="pointer-events:none"></circle>
     <template v-else>
-      <circle cx="0" cy="-3" r="2" fill="black"></circle>
-      <circle cx="0" cy="3" r="2" fill="black"></circle>
+      <circle cx="0" cy="-3" r="2" fill="black" style="pointer-events:none"></circle>
+      <circle cx="0" cy="3" r="2" fill="black" style="pointer-events:none"></circle>
     </template>
   </g>
 </template>
@@ -58,11 +58,3 @@ export default Vue.extend({
   }
 });
 </script>
-<style>
-.lone-pair {
-  visibility: visible;
-}
-.lone-pair > circle:not(:first-child) {
-  pointer-events: none;
-}
-</style>
