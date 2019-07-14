@@ -15,7 +15,7 @@
     <radialGradient
       v-for="color in colors"
       :key="color"
-      :id="color + '-gradient'"
+      :id="'color' + color + '-gradient'"
       fx="36%"
       fy="36%"
     >

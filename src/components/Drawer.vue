@@ -88,7 +88,7 @@ export default Vue.extend({
   },
   computed: {
     classes(): string[] {
-      const clazzes = ["surface"];
+      const clazzes = [] as string[];
       if (this.lockout) {
         clazzes.push("lockout");
       }
@@ -113,10 +113,6 @@ export default Vue.extend({
 .touch-bar-spacer > * {
   height: 100%;
   padding: 5px;
-}
-.surface {
-  height: 100%;
-  width: 100%;
 }
 .wrapper {
   height: 100%;

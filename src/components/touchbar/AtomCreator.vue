@@ -15,7 +15,7 @@
           cx="0"
           cy="0"
           r="5"
-          :fill="d3 ? `url(#${colors[idx]}-gradient)` : 'transparent'"
+          :fill="d3 ? `url(#color${colors[idx]}-gradient)` : 'transparent'"
           :stroke="d3 ? 'transparent' : 'black'"
           stroke-width="0.5"
         ></circle>

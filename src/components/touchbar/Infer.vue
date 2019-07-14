@@ -1,6 +1,6 @@
 <template>
   <form name="infer" class="infer">
-    <toggle-button :on="false" @toggle-button="infer" viewBox="-20 -20 40 40">
+    <toggle-button @toggle-button="infer" viewBox="-20 -20 40 40">
       <path
         d="M -7.5 2.5 A 10 10 0 1 1 7.5 2.5
          A 5 5 0 0 0 5 7.5 L 5 10

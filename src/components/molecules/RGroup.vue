@@ -10,7 +10,7 @@
     <circle :r="d3 ? 17.5 : abbrev.length * 5 + 10" :fill="selected ? '#0088ff44' : 'transparent'" />
     <circle
       :r="d3 ? 12.5 : abbrev.length * 5 + 5"
-      :fill="d3 ? `url(#${color}-gradient)` : 'white'"
+      :fill="d3 ? `url(#color${color}-gradient)` : 'white'"
     />
     <text
       v-if="!d3"
