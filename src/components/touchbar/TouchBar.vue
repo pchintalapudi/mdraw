@@ -10,6 +10,7 @@
     <arrow-creator-vue :state-machine="stateMachine" @button-click="cascade"></arrow-creator-vue>
     <infer-vue :state-machine="stateMachine" @button-click="cascade"></infer-vue>
     <maps-vue :state-machine="stateMachine" @button-click="cascade"></maps-vue>
+    <export-vue :state-machine="stateMachine" @button-click="cascade"></export-vue>
   </span>
 </template>
 <script lang="ts">
@@ -19,6 +20,7 @@ import LonePairCreatorVue from "./LonePairCreator.vue";
 import ArrowCreatorVue from "./ArrowCreator.vue";
 import MapsVue from "./Maps.vue";
 import InferVue from "./Infer.vue";
+import ExportVue from "./Export.vue";
 import { StateMachine, State, Action } from "@/state_machine";
 type StyleProperty = [string, string];
 export default Vue.extend({
@@ -28,7 +30,8 @@ export default Vue.extend({
     "lone-pair-creator-vue": LonePairCreatorVue,
     "arrow-creator-vue": ArrowCreatorVue,
     "maps-vue": MapsVue,
-    "infer-vue": InferVue
+    "infer-vue": InferVue,
+    "export-vue": ExportVue
   },
   data() {
     return {

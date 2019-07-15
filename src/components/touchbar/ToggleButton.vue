@@ -20,6 +20,7 @@ export default Vue.extend({
 .toggle-button {
   background-color: transparent;
   transition: background-color 250ms;
+  cursor: pointer;
 }
 .toggle-button.on {
   background-color: #0088ff33;

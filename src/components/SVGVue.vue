@@ -1,11 +1,14 @@
 <template>
   <svg
+    xmlns="http://www.w3.org/2000/svg"
     @pointermove.stop="handleMouseMove"
     @pointerdown.stop="handleMouseDown"
     @pointerup.stop="handleMouseUp"
     :viewBox="printing ? viewBox.serialized : viewPort.serialized"
     ref="svg"
     :cursor="cursor"
+    :width="viewPort.width"
+    :height="viewPort.height"
   >
     <defs-vue />
     <slot />

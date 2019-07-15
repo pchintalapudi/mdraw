@@ -25,27 +25,18 @@ export class IframeIO extends IO {
     }
 
     public async getFile(write: boolean, saveFile = true, def = false) {
-        let resolve: (value: any) => void, reject: (reason: any) => void;
-        const promise = new Promise<string | null>((rs, rj) => { resolve = rs; reject = rj; });
-        this.responseMap.set(this.id, { resolve: resolve!, reject: reject! });
-        this.sendMessage({ type: "getFile", data: `${write}|${saveFile}|${!!def}`, id: this.id++ });
-        return promise;
+        return this.requestResponse<string | null>({
+            type: "getFile",
+            data: `${write}|${saveFile}|${!!def}`, id: this.id++
+        });
     }
 
     public async write(filename: string, data: string, session: boolean) {
-        let resolve: (value: any) => void, reject: (reason: any) => void;
-        const promise = new Promise<void>((rs, rj) => { resolve = rs; reject = rj; });
-        this.responseMap.set(this.id, { resolve: resolve!, reject: reject! });
-        this.sendMessage({ type: "save", filename, data, session, id: this.id++ });
-        return promise;
+        return this.requestResponse<void>({ type: "save", filename, data, session, id: this.id++ });
     }
 
     public async read(filename: string, session: boolean) {
-        let resolve: (value: any) => void, reject: (reason: any) => void;
-        const promise = new Promise<string | null>((rs, rj) => { resolve = rs; reject = rj; });
-        this.responseMap.set(this.id, { resolve: resolve!, reject: reject! });
-        this.sendMessage({ type: "load", filename, session, id: this.id++ });
-        return promise;
+        return this.requestResponse<string | null>({ type: "load", filename, session, id: this.id++ });
     }
 
     private initPort(evt: MessageEvent) {
@@ -58,6 +49,14 @@ export class IframeIO extends IO {
             this.responseMap.clear();
         };
         queue.forEach(m => this.port!.postMessage(m));
+    }
+
+    private async requestResponse<T>(message: Message) {
+        let resolve: (value: any) => void, reject: (reason: any) => void;
+        const promise = new Promise<T>((rs, rj) => { resolve = rs; reject = rj; });
+        this.responseMap.set(message.id, { resolve: resolve!, reject: reject! });
+        this.sendMessage(message);
+        return promise;
     }
 
     private sendMessage(message: Message) {
