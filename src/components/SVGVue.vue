@@ -44,7 +44,10 @@ export default Vue.extend({
     autoscroll(): boolean {
       switch (this.stateMachine.state) {
         default:
-          return true;
+          return (
+            this.stateMachine.stateVariables.rgroups.length !== 0 ||
+            this.stateMachine.stateVariables.straightArrows.length !== 0
+          );
         case State.MAPPING:
         case State.ANGLING_LONE_PAIR:
         case State.IDLE:
@@ -147,34 +150,38 @@ export default Vue.extend({
     scroll() {
       const defaultDist = Constants.scrollDistance;
       if (this.scrollLeft) {
-        const dist = Math.max(
-          Math.min(defaultDist, this.viewPort.startX - this.viewBox.startX),
-          0
-        );
+        // const dist = Math.max(
+        //   Math.min(defaultDist, this.viewPort.startX - this.viewBox.startX),
+        //   0
+        // );
+        const dist = defaultDist;
         this.viewPort.startX -= dist;
         this.mx -= dist;
       }
       if (this.scrollTop) {
-        const dist = Math.max(
-          Math.min(defaultDist, this.viewPort.startY - this.viewBox.startY),
-          0
-        );
+        // const dist = Math.max(
+        //   Math.min(defaultDist, this.viewPort.startY - this.viewBox.startY),
+        //   0
+        // );
+        const dist = defaultDist;
         this.viewPort.startY -= dist;
         this.my -= dist;
       }
       if (this.scrollRight) {
-        const dist = Math.max(
-          Math.min(defaultDist, this.viewBox.endX - this.viewPort.endX),
-          0
-        );
+        // const dist = Math.max(
+        //   Math.min(defaultDist, this.viewBox.endX - this.viewPort.endX),
+        //   0
+        // );
+        const dist = defaultDist;
         this.viewPort.startX += dist;
         this.mx += dist;
       }
       if (this.scrollBottom) {
-        const dist = Math.max(
-          Math.min(defaultDist, this.viewBox.endY - this.viewPort.startY),
-          0
-        );
+        // const dist = Math.max(
+        //   Math.min(defaultDist, this.viewBox.endY - this.viewPort.startY),
+        //   0
+        // );
+        const dist = defaultDist;
         this.viewPort.startY += dist;
         this.my += dist;
       }
