@@ -1,10 +1,10 @@
 <template>
   <g
-    :transform="`translate(${x} ${y})`"
     @pointerdown.stop="pointerDown"
     @pointerup.stop="pointerUp"
     @pointermove.stop="pointerMove"
     :style="rootStyle"
+    class="positioned"
   >
     <title>{{name}}</title>
     <circle
@@ -96,7 +96,8 @@ export default Vue.extend({
           ? "hidden"
           : "visible"
       };
-      pointer-events:${this.transparent || this.omittable ? "none" : "all"};`;
+      pointer-events:${this.transparent || this.omittable ? "none" : "all"};
+      --x:${this.x}px;--y:${this.y}px;`;
     },
     classes(): string[] {
       const clazzes: string[] = [];

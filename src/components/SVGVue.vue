@@ -9,8 +9,10 @@
     :cursor="cursor"
     :width="viewPort.width"
     :height="viewPort.height"
+    style="--x:0px;--y:0px;--angle:0deg;--tx:center;--ty:center;"
   >
     <defs-vue />
+    <defs v-html="'<style>.positioned{transform:translate(var(--x),var(--y)) rotate(var(--angle));transform-origin:var(--tx) var(--ty);}</style>'"></defs>
     <slot />
   </svg>
 </template>

@@ -1,12 +1,12 @@
 <template>
   <g
-    :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle})`"
     @pointerdown.stop="$emit('dmouse', {target:'bond', payload:bond, event:$event})"
     @pointermove.stop="$emit('mmouse', {target:'bond', payload:bond, event:$event})"
     @pointerup.stop="$emit('umouse', {target:'bond', payload:bond, event:$event})"
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
     :style="rootStyle"
+    class="positioned"
   >
     <rect
       x="0"
@@ -211,10 +211,11 @@ export default Vue.extend({
     },
     rootStyle(): string {
       return `${
-        this.omitting && this.omittable()
-          ? "visibility:hidden;"
-          : ""
-      }pointer-events:none;`;
+        this.omitting && this.omittable() ? "visibility:hidden;" : ""
+      }pointer-events:none;
+      --x:${this.bond.start.x}px;--y:${this.bond.start.y}px;--angle:${
+        this.angle
+      }deg;--tx:0px;--ty:0px;`;
     },
     standardFill(): string {
       return this.d3 ? "url(#d3bond)" : "black";

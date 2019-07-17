@@ -1,10 +1,10 @@
 <template>
   <g
-    style="visibility:visible"
-    :transform="`translate(${tx}, 0) rotate(${angle}, ${-tx}, 0)`"
+    :style="`visibility:visible;--x:${tx}px;--y:0px;--angle:${angle}deg;--tx:${-tx}px;--ty:0px`"
     @pointerdown.stop="mouseDown"
     @pointermove.stop="mouseMove"
     @pointerup.stop="mouseUp"
+    class="positioned"
   >
     <circle r="5" fill="transparent"></circle>
     <circle v-if="count === 1" cx="0" cy="0" r="2" style="pointer-events:none"></circle>

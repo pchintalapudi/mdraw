@@ -5,7 +5,7 @@
       :y="d3 ? -5 : -0.5"
       :width="dist"
       :height="d3 ? 10 : 1"
-      :style="`fill:${d3 ? 'url(#d3bond)' : 'transparent'};stroke:${d3 ? 'transparent' : selected?'blue':'black'};`"
+      :style="`fill:${d3 ? 'url(#d3bond)' : 'transparent'};stroke:${d3 ? 'transparent' : selected ? 'blue':'black'};`"
     ></rect>
     <polygon
       :points="`${dist},${d3 ? 10.5 : 3.5}, ${dist}, ${d3 ? -10.5 : -3.5}, ${dist + (d3 ? 20 : 10)},0`"
