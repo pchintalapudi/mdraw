@@ -11,8 +11,9 @@ interface Payload {
 
 class RGroup {
 
-    public bonds = new Map<RGroup, Bond>();
     public lonePairs: LonePair[] = [];
+    private bonds = new Map<RGroup, Bond>();
+    private bondsTracker = 1;
 
     constructor(public payload: Payload, public x = 0, public y = 0,
         // tslint:disable-next-line: align
@@ -49,19 +50,55 @@ class RGroup {
 
     get softOmittable() {
         return (
-            this.payload.name === "Carbon" && this.bonds.size > 0
+            this.payload.name === "Carbon" && this.bondSize > 0
         );
     }
     get omittable() {
+        const peer = this.nextBond.start === this ? this.nextBond.end : this.nextBond.start;
         return (
             this.payload.name === "Hydrogen" &&
-            this.bonds.size === 1 &&
-            this.bonds.keys().next().value.payload.name === "Carbon"
+            this.bondSize === 1 &&
+            peer.payload.name === "Carbon"
         );
     }
 
     get radius() {
         return this.payload.abbrev.length * 5 + 5;
+    }
+
+    get bondSize() {
+        const bool = (this.bondsTracker !== undefined as any);
+        if (bool) return this.bonds.size;
+        else return this.bonds.size;
+    }
+
+    get tempBonds() { return this.bonds; }
+
+    public setBond(rgroup: RGroup, bond: Bond) {
+        this.bonds.set(rgroup, bond);
+        this.bondsTracker = (this.bondsTracker + 1) % (1 << 10);
+    }
+
+    public deleteBond(rgroup: RGroup) {
+        this.bonds.delete(rgroup);
+        this.bondsTracker++;
+        this.bondsTracker = (this.bondsTracker + 1) % (1 << 10);
+    }
+
+    public getBond(rgroup: RGroup) {
+        const bool = (this.bondsTracker !== undefined as any);
+        if (bool) return this.bonds.get(rgroup);
+    }
+
+    get nextBond() {
+        const bool = (this.bondsTracker !== undefined as any);
+        const bond = this.bonds.values().next().value;
+        if (bool) return bond;
+        else return bond;
+    }
+
+    public forEachBond(callback: (bond: Bond, rgroup: RGroup, map: Map<RGroup, Bond>) => void) {
+        this.bonds.forEach(callback);
     }
 }
 

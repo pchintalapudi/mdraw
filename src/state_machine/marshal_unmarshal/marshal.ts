@@ -4,7 +4,7 @@ function getValidBonds(rgroups: RGroup[]) {
     const rgroupSet = new Set<RGroup>(rgroups);
     const bonds = new Set<Bond>();
     for (const rgroup of rgroups) {
-        rgroup.bonds.forEach((b, r) => {
+        rgroup.forEachBond((b, r) => {
             if (rgroupSet.has(r) && !bonds.has(b)) {
                 bonds.add(b);
             }

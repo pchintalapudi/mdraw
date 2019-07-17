@@ -15,7 +15,7 @@ export const infer: Transform = (stateMachine) => {
     affected.forEach(r => {
         const add = inferImplicits(r);
         addedRGroups.push(...add[0]);
-        addedBonds.push(...add[0].map(h => h.bonds.get(r)!));
+        addedBonds.push(...add[0].map(h => h.getBond(r)!));
         addedLonePairs.push(...add[1]);
         dcharges.set(r, add[2]);
     });
@@ -26,14 +26,14 @@ export const infer: Transform = (stateMachine) => {
     const undo = (sm: StateMachine) => {
         sm.stateVariables.rgroups.length = oldRGLength;
         sm.stateVariables.bonds.length = oldBondLength;
-        addedBonds.forEach(b => b.start.bonds.delete(b.end));
+        addedBonds.forEach(b => b.start.deleteBond(b.end));
         addedLonePairs.forEach(lp => lp.rgroup.lonePairs.pop());
         dcharges.forEach((c, r) => r.charge -= c);
     };
     const redo = (sm: StateMachine) => {
         sm.stateVariables.rgroups.push(...addedRGroups);
         sm.stateVariables.bonds.push(...addedBonds);
-        addedBonds.forEach(b => b.start.bonds.set(b.end, b));
+        addedBonds.forEach(b => b.start.setBond(b.end, b));
         addedLonePairs.forEach(lp => lp.rgroup.lonePairs.push(lp));
         dcharges.forEach((c, r) => r.charge += c);
     };

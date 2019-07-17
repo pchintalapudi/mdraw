@@ -65,8 +65,8 @@ class Bond {
         const parts = str.split("@");
         const b = new Bond(rgroupMap.get(+parts[1])!,
             rgroupMap.get(+parts[2])!, +parts[3] as BondState);
-        b.start.bonds.set(b.end, b);
-        b.end.bonds.set(b.start, b);
+        b.start.setBond(b.end, b);
+        b.end.setBond(b.start, b);
         return [+parts[0], b];
     }
 

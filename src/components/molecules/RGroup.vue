@@ -56,16 +56,6 @@ export default Vue.extend({
     d3: Boolean
   },
   components: { "lone-pair-vue": LonePairVue },
-  data() {
-    return {
-      contentElement: undefined as SVGTextElement | undefined,
-      chargeElement: undefined as SVGTextElement | undefined
-    };
-  },
-  mounted() {
-    this.contentElement = this.$refs.content as SVGTextElement;
-    this.chargeElement = this.$refs.charge as SVGTextElement;
-  },
   computed: {
     name(): string {
       return this.rgroup.payload.name;
@@ -103,11 +93,11 @@ export default Vue.extend({
     rootStyle(): string {
       return `
       visibility:${
-        this.omitting && (this.omittable() || this.softOmittable())
+        this.omitting && (this.omittable || this.softOmittable)
           ? "hidden"
           : "visible"
       };
-      pointer-events:${this.transparent || this.omittable() ? "none" : "all"};`;
+      pointer-events:${this.transparent || this.omittable ? "none" : "all"};`;
     },
     classes(): string[] {
       const clazzes: string[] = [];
@@ -116,17 +106,23 @@ export default Vue.extend({
       }
       if (this.selected) {
         clazzes.push("selected");
-      } else if (this.softOmittable()) {
+      } else if (this.softOmittable) {
         clazzes.push("omittable");
         clazzes.push("soft");
         clazzes.push("override");
-      } else if (this.omittable()) {
+      } else if (this.omittable) {
         clazzes.push("omittable");
       }
       return clazzes;
     },
     color(): string {
       return getColor(this.rgroup);
+    },
+    softOmittable(): boolean {
+      return this.rgroup.softOmittable;
+    },
+    omittable(): boolean {
+      return this.rgroup.omittable;
     }
   },
   methods: {
@@ -141,12 +137,6 @@ export default Vue.extend({
     pointerMove(event: PointerEvent) {
       const rgroup = this.rgroup;
       this.$emit("mmouse", { target: "rgroup", payload: rgroup, event });
-    },
-    softOmittable(): boolean {
-      return this.rgroup.softOmittable;
-    },
-    omittable(): boolean {
-      return this.rgroup.omittable;
     },
     cascadeDown(payload: {
       target: string;
