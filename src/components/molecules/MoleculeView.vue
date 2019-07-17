@@ -74,8 +74,8 @@ export default Vue.extend({
     transparent(): Array<RGroup | Bond | StraightArrow | CurvedArrow> {
       const transp = [];
       switch (this.stateMachine.state) {
-        case State.PLACING_ATOM:
         case State.PLACING_ATOM_AND_BOND:
+        case State.PLACING_ATOM:
           transp.push(this.rgroups[this.rgroups.length - 1]);
         case State.PLACING_LONE_PAIR:
         case State.SELECTING:

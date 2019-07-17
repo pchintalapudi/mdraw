@@ -3,6 +3,8 @@ export abstract class IO {
 
     private stateMachine?: StateMachine;
 
+    constructor(public readonly localExport: boolean) { }
+
     public async abstract getFile(write: boolean, saveFile?: boolean, def?: boolean): Promise<string | null>;
 
     public async abstract write(filename: string, data: string, session: boolean): Promise<void>;

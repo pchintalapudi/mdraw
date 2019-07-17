@@ -8,14 +8,14 @@
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
     :style="rootStyle"
   >
-    <line
-      x1="0"
-      y1="0"
-      :x2="dist"
-      y2="0"
+    <rect
+      x="0"
+      y="-12.5"
+      height="25"
+      :width="dist"
       :style="`pointer-events:${transparent || (this.omitting && this.omittable()) ? 'none' : 'all'}`"
       stroke="transparent"
-      stroke-width="25"
+      fill="transparent"
     />
     <rect
       v-if="showSingleLine"
@@ -38,7 +38,7 @@
         :height="height"
         :width="doubleEndLeft - doubleStartLeft"
         stroke="transparent"
-        :fill="d3 ? 'url(#d3bond)' : 'black'"
+        :fill="standardFill"
       />
       <rect
         :x="doubleStartRight"
@@ -46,7 +46,7 @@
         :height="height"
         :width="doubleEndRight - doubleStartRight"
         stroke="transparent"
-        :fill="d3 ? 'url(#d3bond)' : 'black'"
+        :fill="standardFill"
       />
     </template>
     <template v-else-if="bond.bondOrder == 3">
@@ -56,7 +56,7 @@
         :y="5 - height / 2"
         :height="height"
         stroke="transparent"
-        :fill="d3 ? 'url(#d3bond)' : 'black'"
+        :fill="standardFill"
       />
       <rect
         x="0"
@@ -64,7 +64,7 @@
         :width="dist"
         :height="height"
         stroke="transparent"
-        :fill="d3 ? 'url(#d3bond)' : 'black'"
+        :fill="standardFill"
       />
       <rect
         :x="doubleStartRight"
@@ -72,7 +72,7 @@
         :y="-5 - height / 2"
         :height="height"
         stroke="transparent"
-        :fill="d3 ? 'url(#d3bond)' : 'black'"
+        :fill="standardFill"
       />
     </template>
   </g>
@@ -212,9 +212,12 @@ export default Vue.extend({
     rootStyle(): string {
       return `${
         this.omitting && this.omittable()
-          ? "visibility:hidden;pointer-events:none;"
+          ? "visibility:hidden;"
           : ""
-      }`;
+      }pointer-events:none;`;
+    },
+    standardFill(): string {
+      return this.d3 ? "url(#d3bond)" : "black";
     }
   },
   methods: {

@@ -1,5 +1,6 @@
 import { registerKeybind, Consumer, getValidator } from "./registration";
 import { Modifier } from "./modifiers";
+import { Action } from "@/state_machine";
 
 const copy: Consumer = (vmdata) => { vmdata.clipboard = vmdata.stateMachine.copySelected(); vmdata.copyOffset = 0; };
 
@@ -9,10 +10,18 @@ const cut: Consumer = (vmdata, ev) => copy(vmdata, ev) as any && false || del(vm
 
 const paste: Consumer = (vmdata) => vmdata.stateMachine.loadData(vmdata.clipboard, false, vmdata.copyOffset += 10);
 
+const highlightAll: Consumer = ({ stateMachine }) => {
+    stateMachine.execute(Action.CANCEL, undefined as any);
+    stateMachine.stateVariables.selected = [...stateMachine.stateVariables.rgroups,
+    ...stateMachine.stateVariables.straightArrows];
+};
+
 export default function () {
-    registerKeybind("c", getValidator(Modifier.SHORTCUT), copy);
-    registerKeybind("x", getValidator(Modifier.SHORTCUT), cut);
-    registerKeybind("v", getValidator(Modifier.SHORTCUT), paste);
+    const shortcut = getValidator(Modifier.SHORTCUT);
+    registerKeybind("c", shortcut, copy);
+    registerKeybind("x", shortcut, cut);
+    registerKeybind("v", shortcut, paste);
+    registerKeybind("a", shortcut, highlightAll);
     registerKeybind("Backspace", getValidator(), del);
     registerKeybind("Delete", getValidator(), del);
 }

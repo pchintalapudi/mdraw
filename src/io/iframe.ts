@@ -19,7 +19,7 @@ export class IframeIO extends IO {
     private id = 0;
 
     constructor() {
-        super();
+        super(false);
         this.port = undefined;
         window.onmessage = this.initPort;
     }

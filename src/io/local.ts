@@ -38,6 +38,10 @@ export class LocalIO extends IO {
 
     private prevFile = null as string | null;
 
+    constructor() {
+        super(true);
+    }
+
     public async getFile(write: boolean, saveFile = true, def = false) {
         if (def && this.prevFile !== null) return Promise.resolve(this.prevFile);
         const fileNameStr = await this.read(FILE_NAME_FILE, false);
