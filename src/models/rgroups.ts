@@ -54,11 +54,11 @@ class RGroup {
         );
     }
     get omittable() {
-        const peer = this.nextBond.start === this ? this.nextBond.end : this.nextBond.start;
+        const peer = this.bondSize !== 1 ? false
+            : this.nextBond.start === this ? this.nextBond.end : this.nextBond.start;
         return (
             this.payload.name === "Hydrogen" &&
-            this.bondSize === 1 &&
-            peer.payload.name === "Carbon"
+            peer && peer.payload.name === "Carbon"
         );
     }
 

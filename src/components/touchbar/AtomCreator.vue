@@ -31,7 +31,7 @@
     </div>
     <select name="atom-selector" id="atom-selector" v-model="selected" title="Select an element">
       <option
-        v-for="el in choices"
+        v-for="el in $options.choices"
         :key="el.number"
         :value="el"
       >{{`${el.number} ${el.name} (${el.abbrev})`}}</option>
@@ -41,15 +41,15 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import ToggleButtonVue from "./ToggleButton.vue";
-import { ChemicalElement, elementCount, element } from "@/models";
+import { ChemicalElement } from "@/models";
 import { State, StateMachine } from "@/state_machine";
 import { getColor } from "@/models";
-const elements: ChemicalElement[] = [];
-for (let i = 1; i <= elementCount; i++) {
-  elements.push(element(i));
-}
+import elements from "@/models/elements";
 export default Vue.extend({
   components: { "toggle-button": ToggleButtonVue },
+  created() {
+    (this.$options as any).choices = elements;
+  },
   props: {
     stateMachine: StateMachine,
     d3: Boolean
@@ -61,14 +61,12 @@ export default Vue.extend({
     };
   },
   computed: {
-    choices(): ChemicalElement[] {
-      return elements;
-    },
     recent(): ChemicalElement[] {
       const rev = [];
-      for (let i = this.recentlyUsed.length; i-- > 0; ) {
+      let i = this.recentlyUsed.length - 1;
+      do {
         rev.push(this.recentlyUsed[i]);
-      }
+      } while (i--);
       return rev;
     },
     on(): boolean {

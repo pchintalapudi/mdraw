@@ -12,6 +12,7 @@ export class History {
 
     public log(undo: Operation, redo: Operation) {
         this.stack[this.stack.length = ++this.idx] = { undo, redo };
+        if (this.stack.length > 50) this.stack.splice(0, 1);
     }
 
     get canUndo() {

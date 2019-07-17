@@ -35,7 +35,6 @@
       v-for="lp in lonePairs"
       :key="lp.id"
       :lonepair="lp"
-      :dist="radius"
       :omitting="omitting"
       @cascade-down="cascadeDown"
       @cascade-move="cascadeMove"

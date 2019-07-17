@@ -43,11 +43,6 @@ class Bond {
         }
     }
 
-    get cmp() {
-        //Cantor pairing function
-        return ((this.start.id + this.end.id) * (this.start.id + this.end.id + 1)) / 2 + this.end.id;
-    }
-
     public asString() {
         return `
         Start: ${this.start.asString(true)}\n
