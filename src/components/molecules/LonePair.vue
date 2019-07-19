@@ -1,6 +1,6 @@
 <template>
   <g
-    :style="`visibility:visible;--x:${tx}px;--y:0px;--angle:${angle}deg;--tx:${-tx}px;--ty:0px`"
+    :style="`visibility:visible;--x:${tx}px;--angle:${angle}deg;--tx:${-tx}px;--ty:0px`"
     @pointerdown.stop="mouseDown"
     @pointermove.stop="mouseMove"
     @pointerup.stop="mouseUp"

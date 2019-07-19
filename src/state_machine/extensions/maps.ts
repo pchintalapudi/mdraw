@@ -112,7 +112,6 @@ export class MapStruct {
             maxx = Math.max(maxx, rgroup.x);
             maxy = Math.max(maxy, rgroup.y);
         }
-        console.debug("recompute rgroup box");
         return [minx - 30, miny - 30, maxx + 30, maxy + 30];
     }
 
@@ -127,7 +126,6 @@ export class MapStruct {
             maxx = Math.max(maxx, end[0], sa.start.x);
             maxy = Math.max(maxy, end[1], sa.start.y);
         }
-        console.debug("recompute straight arrow box");
         return [minx, miny, maxx, maxy];
     }
 
@@ -144,7 +142,6 @@ export class MapStruct {
                 }
             }
         }
-        console.debug("recompute curved arrow box");
         return [minx - 5, miny - 5, maxx + 5, maxy + 5];
     }
 
@@ -157,7 +154,6 @@ export class MapStruct {
             maxx = Math.max(maxx, bond.start.x, bond.end.x);
             maxy = Math.max(maxy, bond.start.y, bond.end.y);
         }
-        console.debug("recompute bond box");
         return [minx - 10, miny - 10, maxx + 10, maxy + 10];
     }
 
@@ -165,7 +161,6 @@ export class MapStruct {
         const boxes = [this.rgroupBox, this.straightArrowBox, this.curvedArrowBox, this.bondBox];
         const startX = Math.min(...boxes.map(b => b[0])), startY = Math.min(...boxes.map(b => b[1])),
             endX = Math.max(...boxes.map(b => b[2])), endY = Math.max(...boxes.map(b => b[3]));
-        console.debug("recompute bounds box");
         return new BoundingBox(startX, startY, endX, endY);
     }
 
@@ -173,7 +168,6 @@ export class MapStruct {
         const minbox = this.bounds;
         const startX = Math.min(0, minbox.startX), startY = Math.min(0, minbox.startY),
             endX = Math.max(this.viewPort.width, minbox.endX), endY = Math.max(this.viewPort.height, minbox.endY);
-        console.debug("recompute viewbox");
         return new BoundingBox(startX, startY, endX, endY);
     }
 

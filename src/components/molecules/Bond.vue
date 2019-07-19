@@ -6,74 +6,32 @@
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
     :style="rootStyle"
-    class="positioned"
+    class="positioned bond"
   >
     <rect
       x="0"
       y="-12.5"
       height="25"
       :width="dist"
-      :style="`pointer-events:${transparent || (this.omitting && this.omittable()) ? 'none' : 'all'}`"
-      stroke="transparent"
+      :style="`pointer-events:${transparent || (omitting && bond.omittable) ? 'none' : 'all'}`"
       fill="transparent"
     />
-    <rect
-      v-if="showSingleLine"
-      x="0"
-      :y="-height / 2"
-      :width="dist"
-      :height="height"
-      :fill="d3 ? patchy ? 'url(#patchy-d3bond)': 'url(#d3bond)' : patchy ? 'url(#patchy)' :  'black'"
-      stroke="transparent"
-    />
     <polygon
-      v-else-if="bond.bondOrder == 1"
-      :style="`fill: ${isApproachingBond ? 'black' : 'url(#patchy)'};stroke:transparent`"
+      v-if="showPolygon"
+      :style="polygonFill"
       :points="`0,0 ${polygonX},5 ${polygonX},-5`"
     ></polygon>
-    <template v-else-if="bond.bondOrder == 2">
-      <rect
-        :x="doubleStartLeft"
-        :y="doubleDown - height / 2"
-        :height="height"
-        :width="doubleEndLeft - doubleStartLeft"
-        stroke="transparent"
-        :fill="standardFill"
-      />
-      <rect
-        :x="doubleStartRight"
-        :y="doubleUp - height / 2"
-        :height="height"
-        :width="doubleEndRight - doubleStartRight"
-        stroke="transparent"
-        :fill="standardFill"
-      />
-    </template>
-    <template v-else-if="bond.bondOrder == 3">
-      <rect
-        :x="doubleStartLeft"
-        :width="doubleEndLeft - doubleStartLeft"
-        :y="5 - height / 2"
-        :height="height"
-        stroke="transparent"
-        :fill="standardFill"
-      />
-      <rect
-        x="0"
-        :y="-height / 2"
-        :width="dist"
-        :height="height"
-        stroke="transparent"
-        :fill="standardFill"
-      />
-      <rect
-        :x="doubleStartRight"
-        :width="doubleEndRight - doubleStartRight"
-        :y="-5 - height / 2"
-        :height="height"
-        stroke="transparent"
-        :fill="standardFill"
-      />
+    <rect
+      v-else-if="bond.bondOrder !== 2"
+      :width="dist"
+      :height="height"
+      class="positioned"
+      :style="`--y:${-height / 2}px;
+      ${!bond.bondOrder ? `fill:${d3 ? 'url(#patchy-d3bond)' : 'url(#patchy)'}` : ''}`"
+    />
+    <template v-if="bond.bondOrder > 1">
+      <rect x="0" y="0" height="1" width="1" class="positioned" :style="`--x:${doubleStartLeft}px;--y:${doubleDown}px;--sy:${height};--sx:${doubleDistLeft};`" />
+      <rect x="0" y="0" height="1" width="1" class="positioned" :style="`--x:${doubleStartRight}px;--y:${doubleUp}px;--sy:${height};--sx:${doubleDistRight};`"/>
     </template>
   </g>
 </template>
@@ -87,23 +45,18 @@ export default Vue.extend({
     omitting: Boolean,
     d3: Boolean
   },
-  data() {
-    return {
-      shortenVisible: 2 / 7,
-      shortenOmitted: 1 / 7
-    };
+  created() {
+    const options = this.$options as any;
+    options.shortenVisible = 2 / 7;
+    options.shortenOmitted = 1 / 7;
   },
   computed: {
-    showSingleLine(): boolean {
+    showPolygon(): boolean {
       return (
-        this.bond.state === BondState.SINGLE ||
-        !this.bond.bondOrder ||
-        this.bond.state === BondState.THICK ||
-        (this.bond.bondOrder === 1 && this.d3)
+        !this.d3 &&
+        (this.bond.state === BondState.FORWARD ||
+          this.bond.state === BondState.RETREATING)
       );
-    },
-    patchy(): boolean {
-      return this.bond.bondOrder === 0;
     },
     height(): number {
       switch (this.bond.state) {
@@ -120,8 +73,10 @@ export default Vue.extend({
           return this.d3 ? 5 : 1;
       }
     },
-    isApproachingBond(): boolean {
-      return this.bond.state === BondState.FORWARD;
+    polygonFill(): string {
+      return this.bond.state === BondState.FORWARD
+        ? "fill:black"
+        : "fill:url(#patchy)";
     },
     dist(): number {
       return Math.hypot(
@@ -138,43 +93,39 @@ export default Vue.extend({
         )
       );
     },
-    classes(): string[] {
-      const clazzes: string[] = [];
-      if (this.d3) {
-        clazzes.push("d3");
-      } else if (this.omittable()) {
-        clazzes.push("omittable");
-      }
-      if (this.transparent) {
-        clazzes.push("transparent");
-      }
-      const start = this.bond.start;
-      const end = this.bond.end;
-      return clazzes;
-    },
     shortenStart(): number {
-      return this.rgroupOmittable(true) && this.omitting
-        ? this.shortenOmitted
-        : this.shortenVisible;
+      return this.bond.start.softOmittable && this.omitting
+        ? (this.$options as any).shortenOmitted
+        : (this.$options as any).shortenVisible;
     },
     shortenEnd(): number {
-      return this.rgroupOmittable(false) && this.omitting
-        ? this.shortenOmitted
-        : this.shortenVisible;
+      return this.bond.end.softOmittable && this.omitting
+        ? (this.$options as any).shortenOmitted
+        : (this.$options as any).shortenVisible;
     },
     doubleUp(): number {
-      return (this.bond.state === BondState.DOUBLE_LEFT ||
-        this.bond.state === BondState.TRIPLE_SHORT) &&
-        !this.d3
-        ? 0
-        : 3.75;
+      return (
+        (this.d3
+          ? this.bond.bondOrder === 3
+            ? 5
+            : 3.75
+          : this.bond.state === BondState.DOUBLE_LEFT
+          ? 0
+          : 3.75) -
+        this.height / 2
+      );
     },
     doubleDown(): number {
-      return (this.bond.state === BondState.DOUBLE_RIGHT ||
-        this.bond.state === BondState.TRIPLE_SHORT) &&
-        !this.d3
-        ? 0
-        : -3.75;
+      return (
+        (this.d3
+          ? this.bond.bondOrder === 3
+            ? -5
+            : -3.75
+          : this.bond.state === BondState.DOUBLE_RIGHT
+          ? 0
+          : -3.75) -
+        this.height / 2
+      );
     },
     doubleStartLeft(): number {
       return (this.bond.state === BondState.DOUBLE_LEFT ||
@@ -190,45 +141,34 @@ export default Vue.extend({
         ? this.dist * this.shortenStart
         : 0;
     },
-    doubleEndLeft(): number {
-      return (this.bond.state === BondState.DOUBLE_LEFT ||
-        this.bond.state === BondState.TRIPLE_SHORT) &&
-        !this.d3
-        ? this.dist * (1 - this.shortenEnd)
+    doubleDistLeft(): number {
+      return this.d3
+        ? this.dist
+        : this.bond.state === BondState.DOUBLE_LEFT ||
+          this.bond.state === BondState.TRIPLE_SHORT
+        ? this.dist * (1 - this.shortenStart - this.shortenEnd)
         : this.dist;
     },
-    doubleEndRight(): number {
-      return (this.bond.state === BondState.DOUBLE_RIGHT ||
-        this.bond.state === BondState.TRIPLE_SHORT) &&
-        !this.d3
-        ? this.dist * (1 - this.shortenEnd)
+    doubleDistRight(): number {
+      return this.d3
+        ? this.dist
+        : this.bond.state === BondState.DOUBLE_RIGHT ||
+          this.bond.state === BondState.TRIPLE_SHORT
+        ? this.dist * (1 - this.shortenStart - this.shortenEnd)
         : this.dist;
     },
     polygonX(): number {
-      return this.rgroupOmittable(false) && this.omitting
+      return this.bond.end.softOmittable && this.omitting
         ? this.dist
         : this.dist - this.bond.end.radius;
     },
     rootStyle(): string {
       return `${
-        this.omitting && this.omittable() ? "visibility:hidden;" : ""
+        this.omitting && this.bond.omittable ? "visibility:hidden;" : ""
       }pointer-events:none;
       --x:${this.bond.start.x}px;--y:${this.bond.start.y}px;--angle:${
         this.angle
-      }deg;--tx:0px;--ty:0px;`;
-    },
-    standardFill(): string {
-      return this.d3 ? "url(#d3bond)" : "black";
-    }
-  },
-  methods: {
-    rgroupOmittable(start: boolean): boolean {
-      return start
-        ? this.bond.start.softOmittable || this.bond.start.omittable
-        : this.bond.end.softOmittable || this.bond.end.omittable;
-    },
-    omittable(): boolean {
-      return this.bond.omittable;
+      }deg;`;
     }
   }
 });

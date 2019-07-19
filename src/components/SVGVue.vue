@@ -4,16 +4,50 @@
     @pointermove.stop="handleMouseMove"
     @pointerdown.stop="handleMouseDown"
     @pointerup.stop="handleMouseUp"
-    :viewBox="printing ? viewBox.serialized : viewPort.serialized"
+    :viewBox="printing ? viewBox.serialized : `0 0 ${viewPort.width} ${viewPort.height}`"
     ref="svg"
     :cursor="cursor"
-    :width="viewPort.width"
-    :height="viewPort.height"
-    style="--x:0px;--y:0px;--angle:0deg;--tx:center;--ty:center;"
+    :width="printing ? viewBox.width : '100%'"
+    :height="printing ? viewBox.height : '100%'"
   >
     <defs-vue />
-    <defs v-html="'<style>.positioned{transform:translate(var(--x),var(--y)) rotate(var(--angle));transform-origin:var(--tx) var(--ty);}</style>'"></defs>
-    <slot />
+    <defs
+      v-html="`
+      <style>
+        .positioned {
+          transform:translate(var(--x),var(--y)) rotate(var(--angle)) scale(var(--sx), var(--sy));
+          transform-origin:var(--tx) var(--ty);
+        }
+
+        .positioned > * {
+          --x:0;
+          --y:0;
+          --sx:1;
+          --sy:1;
+          --angle:0deg;
+          --tx:center;
+          --ty:center;
+        }
+
+        .bond {
+          fill:${d3 ? 'url(#d3bond)' : 'black'};
+          stroke:transparent;
+          --tx:0px;
+          --ty:0px;
+        }
+
+        .bond > * {
+          --tx:0px;
+          --ty:0px;
+        }
+      </style>`"
+    />
+    <g
+      class="positioned"
+      :style="`--x:${printing ? 0 : -viewPort.startX}px;--y:${printing ? 0 : -viewPort.startY}px;--angle:0;--tx:center;--ty:center;--sx:1;--sy:1;`"
+    >
+      <slot />
+    </g>
   </svg>
 </template>
 <script lang="ts">
@@ -24,13 +58,17 @@ import { ViewPort, BoundingBox } from "@/state_machine/extensions";
 import { Constants } from "@/utils";
 export default Vue.extend({
   components: { "defs-vue": DefsVue },
-  props: { stateMachine: Object as PropType<StateMachine>, printing: Boolean },
+  props: {
+    stateMachine: Object as PropType<StateMachine>,
+    printing: Boolean,
+    d3: Boolean
+  },
   data() {
     return {
       svg: (undefined as any) as SVGGraphicsElement,
       mx: this.stateMachine.view.viewPort.width / 2,
       my: this.stateMachine.view.viewPort.height / 2,
-      autoscroller: 0
+      autoscroller: 0,
     };
   },
   mounted() {
@@ -62,25 +100,31 @@ export default Vue.extend({
     scrollLeft(): boolean {
       return (
         this.autoscroll &&
-        this.mx < this.viewPort.startX + Constants.screenScrollWidth
+        this.mx < Constants.screenScrollWidth + this.viewPort.startX
       );
     },
     scrollTop(): boolean {
       return (
         this.autoscroll &&
-        this.my < this.viewPort.startY + Constants.screenScrollWidth
+        this.my < Constants.screenScrollWidth + this.viewPort.startY
       );
     },
     scrollRight(): boolean {
       return (
         this.autoscroll &&
-        this.mx > this.viewPort.endX - Constants.screenScrollWidth
+        this.mx >
+          this.viewPort.width -
+            Constants.screenScrollWidth +
+            this.viewPort.startX
       );
     },
     scrollBottom(): boolean {
       return (
         this.autoscroll &&
-        this.my > this.viewPort.endY - Constants.screenScrollWidth
+        this.my >
+          this.viewPort.height -
+            Constants.screenScrollWidth +
+            this.viewPort.startY
       );
     },
     needsScroll(): boolean {
@@ -123,17 +167,25 @@ export default Vue.extend({
       const pt = (this.svg as any).createSVGPoint() as SVGPoint;
       pt.x = payload.x;
       pt.y = payload.y;
-      return pt.matrixTransform(this.svg.getScreenCTM()!.inverse());
+      const transformed = pt.matrixTransform(
+        this.svg.getScreenCTM()!.inverse()
+      );
+      return {
+        x: transformed.x + this.viewPort.startX,
+        y: transformed.y + this.viewPort.startY
+      };
     },
     handleMouseMove(payload: { x: number; y: number }, transformed = false) {
       const pt = transformed ? payload : this.transformPoint(payload);
+      if (!transformed) {
+        this.mx = pt.x;
+        this.my = pt.y;
+      }
       this.stateMachine.execute(Action.MOUSE_MOVE, {
         target: "surface",
         payload: pt,
         event: payload instanceof PointerEvent ? payload : undefined
       });
-      this.mx = pt.x;
-      this.my = pt.y;
     },
     handleMouseUp(payload: PointerEvent) {
       this.stateMachine.execute(Action.MOUSE_UP, {
@@ -152,37 +204,21 @@ export default Vue.extend({
     scroll() {
       const defaultDist = Constants.scrollDistance;
       if (this.scrollLeft) {
-        // const dist = Math.max(
-        //   Math.min(defaultDist, this.viewPort.startX - this.viewBox.startX),
-        //   0
-        // );
         const dist = defaultDist;
         this.viewPort.startX -= dist;
         this.mx -= dist;
       }
       if (this.scrollTop) {
-        // const dist = Math.max(
-        //   Math.min(defaultDist, this.viewPort.startY - this.viewBox.startY),
-        //   0
-        // );
         const dist = defaultDist;
         this.viewPort.startY -= dist;
         this.my -= dist;
       }
       if (this.scrollRight) {
-        // const dist = Math.max(
-        //   Math.min(defaultDist, this.viewBox.endX - this.viewPort.endX),
-        //   0
-        // );
         const dist = defaultDist;
         this.viewPort.startX += dist;
         this.mx += dist;
       }
       if (this.scrollBottom) {
-        // const dist = Math.max(
-        //   Math.min(defaultDist, this.viewBox.endY - this.viewPort.startY),
-        //   0
-        // );
         const dist = defaultDist;
         this.viewPort.startY += dist;
         this.my += dist;

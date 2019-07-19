@@ -1,7 +1,7 @@
 <template>
   <defs>
     <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
-      <line stroke="black" stroke-width="4px" y2="10"></line>
+      <rect x="0" y="0" width="2" height="10" fill="black"></rect>
     </pattern>
     <linearGradient id="d3bond" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="lightgray"></stop>

@@ -9,10 +9,9 @@
     <title>{{name}}</title>
     <circle
       :r="d3 ? 12.5 : abbrev.length * 5 + 5"
-      :fill="d3 ? `url(#color${color}-gradient)` : 'white'"
-      :stroke="selected ? '#0088ff44' : 'transparent'"
       stroke-width="10"
       paint-order="stroke"
+      :style="`fill:${d3 ? `url(#color${color}-gradient)` : 'white'};stroke:${selected ? '#0088ff44' : 'transparent'}`"
     />
     <text
       v-if="!d3"
@@ -65,12 +64,6 @@ export default Vue.extend({
     lonePairs(): LonePair[] {
       return this.rgroup.lonePairs;
     },
-    x(): number {
-      return this.rgroup.x;
-    },
-    y(): number {
-      return this.rgroup.y;
-    },
     charge(): number {
       return this.rgroup.charge;
     },
@@ -92,37 +85,17 @@ export default Vue.extend({
     rootStyle(): string {
       return `
       visibility:${
-        this.omitting && (this.omittable || this.softOmittable)
+        this.omitting && (this.rgroup.omittable || this.rgroup.softOmittable)
           ? "hidden"
           : "visible"
       };
-      pointer-events:${this.transparent || this.omittable ? "none" : "all"};
-      --x:${this.x}px;--y:${this.y}px;`;
-    },
-    classes(): string[] {
-      const clazzes: string[] = [];
-      if (this.transparent) {
-        clazzes.push("transparent");
-      }
-      if (this.selected) {
-        clazzes.push("selected");
-      } else if (this.softOmittable) {
-        clazzes.push("omittable");
-        clazzes.push("soft");
-        clazzes.push("override");
-      } else if (this.omittable) {
-        clazzes.push("omittable");
-      }
-      return clazzes;
+      pointer-events:${
+        this.transparent || this.rgroup.omittable ? "none" : "all"
+      };
+      --x:${this.rgroup.x}px;--y:${this.rgroup.y}px;`;
     },
     color(): string {
       return getColor(this.rgroup);
-    },
-    softOmittable(): boolean {
-      return this.rgroup.softOmittable;
-    },
-    omittable(): boolean {
-      return this.rgroup.omittable;
     }
   },
   methods: {

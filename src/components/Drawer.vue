@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <svg-vue :class="classes" :state-machine="stateMachine" id="svg">
+    <svg-vue :class="classes" :state-machine="stateMachine" id="svg" :d3="d3">
       <molecule-vue :state-machine="stateMachine" :omit="omit" :d3="d3" id="molecules"></molecule-vue>
       <widget-vue :state-machine="stateMachine"></widget-vue>
     </svg-vue>

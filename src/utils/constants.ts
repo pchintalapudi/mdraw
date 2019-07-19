@@ -1,18 +1,17 @@
-/*tslint:disable:align*/
 
-class Constants {
-    constructor(public readonly bondLength: number,
-        public readonly scrollDistance: number,
-        public readonly frameTime: number,
-        public readonly screenScrollWidth: number,
-        public readonly baseFontSize: number) { }
+interface Constants {
+    bondLength: number;
+    frameTime: number;
+    scrollDistance: number;
+    screenScrollWidth: number;
 }
 
-function getFontSize() {
-    const computedFontSize = window.getComputedStyle(document.documentElement).getPropertyValue("font-size");
-    return +computedFontSize.slice(0, computedFontSize.length - 2);
-}
-
-const constants = new Constants(50, 7.5, 12.5, 50, getFontSize() * 1.1);
+const constants: Constants = {
+    bondLength: 50,
+    frameTime: 30,
+    scrollDistance: 0,
+    screenScrollWidth: 50
+};
+constants.scrollDistance = constants.frameTime * 3 / 5;
 
 export { constants as Constants };
