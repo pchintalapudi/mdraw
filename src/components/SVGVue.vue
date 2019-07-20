@@ -29,6 +29,15 @@
           --ty:center;
         }
 
+        svg > .positioned {
+          transition:transform ${$options.frameTime}ms linear
+        }
+
+        text {
+          cursor:default;
+          user-select:none;
+        }
+
         .bond {
           fill:${d3 ? 'url(#d3bond)' : 'black'};
           stroke:transparent;
@@ -44,7 +53,8 @@
     />
     <g
       class="positioned"
-      :style="`--x:${printing ? 0 : -viewPort.startX}px;--y:${printing ? 0 : -viewPort.startY}px;--angle:0;--tx:center;--ty:center;--sx:1;--sy:1;`"
+      :style="`--x:${printing ? 0 : -viewPort.startX}px;--y:${printing ? 0 : -viewPort.startY}px;
+              --angle:0;--tx:center;--ty:center;--sx:1;--sy:1;`"
     >
       <slot />
     </g>
@@ -63,12 +73,15 @@ export default Vue.extend({
     printing: Boolean,
     d3: Boolean
   },
+  created() {
+    (this.$options as any).frameTime = Constants.frameTime;
+  },
   data() {
     return {
       svg: (undefined as any) as SVGGraphicsElement,
       mx: this.stateMachine.view.viewPort.width / 2,
       my: this.stateMachine.view.viewPort.height / 2,
-      autoscroller: 0,
+      autoscroller: 0
     };
   },
   mounted() {
@@ -135,12 +148,9 @@ export default Vue.extend({
         this.scrollBottom
       );
     },
-    grabbing(): boolean {
-      return this.stateMachine.stateVariables.ipos.length !== 0;
-    },
     cursor(): string {
       if (this.stateMachine.state === State.PANNING) {
-        if (this.grabbing) {
+        if (this.stateMachine.stateVariables.ipos.length === 1) {
           return "grabbing";
         } else {
           return "grab";

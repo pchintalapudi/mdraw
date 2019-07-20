@@ -92,7 +92,7 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #00000011;
+  background-color: #eeeeee;
   transition-property: opacity;
   transition: opacity 500ms;
 }

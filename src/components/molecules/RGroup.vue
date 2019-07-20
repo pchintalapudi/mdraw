@@ -5,36 +5,36 @@
     @pointermove.stop="pointerMove"
     :style="rootStyle"
     class="positioned"
+    v-if="!omitting || !rgroup.omittable"
   >
-    <title>{{name}}</title>
-    <circle
-      :r="d3 ? 12.5 : abbrev.length * 5 + 5"
-      stroke-width="10"
-      paint-order="stroke"
-      :style="`fill:${d3 ? `url(#color${color}-gradient)` : 'white'};stroke:${selected ? '#0088ff44' : 'transparent'}`"
-    />
+    <title>{{rgroup.payload.name}}</title>
+    <template v-if="selected || !(omitting && rgroup.softOmittable)">
+      <circle
+        :r="d3 ? 12.5 : abbrev.length * 5 + 5"
+        stroke-width="10"
+        paint-order="stroke"
+        :style="`fill:${d3 ? `url(#color${color}-gradient)` : 'white'};stroke:${selected ? '#0088ff44' : 'transparent'}`"
+      />
+      <text
+        v-if="!d3"
+        class="abbrev"
+        ref="content"
+        text-anchor="middle"
+        dominant-baseline="central"
+      >{{abbrev}}</text>
+    </template>
     <text
-      v-if="!d3"
-      class="abbrev"
-      ref="content"
-      text-anchor="middle"
-      dominant-baseline="central"
-      style="cursor:default;user-select:none;"
-    >{{abbrev}}</text>
-    <text
-      style="visibility:visible;cursor:default;user-select:none;"
-      v-if="!d3 && charge"
+      v-if="!d3 && rgroup.charge"
       :x="abbrev.length * 5 + 2.5"
       y="-5"
       font-size="small"
       ref="charge"
       text-anchor="start"
-    >{{chargeText}}</text>
+    >{{rgroup.charge === -1 ? '-' : rgroup.charge === 1 ? '+' : rgroup.charge > 0 ? rgroup.charge + "+" : rgroup.charge + "-"}}</text>
     <lone-pair-vue
-      v-for="lp in lonePairs"
+      v-for="lp in rgroup.lonePairs"
       :key="lp.id"
       :lonepair="lp"
-      :omitting="omitting"
       @cascade-down="cascadeDown"
       @cascade-move="cascadeMove"
       @cascade-up="cascadeUp"
@@ -55,43 +55,11 @@ export default Vue.extend({
   },
   components: { "lone-pair-vue": LonePairVue },
   computed: {
-    name(): string {
-      return this.rgroup.payload.name;
-    },
     abbrev(): string {
-      return this.rgroup.payload.abbrev || this.name;
-    },
-    lonePairs(): LonePair[] {
-      return this.rgroup.lonePairs;
-    },
-    charge(): number {
-      return this.rgroup.charge;
-    },
-    radius(): number {
-      return this.rgroup.radius;
-    },
-    chargeText(): string {
-      switch (this.charge) {
-        case 0:
-          return "";
-        case 1:
-          return "+";
-        case -1:
-          return "-";
-        default:
-          return this.charge > 0 ? `${this.charge}+` : `${-this.charge}-`;
-      }
+      return this.rgroup.payload.abbrev || this.rgroup.payload.name;
     },
     rootStyle(): string {
-      return `
-      visibility:${
-        this.omitting && (this.rgroup.omittable || this.rgroup.softOmittable)
-          ? "hidden"
-          : "visible"
-      };
-      pointer-events:${
-        this.transparent || this.rgroup.omittable ? "none" : "all"
-      };
+      return `pointer-events:${this.transparent ? "none" : "all"};
       --x:${this.rgroup.x}px;--y:${this.rgroup.y}px;`;
     },
     color(): string {

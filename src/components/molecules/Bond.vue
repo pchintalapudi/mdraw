@@ -5,22 +5,12 @@
     @pointerup.stop="$emit('umouse', {target:'bond', payload:bond, event:$event})"
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
-    :style="rootStyle"
+    :style="`--x:${bond.start.x}px;--y:${bond.start.y}px;--angle:${this.angle}rad;`"
     class="positioned bond"
+    v-if="!(omitting && bond.omittable)"
   >
-    <rect
-      x="0"
-      y="-12.5"
-      height="25"
-      :width="dist"
-      :style="`pointer-events:${transparent || (omitting && bond.omittable) ? 'none' : 'all'}`"
-      fill="transparent"
-    />
-    <polygon
-      v-if="showPolygon"
-      :style="polygonFill"
-      :points="`0,0 ${polygonX},5 ${polygonX},-5`"
-    ></polygon>
+    <rect x="0" y="-12.5" height="25" :width="dist" fill="transparent" />
+    <polygon v-if="showPolygon" :style="polygonFill" :points="`0,0 ${polygonX},5 ${polygonX},-5`"></polygon>
     <rect
       v-else-if="bond.bondOrder !== 2"
       :width="dist"
@@ -30,8 +20,22 @@
       ${!bond.bondOrder ? `fill:${d3 ? 'url(#patchy-d3bond)' : 'url(#patchy)'}` : ''}`"
     />
     <template v-if="bond.bondOrder > 1">
-      <rect x="0" y="0" height="1" width="1" class="positioned" :style="`--x:${doubleStartLeft}px;--y:${doubleDown}px;--sy:${height};--sx:${doubleDistLeft};`" />
-      <rect x="0" y="0" height="1" width="1" class="positioned" :style="`--x:${doubleStartRight}px;--y:${doubleUp}px;--sy:${height};--sx:${doubleDistRight};`"/>
+      <rect
+        x="0"
+        y="0"
+        height="1"
+        width="1"
+        class="positioned"
+        :style="`--x:${doubleStartLeft}px;--y:${doubleDown}px;--sy:${height};--sx:${doubleDistLeft};`"
+      />
+      <rect
+        x="0"
+        y="0"
+        height="1"
+        width="1"
+        class="positioned"
+        :style="`--x:${doubleStartRight}px;--y:${doubleUp}px;--sy:${height};--sx:${doubleDistRight};`"
+      />
     </template>
   </g>
 </template>
@@ -78,20 +82,17 @@ export default Vue.extend({
         ? "fill:black"
         : "fill:url(#patchy)";
     },
+    difX(): number {
+      return this.bond.end.x - this.bond.start.x;
+    },
+    difY(): number {
+      return this.bond.end.y - this.bond.start.y;
+    },
     dist(): number {
-      return Math.hypot(
-        this.bond.start.x - this.bond.end.x,
-        this.bond.start.y - this.bond.end.y
-      );
+      return Math.hypot(this.difX, this.difY);
     },
     angle(): number {
-      return (
-        (180 / Math.PI) *
-        Math.atan2(
-          this.bond.end.y - this.bond.start.y,
-          this.bond.end.x - this.bond.start.x
-        )
-      );
+      return Math.atan2(this.difY, this.difX);
     },
     shortenStart(): number {
       return this.bond.start.softOmittable && this.omitting
@@ -108,7 +109,7 @@ export default Vue.extend({
         (this.d3
           ? this.bond.bondOrder === 3
             ? 5
-            : 3.75
+            : 3.5
           : this.bond.state === BondState.DOUBLE_LEFT
           ? 0
           : 3.75) -
@@ -162,14 +163,6 @@ export default Vue.extend({
         ? this.dist
         : this.dist - this.bond.end.radius;
     },
-    rootStyle(): string {
-      return `${
-        this.omitting && this.bond.omittable ? "visibility:hidden;" : ""
-      }pointer-events:none;
-      --x:${this.bond.start.x}px;--y:${this.bond.start.y}px;--angle:${
-        this.angle
-      }deg;`;
-    }
   }
 });
 </script>

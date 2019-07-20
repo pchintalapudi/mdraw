@@ -64,7 +64,8 @@ export default Vue.extend({
   },
   methods: {
     goHome() {
-      this.stateMachine.view.viewPort.scrollTo(0, 0);
+      this.viewPort.startX = 0;
+      this.viewPort.startY = 0;
     }
   }
 });

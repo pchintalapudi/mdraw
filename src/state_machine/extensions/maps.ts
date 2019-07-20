@@ -11,83 +11,20 @@ export class BoundingBox {
 
 // tslint:disable-next-line: max-classes-per-file
 export class ViewPort {
-    // tslint:disable-next-line: variable-name
-    public _startX = 0;
-    // tslint:disable-next-line: variable-name
-    public _startY = 0;
+    public startX = 0;
+    public startY = 0;
     public width = window.innerWidth;
     public height = window.innerHeight;
-    private startTime = 0;
-    private goalX = 0;
-    private goalY = 0;
-    private scrollEaser = 0;
-
-    constructor(private mapStruct: MapStruct) { }
 
     public readonly listener = (_: UIEvent) => {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
     }
 
-    get startX() {
-        return this._startX;
-    }
-
-    set startX(startX: number) {
-        this.stopEasing();
-        this._startX = this.goalX = startX;
-    }
-
-    get startY() {
-        return this._startY;
-    }
-
-    set startY(startY: number) {
-        this.stopEasing();
-        this._startY = this.goalY = startY;
-    }
-
     get endX() { return this.startX + this.width; }
     get endY() { return this.startY + this.height; }
 
     get serialized() { return [this.startX, this.startY, this.width, this.height]; }
-
-    public scrollTo(x: number, y: number, animated = true) {
-        if (!animated) {
-            this.startX = x;
-            this.startY = y;
-        } else {
-            this.startTime = Date.now();
-            this.goalX = x;
-            this.goalY = y;
-            const mx = (x + this.startX) / 2;
-            const my = (y + this.startY) / 2;
-            this.stopEasing();
-            this.scrollEaser = window.setInterval(() => this.easingFunction(mx, my), 12.5);
-        }
-    }
-
-    public stopEasing() {
-        if (this.scrollEaser) {
-            window.clearInterval(this.scrollEaser);
-            this.scrollEaser = 0;
-            this._startX = this.goalX;
-            this._startY = this.goalY;
-        }
-    }
-
-    private easingFunction(mx: number, my: number) {
-        const multAlloted = 200;
-        const time = Date.now();
-        if (time - this.startTime > Math.PI * multAlloted) {
-            this.startX = this.goalX;
-            this.startY = this.goalY;
-        } else {
-            const multiplier = Math.cos((time - this.startTime) / multAlloted);
-            this._startX = multiplier * (mx - this.goalX) + mx;
-            this._startY = multiplier * (my - this.goalY) + my;
-        }
-    }
 }
 
 // tslint:disable-next-line: max-classes-per-file
@@ -96,7 +33,7 @@ export class MapStruct {
     private static empty: BBox = [0, 0, 0, 0];
 
     public zoomFactor = 1;
-    public viewPort = new ViewPort(this);
+    public viewPort = new ViewPort();
 
     constructor(private rgroups: RGroup[], private bonds: Bond[],
         // tslint:disable-next-line: align
