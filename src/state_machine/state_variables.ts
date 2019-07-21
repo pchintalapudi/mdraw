@@ -1,4 +1,5 @@
-import { RGroup, Bond, SelectionRectangle, StraightArrow, CurvedArrow } from "../models";
+import { RGroup, Bond, StraightArrow, CurvedArrow } from "@/models";
+import { Rectangle } from "@/utils";
 
 class StateVariables {
     public selected: Array<RGroup | StraightArrow> = [];
@@ -10,7 +11,7 @@ class StateVariables {
     public lastPlaced = 0;
     public lastElement = { name: "Carbon", abbrev: "C" };
     public count = 0;
-    public selectionBox = new SelectionRectangle();
+    public selectionBox = new Rectangle();
     public itime = 0;
     public ipos: Array<{ x: number, y: number }> = [];
     public file = "";

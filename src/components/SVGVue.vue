@@ -53,7 +53,7 @@
     />
     <g
       class="positioned"
-      :style="`--x:${printing ? 0 : -viewPort.startX}px;--y:${printing ? 0 : -viewPort.startY}px;
+      :style="`--x:${printing ? 0 : -viewPort.x}px;--y:${printing ? 0 : -viewPort.y}px;
               --angle:0;--tx:center;--ty:center;--sx:1;--sy:1;`"
     >
       <slot />
@@ -64,8 +64,7 @@
 import Vue, { PropType } from "vue";
 import DefsVue from "./defs/Defs.vue";
 import { StateMachine, Action, State } from "@/state_machine";
-import { ViewPort, BoundingBox } from "@/state_machine/extensions";
-import { Constants } from "@/utils";
+import { Constants, Rectangle } from "@/utils";
 export default Vue.extend({
   components: { "defs-vue": DefsVue },
   props: {
@@ -88,10 +87,10 @@ export default Vue.extend({
     this.svg = this.$refs.svg as SVGGraphicsElement;
   },
   computed: {
-    viewPort(): ViewPort {
+    viewPort(): Rectangle {
       return this.stateMachine.view.viewPort;
     },
-    viewBox(): BoundingBox {
+    viewBox(): Rectangle {
       return this.stateMachine.view.viewBox;
     },
     autoscroll(): boolean {
@@ -113,13 +112,13 @@ export default Vue.extend({
     scrollLeft(): boolean {
       return (
         this.autoscroll &&
-        this.mx < Constants.screenScrollWidth + this.viewPort.startX
+        this.mx < Constants.screenScrollWidth + this.viewPort.x
       );
     },
     scrollTop(): boolean {
       return (
         this.autoscroll &&
-        this.my < Constants.screenScrollWidth + this.viewPort.startY
+        this.my < Constants.screenScrollWidth + this.viewPort.y
       );
     },
     scrollRight(): boolean {
@@ -128,7 +127,7 @@ export default Vue.extend({
         this.mx >
           this.viewPort.width -
             Constants.screenScrollWidth +
-            this.viewPort.startX
+            this.viewPort.x
       );
     },
     scrollBottom(): boolean {
@@ -137,7 +136,7 @@ export default Vue.extend({
         this.my >
           this.viewPort.height -
             Constants.screenScrollWidth +
-            this.viewPort.startY
+            this.viewPort.y
       );
     },
     needsScroll(): boolean {
@@ -181,8 +180,8 @@ export default Vue.extend({
         this.svg.getScreenCTM()!.inverse()
       );
       return {
-        x: transformed.x + this.viewPort.startX,
-        y: transformed.y + this.viewPort.startY
+        x: transformed.x + this.viewPort.x,
+        y: transformed.y + this.viewPort.y
       };
     },
     handleMouseMove(payload: { x: number; y: number }, transformed = false) {
@@ -215,22 +214,22 @@ export default Vue.extend({
       const defaultDist = Constants.scrollDistance;
       if (this.scrollLeft) {
         const dist = defaultDist;
-        this.viewPort.startX -= dist;
+        this.viewPort.x -= dist;
         this.mx -= dist;
       }
       if (this.scrollTop) {
         const dist = defaultDist;
-        this.viewPort.startY -= dist;
+        this.viewPort.y -= dist;
         this.my -= dist;
       }
       if (this.scrollRight) {
         const dist = defaultDist;
-        this.viewPort.startX += dist;
+        this.viewPort.x += dist;
         this.mx += dist;
       }
       if (this.scrollBottom) {
         const dist = defaultDist;
-        this.viewPort.startY += dist;
+        this.viewPort.y += dist;
         this.my += dist;
       }
       this.handleMouseMove({ x: this.mx, y: this.my }, true);

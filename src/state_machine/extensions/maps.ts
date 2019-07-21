@@ -1,46 +1,20 @@
 import { RGroup, Bond, StraightArrow, CurvedArrow } from "@/models";
-
-export type BBox = [number, number, number, number];
-
-export class BoundingBox {
-    constructor(public startX: number, public startY: number, public endX: number, public endY: number) { }
-    get width() { return this.endX - this.startX; }
-    get height() { return this.endY - this.startY; }
-    get serialized(): BBox { return [this.startX, this.startY, this.width, this.height]; }
-}
-
-// tslint:disable-next-line: max-classes-per-file
-export class ViewPort {
-    public startX = 0;
-    public startY = 0;
-    public width = window.innerWidth;
-    public height = window.innerHeight;
-
-    public readonly listener = (_: UIEvent) => {
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-    }
-
-    get endX() { return this.startX + this.width; }
-    get endY() { return this.startY + this.height; }
-
-    get serialized() { return [this.startX, this.startY, this.width, this.height]; }
-}
+import { Rectangle } from "@/utils";
 
 // tslint:disable-next-line: max-classes-per-file
 export class MapStruct {
 
-    private static empty: BBox = [0, 0, 0, 0];
+    private static empty = [0, 0, 0, 0];
 
     public zoomFactor = 1;
-    public viewPort = new ViewPort();
+    public viewPort = new Rectangle();
 
     constructor(private rgroups: RGroup[], private bonds: Bond[],
         // tslint:disable-next-line: align
         private straightArrows: StraightArrow[], private curvedArrows: CurvedArrow[]) {
     }
 
-    private get rgroupBox(): BBox {
+    private get rgroupBox() {
         if (!this.rgroups.length) return MapStruct.empty;
         let minx, miny = minx = 30, maxx, maxy = maxx = -30;
         for (const rgroup of this.rgroups) {
@@ -52,7 +26,7 @@ export class MapStruct {
         return [minx - 30, miny - 30, maxx + 30, maxy + 30];
     }
 
-    private get straightArrowBox(): BBox {
+    private get straightArrowBox() {
         if (!this.straightArrows.length) return MapStruct.empty;
         let minx, miny = minx = 0, maxx, maxy = maxx = 0;
         for (const sa of this.straightArrows) {
@@ -66,7 +40,7 @@ export class MapStruct {
         return [minx, miny, maxx, maxy];
     }
 
-    private get curvedArrowBox(): BBox {
+    private get curvedArrowBox() {
         if (!this.curvedArrows.length) return MapStruct.empty;
         let minx, miny = minx = 5, maxx, maxy = maxx = -5;
         for (const ca of this.curvedArrows) {
@@ -82,7 +56,7 @@ export class MapStruct {
         return [minx - 5, miny - 5, maxx + 5, maxy + 5];
     }
 
-    private get bondBox(): BBox {
+    private get bondBox() {
         if (!this.bonds.length) return MapStruct.empty;
         let minx, miny = minx = 10, maxx, maxy = maxx = -10;
         for (const bond of this.bonds) {
@@ -94,25 +68,17 @@ export class MapStruct {
         return [minx - 10, miny - 10, maxx + 10, maxy + 10];
     }
 
-    get bounds(): BoundingBox {
+    get bounds() {
         const boxes = [this.rgroupBox, this.straightArrowBox, this.curvedArrowBox, this.bondBox];
         const startX = Math.min(...boxes.map(b => b[0])), startY = Math.min(...boxes.map(b => b[1])),
             endX = Math.max(...boxes.map(b => b[2])), endY = Math.max(...boxes.map(b => b[3]));
-        return new BoundingBox(startX, startY, endX, endY);
+        return new Rectangle(startX, startY, endX - startX, endY - startY);
     }
 
-    get viewBox(): BoundingBox {
+    get viewBox() {
         const minbox = this.bounds;
-        const startX = Math.min(0, minbox.startX), startY = Math.min(0, minbox.startY),
-            endX = Math.max(this.viewPort.width, minbox.endX), endY = Math.max(this.viewPort.height, minbox.endY);
-        return new BoundingBox(startX, startY, endX, endY);
-    }
-
-    public clampX(startX: number) {
-        return Math.min(Math.max(startX, this.bounds.startX), this.bounds.endX - this.viewPort.width);
-    }
-
-    public clampY(startY: number) {
-        return Math.min(Math.max(startY, this.bounds.startY), this.bounds.endY - this.viewPort.height);
+        const startX = Math.min(0, minbox.x), startY = Math.min(0, minbox.x),
+            endX = Math.max(this.viewPort.width, minbox.ex), endY = Math.max(this.viewPort.height, minbox.ey);
+        return new Rectangle(startX, startY, endX - startX, endY - startY);
     }
 }

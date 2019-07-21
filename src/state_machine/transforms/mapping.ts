@@ -4,7 +4,7 @@ import { Transform, registerTransform } from "../transitions";
 const mouseDownMapping: Transform = (stateMachine, payload) => {
     if (!stateMachine.stateVariables.count++) {
         stateMachine.stateVariables.ipos =
-            [{ x: stateMachine.view.viewPort.startX, y: stateMachine.view.viewPort.startY }];
+            [{ x: stateMachine.view.viewPort.x, y: stateMachine.view.viewPort.y }];
     }
     mouseMoveMapping(stateMachine, payload);
 };
@@ -14,8 +14,8 @@ const mouseMoveMapping: Transform = (stateMachine, { payload }) => {
         const view = stateMachine.view;
         const x = payload.x - view.viewPort.width / 2;
         const y = payload.y - view.viewPort.height / 2;
-        view.viewPort.startX = Math.max(view.viewBox.startX, Math.min(view.viewBox.endX - view.viewPort.width, x));
-        view.viewPort.startY = Math.max(view.viewBox.startY, Math.min(view.viewBox.endY - view.viewPort.height, y));
+        view.viewPort.x = Math.max(view.viewPort.x, Math.min(view.viewPort.ex - view.viewPort.width, x));
+        view.viewPort.y = Math.max(view.viewPort.y, Math.min(view.viewBox.ey - view.viewPort.height, y));
     }
 };
 
@@ -29,8 +29,8 @@ const mouseUpMapping: Transform = (stateMachine, payload) => {
 const cancelMapping: Transform = (stateMachine) => {
     if (stateMachine.stateVariables.count) {
         stateMachine.stateVariables.count = 0;
-        stateMachine.view.viewPort.startX = stateMachine.stateVariables.ipos[0].x;
-        stateMachine.view.viewPort.startY = stateMachine.stateVariables.ipos[0].y;
+        stateMachine.view.viewPort.x = stateMachine.stateVariables.ipos[0].x;
+        stateMachine.view.viewPort.y = stateMachine.stateVariables.ipos[0].y;
     }
     stateMachine.state = State.IDLE;
 };

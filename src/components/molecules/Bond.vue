@@ -7,7 +7,6 @@
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
     :style="`--x:${bond.start.x}px;--y:${bond.start.y}px;--angle:${this.angle}rad;`"
     class="positioned bond"
-    v-if="!(omitting && bond.omittable)"
   >
     <rect x="0" y="-12.5" height="25" :width="dist" fill="transparent" />
     <polygon v-if="showPolygon" :style="polygonFill" :points="`0,0 ${polygonX},5 ${polygonX},-5`"></polygon>

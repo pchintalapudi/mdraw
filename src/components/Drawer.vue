@@ -57,7 +57,13 @@ export default Vue.extend({
           (ev: KeyboardEvent) =>
             keyHandler(ev, this.$data as ReturnType<typeof data>)
         ] as Handler,
-        ["resize", this.stateMachine.view.viewPort.listener] as Handler,
+        [
+          "resize",
+          () => {
+            this.stateMachine.view.viewPort.width = window.innerWidth;
+            this.stateMachine.view.viewPort.height = window.innerHeight;
+          }
+        ] as Handler,
         [
           "beforeunload",
           (event: Event) => {

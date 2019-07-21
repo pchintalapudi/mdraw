@@ -1,6 +1,17 @@
-import { StraightArrow } from "@/models";
-export class SelectionRectangle {
+export class Rectangle {
     constructor(public x = 0, public y = 0, public width = 0, public height = 0) { }
+
+    get ex() { return this.x + this.width; }
+
+    set ex(ex: number) {
+        this.width = ex - this.x;
+    }
+
+    get ey() { return this.y + this.height; }
+
+    set ey(ey: number) {
+        this.height = ey - this.y;
+    }
 
     get left() {
         return Math.min(this.x, this.x + this.width);
@@ -18,15 +29,7 @@ export class SelectionRectangle {
         return Math.max(this.y, this.y + this.height);
     }
 
-    set ex(ex: number) {
-        this.width = ex - this.x;
-    }
-
-    set ey(ey: number) {
-        this.height = ey - this.y;
-    }
-
-    public contains(coord: { x: number, y: number }) {
-        return coord.x >= this.left && coord.x <= this.right && coord.y >= this.top && coord.y <= this.bottom;
+    get serialized() {
+        return [this.left, this.top, this.bottom - this.top, this.right - this.left];
     }
 }

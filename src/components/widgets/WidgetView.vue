@@ -1,24 +1,33 @@
 <template>
   <g data-group="widgets">
-    <lone-pair-simulator-vue v-if="simulateLonePair" :position="coords" :count="count"></lone-pair-simulator-vue>
+    <lone-pair-simulator-vue
+      v-if="simulateLonePair"
+      :position="coords"
+      :count="stateMachine.stateVariables.count"
+    ></lone-pair-simulator-vue>
     <arrow-simulator-vue v-if="simulateArrow" :position="coords"></arrow-simulator-vue>
     <angler-vue v-if="angling" :offset="offset" :angle="angle" :bond="bond"></angler-vue>
-    <selection-rectangle-vue v-if="selecting" :selection-rectangle="selectionBox"></selection-rectangle-vue>
+    <rect
+      v-if="selecting"
+      :x="selectionBox.left"
+      :y="selectionBox.top"
+      :width="selectionBox.right - selectionBox.left"
+      :height="selectionBox.bottom - selectionBox.top"
+    ></rect>
   </g>
 </template>
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import LonePairSimulatorVue from "@/components/widgets/LonePairSimulator.vue";
 import ArrowSimulatorVue from "@/components/widgets/ArrowSimulator.vue";
-import SelectionRectangleVue from "@/components/widgets/SelectionBox.vue";
 import AnglerVue from "@/components/widgets/Angler.vue";
 import { State, StateMachine } from "@/state_machine";
-import { SelectionRectangle, StraightArrow, RGroup, Bond } from "@/models";
+import { StraightArrow, RGroup, Bond } from "@/models";
+import { Rectangle } from "@/utils";
 export default Vue.extend({
   components: {
     "arrow-simulator-vue": ArrowSimulatorVue,
     "lone-pair-simulator-vue": LonePairSimulatorVue,
-    "selection-rectangle-vue": SelectionRectangleVue,
     "angler-vue": AnglerVue
   },
   props: { stateMachine: Object as PropType<StateMachine> },
@@ -29,9 +38,6 @@ export default Vue.extend({
         !this.stateMachine.stateVariables.selected.length
       );
     },
-    count(): number {
-      return this.stateMachine.stateVariables.count;
-    },
     simulateArrow(): boolean {
       return (
         this.stateMachine.state === State.PLACING_STRAIGHT_ARROW ||
@@ -41,11 +47,8 @@ export default Vue.extend({
     coords(): { x: number; y: number } {
       return this.stateMachine.stateVariables.ipos[0];
     },
-    selectionBox(): SelectionRectangle {
+    selectionBox(): Rectangle {
       return this.stateMachine.stateVariables.selectionBox;
-    },
-    selected(): Array<RGroup | StraightArrow> {
-      return this.stateMachine.stateVariables.selected;
     },
     selecting(): boolean {
       return this.stateMachine.state === State.SELECTING;

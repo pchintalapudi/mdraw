@@ -5,7 +5,6 @@
     @pointermove.stop="pointerMove"
     :style="rootStyle"
     class="positioned"
-    v-if="!omitting || !rgroup.omittable"
   >
     <title>{{rgroup.payload.name}}</title>
     <template v-if="selected || !(omitting && rgroup.softOmittable)">

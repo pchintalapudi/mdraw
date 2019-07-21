@@ -8,7 +8,7 @@ interface Constants {
 
 const constants: Constants = {
     bondLength: 50,
-    frameTime: 100,
+    frameTime: 50,
     scrollDistance: 0,
     screenScrollWidth: 50
 };

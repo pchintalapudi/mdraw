@@ -57,10 +57,14 @@ export default Vue.extend({
   },
   computed: {
     rgroups(): RGroup[] {
-      return this.stateMachine.stateVariables.rgroups;
+      return this.omit
+        ? this.stateMachine.stateVariables.rgroups.filter(r => !r.omittable)
+        : this.stateMachine.stateVariables.rgroups;
     },
     bonds(): Bond[] {
-      return this.stateMachine.stateVariables.bonds;
+      return this.omit
+        ? this.stateMachine.stateVariables.bonds.filter(b => !b.omittable)
+        : this.stateMachine.stateVariables.bonds;
     },
     straightArrows(): StraightArrow[] {
       return this.stateMachine.stateVariables.straightArrows;

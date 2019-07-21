@@ -8,20 +8,21 @@
       @click.stop
       ref="svg"
     >
-      <use href="#molecules"></use>
+      <use href="#molecules" />
       <rect
         class="viewport"
-        :x="viewPort.startX+.5"
-        :y="viewPort.startY+.5"
+        :x="viewPort.x+.5"
+        :y="viewPort.y+.5"
         :width="viewPort.width - 1"
         :height="viewPort.height - 1"
-      ></rect>
+      />
     </svg>
   </div>
 </template>
 <script lang="ts">
 import Vue, { PropType } from "vue";
-import { StateMachine, Action, ViewPort, BoundingBox } from "@/state_machine";
+import { StateMachine, Action } from "@/state_machine";
+import { Rectangle } from "@/utils";
 export default Vue.extend({
   data() {
     return { mouseDown: false, svg: (undefined as any) as SVGGraphicsElement };
@@ -35,25 +36,25 @@ export default Vue.extend({
       this.stateMachine.execute(Action.MOUSE_UP, {
         target: "",
         payload: {
-          x: this.viewPort.startX + this.viewPort.width / 2,
-          y: this.viewPort.startY + this.viewPort.height / 2
+          x: this.viewPort.x + this.viewPort.width / 2,
+          y: this.viewPort.y + this.viewPort.height / 2
         }
       });
     }
   },
   computed: {
-    viewBox(): BoundingBox {
+    viewBox(): Rectangle {
       return this.stateMachine.view.viewBox;
     },
-    viewPort(): ViewPort {
+    viewPort(): Rectangle {
       return this.stateMachine.view.viewPort;
     },
     maxBox(): number[] {
-      const startX = Math.min(this.viewBox.startX, this.viewPort.startX),
-        startY = Math.min(this.viewBox.startY, this.viewPort.startY);
-      const width = Math.max(this.viewBox.endX, this.viewPort.endX) - startX;
-      const height = Math.max(this.viewBox.endY, this.viewPort.endY) - startY;
-      return [startX, startY, width, height];
+      const x = Math.min(this.viewBox.x, this.viewPort.x),
+        y = Math.min(this.viewBox.y, this.viewPort.y);
+      const width = Math.max(this.viewBox.ex, this.viewPort.ex) - x;
+      const height = Math.max(this.viewBox.ey, this.viewPort.ey) - y;
+      return [x, y, width, height];
     }
   },
   methods: {

@@ -47,7 +47,8 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import ToggleButtonVue from "./ToggleButton.vue";
-import { State, StateMachine, ViewPort } from "@/state_machine";
+import { State, StateMachine } from "@/state_machine";
+import { Rectangle } from "@/utils";
 export default Vue.extend({
   components: { "toggle-button": ToggleButtonVue },
   props: { stateMachine: Object as PropType<StateMachine> },
@@ -58,14 +59,14 @@ export default Vue.extend({
     panning(): boolean {
       return this.stateMachine.state === State.PANNING;
     },
-    viewPort(): ViewPort {
+    viewPort(): Rectangle {
       return this.stateMachine.view.viewPort;
     }
   },
   methods: {
     goHome() {
-      this.viewPort.startX = 0;
-      this.viewPort.startY = 0;
+      this.viewPort.x = 0;
+      this.viewPort.y = 0;
     }
   }
 });
