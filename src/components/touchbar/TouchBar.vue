@@ -5,12 +5,12 @@
     @mouseenter="mouseEnterEvent"
     @mouseleave="mouseLeaveEvent"
   >
-    <atom-creator-vue :state-machine="stateMachine" :d3="d3" @button-click="cascade"></atom-creator-vue>
-    <lone-pair-creator-vue :state-machine="stateMachine" @button-click="cascade"></lone-pair-creator-vue>
-    <arrow-creator-vue :state-machine="stateMachine" @button-click="cascade"></arrow-creator-vue>
-    <infer-vue :state-machine="stateMachine" @button-click="cascade"></infer-vue>
-    <maps-vue :state-machine="stateMachine" @button-click="cascade"></maps-vue>
-    <export-vue :state-machine="stateMachine" @button-click="cascade"></export-vue>
+    <atom-creator-vue :state-machine="stateMachine" :d3="d3"></atom-creator-vue>
+    <lone-pair-creator-vue :state-machine="stateMachine"></lone-pair-creator-vue>
+    <arrow-creator-vue :state-machine="stateMachine"></arrow-creator-vue>
+    <infer-vue :state-machine="stateMachine"></infer-vue>
+    <maps-vue :state-machine="stateMachine"></maps-vue>
+    <export-vue :state-machine="stateMachine"></export-vue>
   </span>
 </template>
 <script lang="ts">
@@ -66,9 +66,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    cascade(payload: { target: string; payload: any }) {
-      this.stateMachine.execute(Action.BUTTON, payload);
-    },
     mouseEnterEvent() {
       this.transparent = false;
       if (this.timeoutCode !== undefined) window.clearTimeout(this.timeoutCode);

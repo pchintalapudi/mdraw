@@ -7,7 +7,7 @@ export class MapStruct {
     private static empty = [0, 0, 0, 0];
 
     public zoomFactor = 1;
-    public viewPort = new Rectangle();
+    public viewPort = new Rectangle(0, 0, window.innerWidth, window.innerHeight);
 
     constructor(private rgroups: RGroup[], private bonds: Bond[],
         // tslint:disable-next-line: align

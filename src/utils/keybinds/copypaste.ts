@@ -12,8 +12,9 @@ const paste: Consumer = (vmdata) => vmdata.stateMachine.loadData(vmdata.clipboar
 
 const highlightAll: Consumer = ({ stateMachine }) => {
     stateMachine.execute(Action.CANCEL, undefined as any);
-    stateMachine.stateVariables.selected = [...stateMachine.stateVariables.rgroups,
-    ...stateMachine.stateVariables.straightArrows];
+    const selected = stateMachine.stateVariables.selection.selected;
+    stateMachine.stateVariables.rgroups.forEach(rg => selected.set(rg, { x: rg.x, y: rg.y }));
+    stateMachine.stateVariables.straightArrows.forEach(sa => selected.set(sa, { x: sa.x, y: sa.y }));
 };
 
 export default function () {

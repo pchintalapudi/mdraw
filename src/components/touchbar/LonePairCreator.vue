@@ -14,7 +14,7 @@
 <script lang="ts">
 import Vue from "vue";
 import ToggleButtonVue from "./ToggleButton.vue";
-import { State, StateMachine, Action } from "../../state_machine";
+import { State, StateMachine, Action } from "@/state_machine";
 export default Vue.extend({
   components: { "toggle-button": ToggleButtonVue },
   props: {
@@ -25,20 +25,23 @@ export default Vue.extend({
       return (
         (this.stateMachine.state === State.PLACING_LONE_PAIR ||
           this.stateMachine.state === State.ANGLING_LONE_PAIR) &&
-        this.stateMachine.stateVariables.count === 1
+        this.stateMachine.stateVariables.temp.number === 1
       );
     },
     on2(): boolean {
       return (
         (this.stateMachine.state === State.PLACING_LONE_PAIR ||
           this.stateMachine.state === State.ANGLING_LONE_PAIR) &&
-        this.stateMachine.stateVariables.count === 2
+        this.stateMachine.stateVariables.temp.number === 2
       );
     }
   },
   methods: {
     spawn(count: number) {
-      this.$emit("button-click", { target: "lone-pair", payload: count });
+      this.stateMachine.execute(Action.BUTTON, {
+        target: "lone-pair",
+        payload: count
+      });
     }
   }
 });

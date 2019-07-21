@@ -55,7 +55,10 @@ export function load(data: string, stateMachine: StateMachine, clear: boolean, o
             sm.stateVariables.straightArrows.push(...straightArrows);
             sm.stateVariables.curvedArrows.push(...curvedArrows);
         };
-        stateMachine.stateVariables.selected = [...rgroups, ...straightArrows];
+        const selected = stateMachine.stateVariables.selection.selected;
+        selected.clear();
+        rgroups.forEach(rg => selected.set(rg, { x: rg.x, y: rg.y }));
+        straightArrows.forEach(rg => selected.set(rg, { x: rg.x, y: rg.y }));
         stateMachine.log(undo, redo);
         redo(stateMachine);
     }

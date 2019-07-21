@@ -4,14 +4,14 @@
       v-for="arrow in straightArrows"
       :key="arrow.id"
       :arrow="arrow"
-      :selected="selected.includes(arrow)"
+      :selected="selected.has(arrow)"
       :d3="d3"
     ></straight-arrow-vue>
     <bond-vue
       v-for="bond in bonds"
       :key="bond.id"
       :bond="bond"
-      :transparent="transparent.includes(bond)"
+      :transparent="transparent.has(bond)"
       @click-bond="handleClick"
       @dblclick-bond="handleDblClick"
       @dmouse="handleMouseDown"
@@ -27,8 +27,8 @@
       @dmouse="handleMouseDown"
       @mmouse="handleMouseMove"
       @umouse="handleMouseUp"
-      :transparent="transparent.includes(rgroup)"
-      :selected="selected.includes(rgroup)"
+      :transparent="transparent.has(rgroup)"
+      :selected="selected.has(rgroup)"
       :omitting="omit"
       :d3="d3"
     ></rgroup-vue>
@@ -43,6 +43,7 @@ import StraightArrowVue from "@/components/molecules/StraightArrow.vue";
 import CurvedArrowVue from "@/components/molecules/CurvedArrow.vue";
 import { State, Action, StateMachine } from "@/state_machine";
 import { RGroup, Bond, StraightArrow, CurvedArrow } from "@/models";
+import {WrapperMap, WrapperSet} from "@/utils";
 export default Vue.extend({
   components: {
     "bond-vue": BondVue,
@@ -72,26 +73,26 @@ export default Vue.extend({
     curvedArrows(): CurvedArrow[] {
       return this.stateMachine.stateVariables.curvedArrows;
     },
-    selected(): Array<RGroup | StraightArrow> {
-      return this.stateMachine.stateVariables.selected;
+    selected(): WrapperMap<RGroup | StraightArrow, { x: number; y: number }> {
+      return this.stateMachine.stateVariables.selection.selected;
     },
-    transparent(): Array<RGroup | Bond | StraightArrow | CurvedArrow> {
-      const transp = [];
+    transparent(): WrapperSet<RGroup | Bond | StraightArrow | CurvedArrow> {
+      const transp = new WrapperSet<RGroup | Bond | StraightArrow | CurvedArrow>();
       switch (this.stateMachine.state) {
         case State.PLACING_ATOM_AND_BOND:
         case State.PLACING_ATOM:
-          transp.push(this.rgroups[this.rgroups.length - 1]);
+          transp.add(this.rgroups[this.rgroups.length - 1]);
         case State.PLACING_LONE_PAIR:
         case State.SELECTING:
-          transp.push(...this.bonds);
+          transp.add(...this.bonds);
           break;
         case State.MOVING_ATOM:
-          transp.push(...this.selected);
-          transp.push(...this.bonds);
+          this.selected.forEach((_, rs) => transp.add(rs));
+          transp.add(...this.bonds);
           break;
         case State.ANGLING_LONE_PAIR:
-          transp.push(...this.rgroups);
-          transp.push(...this.bonds);
+          transp.add(...this.rgroups);
+          transp.add(...this.bonds);
       }
       return transp;
     },

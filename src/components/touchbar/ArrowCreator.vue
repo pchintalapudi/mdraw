@@ -37,7 +37,7 @@ export default Vue.extend({
   },
   methods: {
     startArrow(curved: boolean) {
-      this.$emit("button-click", {
+      this.stateMachine.execute(Action.BUTTON, {
         target: curved ? "curved-arrow" : "straight-arrow",
         payload: undefined
       });

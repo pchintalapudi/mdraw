@@ -6,7 +6,7 @@ function key(k: string, consumer: Consumer) {
 }
 
 const spawnAtom: Consumer = (vmdata) => vmdata.stateMachine.execute(Action.BUTTON,
-    { target: "spawn", payload: vmdata.stateMachine.stateVariables.lastElement });
+    { target: "spawn", payload: vmdata.stateMachine.stateVariables.cache.lastElement });
 
 const toggleD3: Consumer = (vmdata) => {
     vmdata.omit = false;

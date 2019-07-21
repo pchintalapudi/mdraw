@@ -17,7 +17,7 @@ export function save(vars: StateVariables, full = true) {
         return `${vars.rgroups.map(r => r.serialize()).join()}!${vars.bonds.map(b => b.serialize()).join()}!
         ${vars.straightArrows.map(s => s.serialize()).join()}!${vars.curvedArrows.map(c => c.serialize()).join()}`;
     } else {
-        const rgroups = vars.selected.filter(s => s instanceof RGroup) as RGroup[];
+        const rgroups = Array.from(vars.selection.selected.keys()).filter(s => s instanceof RGroup) as RGroup[];
         const bonds = getValidBonds(rgroups);
         return `${rgroups.map(r => r.serialize()).join()}!${bonds.map(b => b.serialize()).join()}!!`;
     }

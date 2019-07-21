@@ -2,15 +2,14 @@ import { State, StateMachine, Action } from "..";
 import { Transform, registerTransform } from "../transitions";
 
 const mouseDownMapping: Transform = (stateMachine, payload) => {
-    if (!stateMachine.stateVariables.count++) {
-        stateMachine.stateVariables.ipos =
-            [{ x: stateMachine.view.viewPort.x, y: stateMachine.view.viewPort.y }];
+    if (!stateMachine.stateVariables.temp.number++) {
+        stateMachine.stateVariables.temp.point = { x: stateMachine.view.viewPort.x, y: stateMachine.view.viewPort.y };
     }
     mouseMoveMapping(stateMachine, payload);
 };
 
 const mouseMoveMapping: Transform = (stateMachine, { payload }) => {
-    if (stateMachine.stateVariables.count) {
+    if (stateMachine.stateVariables.temp.number) {
         const view = stateMachine.view;
         const x = payload.x - view.viewPort.width / 2;
         const y = payload.y - view.viewPort.height / 2;
@@ -21,16 +20,14 @@ const mouseMoveMapping: Transform = (stateMachine, { payload }) => {
 
 const mouseUpMapping: Transform = (stateMachine, payload) => {
     mouseMoveMapping(stateMachine, payload);
-    if (!--stateMachine.stateVariables.count) {
-        stateMachine.stateVariables.ipos = [];
-    }
+    stateMachine.stateVariables.temp.number--;
 };
 
 const cancelMapping: Transform = (stateMachine) => {
-    if (stateMachine.stateVariables.count) {
-        stateMachine.stateVariables.count = 0;
-        stateMachine.view.viewPort.x = stateMachine.stateVariables.ipos[0].x;
-        stateMachine.view.viewPort.y = stateMachine.stateVariables.ipos[0].y;
+    if (stateMachine.stateVariables.temp.number) {
+        stateMachine.stateVariables.temp.number = 0;
+        stateMachine.view.viewPort.x = stateMachine.stateVariables.temp.point.x;
+        stateMachine.view.viewPort.y = stateMachine.stateVariables.temp.point.y;
     }
     stateMachine.state = State.IDLE;
 };

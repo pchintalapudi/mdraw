@@ -1,20 +1,14 @@
 import { RGroup, Bond, StraightArrow, CurvedArrow } from "@/models";
-import { Rectangle } from "@/utils";
+import { Temp, SelectionVariables, Memory } from "./extensions";
 
 class StateVariables {
-    public selected: Array<RGroup | StraightArrow> = [];
     public rgroups: RGroup[] = [];
     public bonds: Bond[] = [];
     public straightArrows: StraightArrow[] = [];
     public curvedArrows: CurvedArrow[] = [];
-    public lastAngle = 0;
-    public lastPlaced = 0;
-    public lastElement = { name: "Carbon", abbrev: "C" };
-    public count = 0;
-    public selectionBox = new Rectangle();
-    public itime = 0;
-    public ipos: Array<{ x: number, y: number }> = [];
-    public file = "";
+    public selection = new SelectionVariables();
+    public temp = new Temp();
+    public cache = new Memory();
 
     public setEntities(rgroups?: RGroup[], bonds?: Bond[],
         // tslint:disable-next-line: align

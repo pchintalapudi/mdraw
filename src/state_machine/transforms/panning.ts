@@ -2,16 +2,19 @@ import { State, Action } from "..";
 import { Transform, registerTransform } from "../transitions";
 
 const mouseDownPanning: Transform = (stateMachine, { event }) => {
-    stateMachine.stateVariables.ipos = [stateMachine.view.viewPort, event!];
+    if (stateMachine.stateVariables.temp.number++) {
+        stateMachine.stateVariables.temp.point = stateMachine.view.viewPort;
+        stateMachine.stateVariables.temp.counterPoint = event!;
+    }
 };
 
 const mouseMovePanning: Transform = (stateMachine, { event }) => {
-    if (stateMachine.stateVariables.ipos.length) {
+    if (stateMachine.stateVariables.temp.number) {
         const sv = stateMachine.stateVariables;
-        stateMachine.view.viewPort.x = Math.min(Math.max(sv.ipos[0].x - event!.x + sv.ipos[1].x,
+        stateMachine.view.viewPort.x = Math.min(Math.max(sv.temp.point.x - event!.x + sv.temp.counterPoint.x,
             stateMachine.view.viewPort.x),
             stateMachine.view.viewPort.ex - stateMachine.view.viewPort.width);
-        stateMachine.view.viewPort.y = Math.min(Math.max(sv.ipos[0].y - event!.y + sv.ipos[1].y,
+        stateMachine.view.viewPort.y = Math.min(Math.max(sv.temp.point.y - event!.y + sv.temp.counterPoint.y,
             stateMachine.view.viewPort.y),
             stateMachine.view.viewPort.ey - stateMachine.view.viewPort.height);
     }
@@ -19,13 +22,13 @@ const mouseMovePanning: Transform = (stateMachine, { event }) => {
 
 const mouseUpPanning: Transform = (stateMachine, { target, payload, event }) => {
     mouseMovePanning(stateMachine, { target, payload, event });
-    stateMachine.stateVariables.ipos = [];
+    stateMachine.stateVariables.temp.number--;
 };
 
 const cancelPanning: Transform = (stateMachine) => {
-    if (stateMachine.stateVariables.ipos.length) {
-        stateMachine.view.viewPort.x = stateMachine.stateVariables.ipos[0].x;
-        stateMachine.view.viewPort.y = stateMachine.stateVariables.ipos[0].y;
+    if (stateMachine.stateVariables.temp.number) {
+        stateMachine.view.viewPort.x = stateMachine.stateVariables.temp.point.x;
+        stateMachine.view.viewPort.y = stateMachine.stateVariables.temp.point.y;
     }
     stateMachine.state = State.IDLE;
 };

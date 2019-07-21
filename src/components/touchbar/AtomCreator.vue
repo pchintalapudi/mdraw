@@ -42,7 +42,7 @@
 import Vue, { PropType } from "vue";
 import ToggleButtonVue from "./ToggleButton.vue";
 import { ChemicalElement } from "@/models";
-import { State, StateMachine } from "@/state_machine";
+import { State, StateMachine, Action } from "@/state_machine";
 import { getColor } from "@/models";
 import elements from "@/models/elements";
 export default Vue.extend({
@@ -96,7 +96,7 @@ export default Vue.extend({
         used.push(this.selected as any);
         this.recentlyUsed = used;
       }
-      this.$emit("button-click", {
+      this.stateMachine.execute(Action.BUTTON, {
         target: "spawn",
         payload: { name: this.selected.name, abbrev: this.selected.abbrev }
       });

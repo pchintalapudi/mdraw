@@ -38,7 +38,7 @@ export class History {
     protected undo_internal(sm: StateMachine) {
         if (this.canUndo) {
             sm.execute(Action.CANCEL, undefined as any);
-            sm.stateVariables.selected.length = 0;
+            sm.stateVariables.selection.selected.clear();
             this.stack[this.idx--].undo(sm);
         }
     }
@@ -46,7 +46,7 @@ export class History {
     protected redo_internal(sm: StateMachine) {
         if (this.canRedo) {
             sm.execute(Action.CANCEL, undefined as any);
-            sm.stateVariables.selected.length = 0;
+            sm.stateVariables.selection.selected.clear();
             this.stack[++this.idx].redo(sm);
         }
     }

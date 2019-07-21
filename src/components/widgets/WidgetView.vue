@@ -13,6 +13,8 @@
       :y="selectionBox.top"
       :width="selectionBox.right - selectionBox.left"
       :height="selectionBox.bottom - selectionBox.top"
+      fill="#0088ff44"
+      stroke="#0088ff88"
     ></rect>
   </g>
 </template>
@@ -35,7 +37,7 @@ export default Vue.extend({
     simulateLonePair(): boolean {
       return (
         this.stateMachine.state === State.PLACING_LONE_PAIR &&
-        !this.stateMachine.stateVariables.selected.length
+        !this.stateMachine.stateVariables.temp.number
       );
     },
     simulateArrow(): boolean {
@@ -45,10 +47,10 @@ export default Vue.extend({
       );
     },
     coords(): { x: number; y: number } {
-      return this.stateMachine.stateVariables.ipos[0];
+      return this.stateMachine.stateVariables.temp.point;
     },
     selectionBox(): Rectangle {
-      return this.stateMachine.stateVariables.selectionBox;
+      return this.stateMachine.stateVariables.selection.selectionBox;
     },
     selecting(): boolean {
       return this.stateMachine.state === State.SELECTING;
@@ -57,10 +59,10 @@ export default Vue.extend({
       return this.stateMachine.state === State.PLACING_ATOM_AND_BOND;
     },
     offset(): number {
-      return this.stateMachine.stateVariables.lastPlaced;
+      return this.stateMachine.stateVariables.cache.lastPlaced;
     },
     angle(): number {
-      return this.stateMachine.stateVariables.lastAngle - this.offset;
+      return this.stateMachine.stateVariables.cache.lastAngle - this.offset;
     },
     bond(): Bond {
       return this.stateMachine.stateVariables.bonds[

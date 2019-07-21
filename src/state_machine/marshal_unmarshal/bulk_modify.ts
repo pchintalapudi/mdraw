@@ -5,13 +5,14 @@ export function deleteSelected(stateMachine: StateMachine) {
     const rgroups: Set<RGroup> = new Set();
     const straightArrows: Set<StraightArrow> = new Set();
     const lonePairs: Set<LonePair> = new Set();
-    for (const selected of stateMachine.stateVariables.selected) {
-        if (selected instanceof RGroup) {
-            rgroups.add(selected);
-            selected.lonePairs.forEach(lp => lonePairs.add(lp));
+    stateMachine.stateVariables.selection.selected.forEach((_, rs) => {
+        if (rs instanceof RGroup) {
+            rgroups.add(rs);
+            rs.lonePairs.forEach(lp => lonePairs.add(lp));
+        } else {
+            straightArrows.add(rs);
         }
-        (selected instanceof RGroup ? rgroups : straightArrows).add(selected as any);
-    }
+    });
     const bonds: Set<Bond> = new Set();
     rgroups.forEach(r => r.bonds.forEach(b => bonds.add(b)));
     const curvedArrows: Set<CurvedArrow> = new Set();

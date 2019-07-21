@@ -6,14 +6,16 @@
     :style="rootStyle"
     class="positioned"
   >
+    <circle
+      :r="d3 ? 12.5 : abbrev.length * 5 + 5"
+      stroke-width="10"
+      paint-order="stroke"
+      :style="`fill:${d3 ? `url(#color${color}-gradient)` :
+              (omitting && rgroup.softOmittable && !selected) ? 'transparent' : 'white'};
+              stroke:${selected ? '#0088ff44' : 'transparent'}`"
+    />
     <title>{{rgroup.payload.name}}</title>
     <template v-if="selected || !(omitting && rgroup.softOmittable)">
-      <circle
-        :r="d3 ? 12.5 : abbrev.length * 5 + 5"
-        stroke-width="10"
-        paint-order="stroke"
-        :style="`fill:${d3 ? `url(#color${color}-gradient)` : 'white'};stroke:${selected ? '#0088ff44' : 'transparent'}`"
-      />
       <text
         v-if="!d3"
         class="abbrev"

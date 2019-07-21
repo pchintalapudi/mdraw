@@ -8,7 +8,7 @@ const buttonAtomPlacement: Transform = (stateMachine, { target, payload }) => {
     if (target === "spawn") {
         const rgs = stateMachine.stateVariables.rgroups;
         rgs[rgs.length - 1].payload = payload;
-        stateMachine.stateVariables.lastElement = payload;
+        stateMachine.stateVariables.cache.lastElement = payload;
     } else {
         stateMachine.execute(Action.CANCEL, undefined as any);
         stateMachine.execute(Action.BUTTON, { target, payload });
@@ -68,17 +68,18 @@ const mouseMoveBondPlacement: Transform = (stateMachine, { target, payload }) =>
         const rg = rgs[rgs.length - 1];
         const bonds = stateMachine.stateVariables.bonds;
         const start = bonds[bonds.length - 1].start;
-        stateMachine.stateVariables.lastAngle = calculateAngle(Math.hypot(payload.y - start.y, payload.x - start.x),
-            Math.atan2(payload.y - start.y, payload.x - start.x) * 180 / Math.PI,
-            stateMachine.stateVariables.lastPlaced);
-        rg.x = Constants.bondLength * Math.cos(Math.PI / 180 * stateMachine.stateVariables.lastAngle) + start.x;
-        rg.y = Constants.bondLength * Math.sin(Math.PI / 180 * stateMachine.stateVariables.lastAngle) + start.y;
+        stateMachine.stateVariables.cache.lastAngle
+            = calculateAngle(Math.hypot(payload.y - start.y, payload.x - start.x),
+                Math.atan2(payload.y - start.y, payload.x - start.x) * 180 / Math.PI,
+                stateMachine.stateVariables.cache.lastPlaced);
+        rg.x = Constants.bondLength * Math.cos(Math.PI / 180 * stateMachine.stateVariables.cache.lastAngle) + start.x;
+        rg.y = Constants.bondLength * Math.sin(Math.PI / 180 * stateMachine.stateVariables.cache.lastAngle) + start.y;
     } else if (target === "rgroup") {
         const bonds = stateMachine.stateVariables.bonds;
         const start = bonds[bonds.length - 1].start;
         if (start !== payload) {
             mouseMoveAtomPlacement(stateMachine, { target, payload });
-            stateMachine.stateVariables.lastAngle =
+            stateMachine.stateVariables.cache.lastAngle =
                 Math.atan2(payload.y - start.y, payload.x - start.x) * 180 / Math.PI;
         }
     }
@@ -91,19 +92,21 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
         const bs = stateMachine.stateVariables.bonds;
         const b = bs[bs.length - 1];
         mouseMoveBondPlacement(stateMachine, { target, payload });
-        const prevPlaced = stateMachine.stateVariables.lastPlaced;
-        const lastPlaced = stateMachine.stateVariables.lastPlaced = (stateMachine.stateVariables.lastAngle + 720) % 360;
+        const prevPlaced = stateMachine.stateVariables.cache.lastPlaced;
+        const lastPlaced =
+            stateMachine.stateVariables.cache.lastPlaced =
+            (stateMachine.stateVariables.cache.lastAngle + 720) % 360;
         const undo = (sm: StateMachine) => {
             sm.stateVariables.rgroups.pop();
             sm.stateVariables.bonds.pop();
             bond.start.bonds.delete(rgc);
-            sm.stateVariables.lastPlaced = prevPlaced;
+            sm.stateVariables.cache.lastPlaced = prevPlaced;
         };
         const redo = (sm: StateMachine) => {
             sm.stateVariables.rgroups.push(rgc);
             sm.stateVariables.bonds.push(b);
             bond.start.bonds.set(rgc, b);
-            sm.stateVariables.lastPlaced = lastPlaced;
+            sm.stateVariables.cache.lastPlaced = lastPlaced;
         };
         stateMachine.log(undo, redo);
         const rg = new RGroup({ name: "Carbon", abbrev: "C" }, rgc.x, rgc.y);
@@ -125,24 +128,24 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
                 payload.payload = rg.payload;
             }
             const newPayload = payload.payload;
-            const lastPlaced = stateMachine.stateVariables.lastPlaced;
+            const lastPlaced = stateMachine.stateVariables.cache.lastPlaced;
             const undo = (sm: StateMachine) => {
                 sm.stateVariables.bonds.pop();
                 bond.start.bonds.delete(payload);
                 payload.bonds.delete(bond.start);
                 payload.payload = oldPayload;
-                sm.stateVariables.lastPlaced = lastPlaced;
+                sm.stateVariables.cache.lastPlaced = lastPlaced;
             };
             const redo = (sm: StateMachine) => {
                 sm.stateVariables.bonds.push(bond);
                 bond.start.bonds.set(payload, bond);
                 payload.bonds.set(bond.start, bond);
                 payload.payload = newPayload;
-                sm.stateVariables.lastPlaced = 0;
+                sm.stateVariables.cache.lastPlaced = 0;
             };
             stateMachine.log(undo, redo);
             stateMachine.state = State.IDLE;
-            stateMachine.stateVariables.lastPlaced = 0;
+            stateMachine.stateVariables.cache.lastPlaced = 0;
         } else {
             stateMachine.stateVariables.rgroups.push(rg);
         }
@@ -152,8 +155,8 @@ const mouseUpBondPlacement: Transform = (stateMachine, { target, payload }) => {
 const cancelBondPlacement: Transform = (stateMachine, _) => {
     stateMachine.stateVariables.bonds.pop()!.start.bonds.delete(stateMachine.stateVariables.rgroups.pop()!);
     stateMachine.state = State.IDLE;
-    stateMachine.stateVariables.lastAngle = 0;
-    stateMachine.stateVariables.lastPlaced = 0;
+    stateMachine.stateVariables.cache.lastAngle = 0;
+    stateMachine.stateVariables.cache.lastPlaced = 0;
 };
 
 export default function () {

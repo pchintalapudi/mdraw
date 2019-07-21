@@ -46,7 +46,7 @@ export class WrapperSet<K> extends Wrapper<Set<K>> {
     }
 
     public add(...values: K[]) {
-        values.forEach(this.collection.add);
+        values.forEach(this.collection.add.bind(this.collection));
         this.log();
     }
 
@@ -56,7 +56,7 @@ export class WrapperSet<K> extends Wrapper<Set<K>> {
     }
 
     public delete(...values: K[]) {
-        values.forEach(this.collection.delete);
+        values.forEach(this.collection.delete.bind(this.collection));
         this.log();
     }
 }
@@ -112,7 +112,7 @@ export class WrapperMap<K, V> extends Wrapper<Map<K, V>> {
     }
 
     public delete(...values: K[]) {
-        values.forEach(this.collection.delete);
+        values.forEach(this.collection.delete.bind(this.collection));
         this.log();
     }
 }

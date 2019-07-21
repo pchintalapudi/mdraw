@@ -149,7 +149,7 @@ export default Vue.extend({
     },
     cursor(): string {
       if (this.stateMachine.state === State.PANNING) {
-        if (this.stateMachine.stateVariables.ipos.length === 1) {
+        if (this.stateMachine.stateVariables.temp.number) {
           return "grabbing";
         } else {
           return "grab";

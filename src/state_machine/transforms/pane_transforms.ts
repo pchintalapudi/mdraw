@@ -1,44 +1,47 @@
 import { Transform, registerTransform } from "../transitions";
 import { State, Action, StateMachine } from "..";
-import { RGroup, StraightArrow } from "../../models";
+import { Rectangle } from "@/utils";
 
 const mouseDownIdle: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
         stateMachine.state = State.SELECTING;
-        const sbox = stateMachine.stateVariables.selectionBox;
-        payload = payload as PointerEvent;
+        const sbox = stateMachine.stateVariables.selection.selectionBox;
         sbox.x = payload.x;
         sbox.y = payload.y;
         sbox.width = 0;
         sbox.height = 0;
     } else if (target === "rgroup") {
-        const idx = stateMachine.stateVariables.selected.indexOf(payload);
-        if (idx === -1) {
-            stateMachine.stateVariables.selected.length = 0;
-        } else {
-            stateMachine.stateVariables.selected.splice(idx, 1);
-        }
-        stateMachine.stateVariables.selected.push(payload);
-        stateMachine.stateVariables.ipos.length = 0;
-        stateMachine.stateVariables.ipos.push(
-            ...stateMachine.stateVariables.selected.map(r => ({ x: r.x, y: r.y }))
-        );
-        stateMachine.stateVariables.itime = Date.now();
+        stateMachine.stateVariables.temp.number = stateMachine.stateVariables.selection.selected.has(payload) ? 1 : 0;
+        stateMachine.stateVariables.temp.point = payload;
+        stateMachine.stateVariables.temp.counterPoint = { x: payload.x, y: payload.y };
+        Array.from(stateMachine.stateVariables.selection.selected.keys())
+            .forEach(rs => stateMachine.stateVariables.selection.selected.set(rs, { x: rs.x, y: rs.y }));
+        stateMachine.stateVariables.temp.time = Date.now();
         stateMachine.state = State.MOVING_ATOM;
     } else if (target === "bond") {
-        stateMachine.stateVariables.count = -1;
+        stateMachine.stateVariables.temp.number = -1;
     }
 };
 
+function contains(sbox: Rectangle, point: { x: number, y: number }) {
+    return point.x >= sbox.left && point.x <= sbox.right && point.y >= sbox.top && point.y <= sbox.bottom;
+}
+
 function select(stateMachine: StateMachine) {
-    const sbox = stateMachine.stateVariables.selectionBox;
-    const selected: Array<RGroup | StraightArrow> = stateMachine.stateVariables.selected;
-    stateMachine.stateVariables.selected.length = 0;
+    const selected = stateMachine.stateVariables.selection.selected;
+    const sbox = stateMachine.stateVariables.selection.selectionBox;
+    selected.clear();
+    stateMachine.stateVariables.rgroups.forEach(r => {
+        if (contains(sbox, r)) selected.set(r, { x: r.x, y: r.y });
+    });
+    stateMachine.stateVariables.straightArrows.forEach(s => {
+        if (contains(sbox, s)) selected.set(s, { x: s.x, y: s.y });
+    });
 }
 
 const mouseMoveSelecting: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface" || target === "rgroup") {
-        const sbox = stateMachine.stateVariables.selectionBox;
+        const sbox = stateMachine.stateVariables.selection.selectionBox;
         payload = payload as PointerEvent;
         sbox.ex = payload.x;
         sbox.ey = payload.y;
@@ -55,7 +58,7 @@ const mouseUpSelecting: Transform = (stateMachine, { target, payload }) => {
 };
 
 const cancelIdle: Transform = (stateMachine, { }) => {
-    stateMachine.stateVariables.selected.length = 0;
+    stateMachine.stateVariables.selection.selected.clear();
     stateMachine.state = State.IDLE;
 };
 

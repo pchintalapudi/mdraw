@@ -1,10 +1,6 @@
 <template>
   <form name="maps" class="maps">
-    <toggle-button
-      :on="mapping"
-      viewBox="-20 -20 40 40"
-      @toggle-button="$emit('button-click', {target:'mapping'})"
-    >
+    <toggle-button :on="mapping" viewBox="-20 -20 40 40" @toggle-button="map">
       <title>MiniMap</title>
       <svg height="40" width="40" x="-20" y="-20" :viewBox="viewPort.serialized">
         <use href="#molecules" />
@@ -24,11 +20,7 @@
           stroke-width="0.75"
         ></path>
       </toggle-button>
-      <toggle-button
-        :on="panning"
-        @toggle-button="$emit('button-click', {target:'panning'})"
-        viewBox="-10 -10 20 20"
-      >
+      <toggle-button :on="panning" @toggle-button="pan" viewBox="-10 -10 20 20">
         <title>{{panning ? 'Stop' : 'Start'}} Panning</title>
         <path
           id="pan-arrow"
@@ -47,7 +39,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import ToggleButtonVue from "./ToggleButton.vue";
-import { State, StateMachine } from "@/state_machine";
+import { State, StateMachine, Action } from "@/state_machine";
 import { Rectangle } from "@/utils";
 export default Vue.extend({
   components: { "toggle-button": ToggleButtonVue },
@@ -67,6 +59,18 @@ export default Vue.extend({
     goHome() {
       this.viewPort.x = 0;
       this.viewPort.y = 0;
+    },
+    map() {
+      this.stateMachine.execute(Action.BUTTON, {
+        target: "mapping",
+        payload: undefined
+      });
+    },
+    pan() {
+      this.stateMachine.execute(Action.BUTTON, {
+        target: "panning",
+        payload: undefined
+      });
     }
   }
 });

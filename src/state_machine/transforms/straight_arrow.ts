@@ -8,16 +8,14 @@ const mouseDownPlacingStraightArrow = () => { };
 
 const mouseMovePlacingStraightArrow: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
-        stateMachine.stateVariables.ipos[0].x = payload.x;
-        stateMachine.stateVariables.ipos[0].y = payload.y;
+        stateMachine.stateVariables.temp.point = payload;
     }
 };
 
 const mouseUpPlacingStraightArrow: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
-        mouseMovePlacingStraightArrow(stateMachine, { target, payload });
         stateMachine.stateVariables.straightArrows.push(
-            new StraightArrow(stateMachine.stateVariables.ipos.pop()!, 0, 0));
+            new StraightArrow(payload, 0, 0));
         stateMachine.state = State.ANGLING_STRAIGHT_ARROW;
     }
 };
@@ -31,7 +29,7 @@ const mouseMoveAnglingStraightArrow: Transform = (stateMachine, { target, payloa
     const sa = sas[sas.length - 1];
     if (target === "surface") {
         sa.dist = Math.hypot(payload.y - sa.start.y, payload.x - sa.start.x);
-        sa.angle = stateMachine.stateVariables.lastAngle = calculateAngle(
+        sa.angle = stateMachine.stateVariables.cache.lastAngle = calculateAngle(
             sa.dist, Math.atan2(payload.y - sa.start.y, payload.x - sa.start.x) * 180 / Math.PI);
     }
 };

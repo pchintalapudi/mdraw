@@ -8,15 +8,16 @@ const mouseDownPlacingLonePair: Transform = () => { };
 
 const mouseMovePlacingLonePair: Transform = (stateMachine, { target, payload }) => {
     if (target === "surface") {
-        if (stateMachine.stateVariables.selected.length) {
-            (stateMachine.stateVariables.selected.pop()! as RGroup).lonePairs.pop();
+        if (stateMachine.stateVariables.temp.number2) {
+            stateMachine.stateVariables.temp.number2 = 0;
+            (stateMachine.stateVariables.temp.point as RGroup).lonePairs.pop();
         }
-        stateMachine.stateVariables.ipos[0].x = payload.x;
-        stateMachine.stateVariables.ipos[0].y = payload.y;
-    } else if (target === "rgroup" && !stateMachine.stateVariables.selected.length) {
-        stateMachine.stateVariables.selected.push(payload);
+        stateMachine.stateVariables.temp.point = payload;
+    } else if (target === "rgroup" && !stateMachine.stateVariables.temp.number2) {
+        stateMachine.stateVariables.temp.number2 = 1;
+        stateMachine.stateVariables.temp.point = payload;
         const rg = payload as RGroup;
-        rg.lonePairs.push(new LonePair(rg, stateMachine.stateVariables.count));
+        rg.lonePairs.push(new LonePair(rg, stateMachine.stateVariables.temp.number));
     }
 };
 
@@ -28,42 +29,39 @@ const mouseUpPlacingLonePair: Transform = (stateMachine, { target, payload }) =>
 };
 
 const cancelPlacingLonePair: Transform = (stateMachine) => {
-    if (stateMachine.stateVariables.selected.length) {
-        (stateMachine.stateVariables.selected.pop()! as RGroup).lonePairs.pop();
+    if (stateMachine.stateVariables.temp.number2) {
+        (stateMachine.stateVariables.temp.point as RGroup).lonePairs.pop();
     }
     stateMachine.state = State.IDLE;
 };
 
 const mouseMoveAnglingLonePair: Transform = (stateMachine, { target, payload }) => {
-    const rg = stateMachine.stateVariables.selected[0] as RGroup;
+    const rg = stateMachine.stateVariables.temp.point as RGroup;
     const lp = rg.lonePairs[rg.lonePairs.length - 1];
     if (target === "surface") {
-        lp.angle = stateMachine.stateVariables.lastAngle = calculateAngle(
+        lp.angle = stateMachine.stateVariables.cache.lastAngle = calculateAngle(
             Math.hypot(payload.y - rg.y, payload.x - rg.x),
             Math.atan2(payload.y - rg.y, payload.x - rg.x) * 180 / Math.PI);
     } else if (target === "rgroup") {
-        lp.angle = Math.atan2(payload.y - rg.y, payload.x - rg.x);
+        lp.angle = Math.atan2(payload.y - rg.y, payload.x - rg.x) * 180 / Math.PI;
     }
 };
 
 const mouseUpAnglingLonePair: Transform = (stateMachine, { target, payload }) => {
     mouseMoveAnglingLonePair(stateMachine, { target, payload });
-    const rg = stateMachine.stateVariables.selected.pop()! as RGroup;
+    const rg = stateMachine.stateVariables.temp.point as RGroup;
     const lp = rg.lonePairs.pop()!;
     rg.lonePairs.push(lp);
     const undo = () => rg.lonePairs.pop();
     const redo = () => rg.lonePairs.push(lp);
     stateMachine.log(undo, redo);
     stateMachine.state = State.PLACING_LONE_PAIR;
-    stateMachine.stateVariables.selected.length = 0;
-    stateMachine.stateVariables.ipos = [{ x: 0, y: 0 }];
-    stateMachine.stateVariables.count = lp.count;
 };
 
 const buttonPlacingLonePair: Transform = (stateMachine, { target, payload }) => {
     if (target === "lone-pair") {
-        if (stateMachine.stateVariables.selected.length) {
-            const lps = (stateMachine.stateVariables.selected[0] as RGroup).lonePairs;
+        if (stateMachine.stateVariables.temp.number2) {
+            const lps = (stateMachine.stateVariables.temp.point as RGroup).lonePairs;
             const lp = lps[lps.length - 1];
             if (lp.count === payload) {
                 stateMachine.execute(Action.CANCEL, undefined as any);
@@ -72,7 +70,7 @@ const buttonPlacingLonePair: Transform = (stateMachine, { target, payload }) => 
                 lps[lps.length].count = payload;
             }
         }
-        stateMachine.stateVariables.count = payload;
+        stateMachine.stateVariables.temp.number = payload;
     } else {
         stateMachine.execute(Action.CANCEL, undefined as any);
         stateMachine.execute(Action.BUTTON, { target, payload });

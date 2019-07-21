@@ -50,7 +50,10 @@ export default Vue.extend({
   props: { stateMachine: Object as PropType<StateMachine> },
   methods: {
     infer() {
-      this.$emit("button-click", { target: "infer", payload: undefined });
+      this.stateMachine.execute(Action.BUTTON, {
+        target: "infer",
+        payload: undefined
+      });
     }
   }
 });

@@ -7,23 +7,20 @@ interface Point { readonly x: number; readonly y: number; }
 // tslint:disable-next-line: no-empty
 const mouseDownPlacingCurvedArrow = () => { };
 
-const mouseMovePlacingCurvedArrow: Transform = (sm, { payload }) => {
-    sm.stateVariables.ipos[0].x = payload.x;
-    sm.stateVariables.ipos[0].y = payload.y;
+const mouseMovePlacingCurvedArrow: Transform = (stateMachine, { payload }) => {
+    stateMachine.stateVariables.temp.point = payload;
 };
 
 const mouseUpPlacingCurvedArrow: Transform = (stateMachine, { target, payload }) => {
     mouseMovePlacingCurvedArrow(stateMachine, { target, payload });
     if (target !== "surface") {
         const cas = stateMachine.stateVariables.curvedArrows;
-        const ipos = stateMachine.stateVariables.ipos;
-        cas.push(new CurvedArrow(payload, ipos[0]));
+        cas.push(new CurvedArrow(payload, stateMachine.stateVariables.temp.point));
         stateMachine.state = State.DRAWING_CURVED_ARROW;
     }
 };
 
 const cancelPlacingCurvedArrow: Transform = (stateMachine) => {
-    stateMachine.stateVariables.ipos.length = 0;
     stateMachine.state = State.IDLE;
 };
 
