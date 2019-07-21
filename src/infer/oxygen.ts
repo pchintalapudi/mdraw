@@ -37,8 +37,8 @@ export function inferOxygen(atom: RGroup): [RGroup[], LonePair[], number] {
                 for (let i = 0; i < addBonds; i++) {
                     const h = new RGroup({ name: "Hydrogen", abbrev: "H" });
                     const b = new Bond(atom, h);
-                    h.setBond(atom, b);
-                    atom.setBond(h, b);
+                    h.bonds.set(atom, b);
+                    atom.bonds.set(h, b);
                     hydrogens.push(h);
                 }
                 if (free % 2) {

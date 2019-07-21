@@ -28,8 +28,8 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
             const rg = new RGroup({ name: "Carbon", abbrev: "C" }, rgs.x, rgs.y);
             stateMachine.stateVariables.rgroups.push(rg);
             const bond = new Bond(rgs, rg);
-            rgs.setBond(rg, bond);
-            rg.setBond(rgs, bond);
+            rgs.bonds.set(rg, bond);
+            rg.bonds.set(rgs, bond);
             stateMachine.stateVariables.bonds.push(bond);
             sel.length = 0;
         }
@@ -74,12 +74,12 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
             }
             const newPayload = payload.payload;
             const remove = new Map<Bond, number>();
-            rgs.forEachBond((b, r) => {
-                r.deleteBond(rgs);
+            rgs.bonds.forEach((b, r) => {
+                r.bonds.delete(rgs);
                 if (!payload.bonds.has(r)) {
                     b.replace(rgs, payload);
-                    payload.setBond(r, b);
-                    r.setBond(payload, b);
+                    payload.bonds.set(r, b);
+                    r.bonds.set(payload, b);
                 } else {
                     remove.set(b, -1);
                 }
@@ -97,12 +97,12 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                 payload.payload = oldPayload;
                 const newbonds: Bond[] | undefined = [];
                 newbonds.length = sm.stateVariables.bonds.length + remove.size;
-                rgs.forEachBond((b, r) => {
-                    r.setBond(rgs, b);
+                rgs.bonds.forEach((b, r) => {
+                    r.bonds.set(rgs, b);
                     if (!remove.has(b)) {
                         b.replace(payload, rgs);
-                        payload.deleteBond(r);
-                        r.deleteBond(payload);
+                        payload.bonds.delete(r);
+                        r.bonds.delete(payload);
                     } else {
                         newbonds[remove.get(b)!] = b;
                     }
@@ -124,12 +124,12 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
             const redo = (sm: StateMachine) => {
                 sm.stateVariables.rgroups.splice(idx, 1);
                 payload.payload = newPayload;
-                rgs.forEachBond((b, r) => {
-                    r.deleteBond(rgs);
+                rgs.bonds.forEach((b, r) => {
+                    r.bonds.delete(rgs);
                     if (!remove.has(b)) {
                         b.replace(rgs, payload);
-                        payload.setBond(r, b);
-                        r.setBond(payload, b);
+                        payload.bonds.set(r, b);
+                        r.bonds.set(payload, b);
                     } else {
                         sm.stateVariables.bonds = sm.stateVariables.bonds.filter(bond => !remove.has(bond));
                     }

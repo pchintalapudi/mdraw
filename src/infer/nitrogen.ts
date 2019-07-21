@@ -14,7 +14,7 @@ export function inferNitrogen(atom: RGroup) {
             for (let i = 0; i < 3 - formalCharge.bound; i++) {
                 const h = new RGroup({ name: "Hydrogen", abbrev: "H" });
                 const bond = new Bond(atom, h);
-                h.setBond(atom, bond);
+                h.bonds.set(atom, bond);
                 hydrogens.push(h);
             }
             let free = 2 - formalCharge.free;
@@ -31,7 +31,7 @@ export function inferNitrogen(atom: RGroup) {
         for (let i = 0; i < 3 + atom.charge - formalCharge.bound; i++) {
             const h = new RGroup({ name: "Hydrogen", abbrev: "H" });
             const bond = new Bond(atom, h);
-            h.setBond(atom, bond);
+            h.bonds.set(atom, bond);
             hydrogens.push(h);
         }
         let free = 2 - 2 * atom.charge - formalCharge.free;
@@ -45,7 +45,7 @@ export function inferNitrogen(atom: RGroup) {
     }
     const angles = inferAngles(atom, hydrogens.length);
     hydrogens.forEach((h, i) => shiftToAngle(atom, h, angles[i]));
-    hydrogens.forEach(h => atom.setBond(h, h.getBond(atom)!));
+    hydrogens.forEach(h => atom.bonds.set(h, h.bonds.get(atom)!));
     const lpAngles = inferAngles(atom, lonePairs.length);
     lonePairs.forEach((lp, i) => lp.angle = lpAngles[i] * 180 / Math.PI);
     lonePairs.forEach(lp => atom.lonePairs.push(lp));

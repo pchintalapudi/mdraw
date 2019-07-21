@@ -13,7 +13,7 @@ export function deleteSelected(stateMachine: StateMachine) {
         (selected instanceof RGroup ? rgroups : straightArrows).add(selected as any);
     }
     const bonds: Set<Bond> = new Set();
-    rgroups.forEach(r => r.forEachBond(b => bonds.add(b)));
+    rgroups.forEach(r => r.bonds.forEach(b => bonds.add(b)));
     const curvedArrows: Set<CurvedArrow> = new Set();
     for (const c of stateMachine.stateVariables.curvedArrows) {
         search:

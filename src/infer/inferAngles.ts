@@ -10,11 +10,11 @@ export function inferAngles(rgroup: RGroup, entityCount: integer) {
         case 0:
             return [];
         case 1:
-            switch (rgroup.bondSize + rgroup.lonePairs.length) {
+            switch (rgroup.bonds.size + rgroup.lonePairs.length) {
                 case 0:
                     return [0];
                 case 1: {
-                    if (rgroup.bondSize) {
+                    if (rgroup.bonds.size) {
                         const bond = rgroup.nextBond;
                         return bond.bondOrder === 3 ?
                             [normalize(bond.getAngle(rgroup) + Math.PI)]
@@ -25,7 +25,7 @@ export function inferAngles(rgroup: RGroup, entityCount: integer) {
                 }
                 case 2: {
                     const angles = [] as number[];
-                    rgroup.forEachBond(b => angles.push(normalize(b.getAngle(rgroup))));
+                    rgroup.bonds.forEach(b => angles.push(normalize(b.getAngle(rgroup))));
                     rgroup.lonePairs.forEach(r => angles.push(normalize(r.angle * Math.PI / 180)));
                     const range = angles[1] - angles[0];
                     return Math.abs(range) < Math.PI
@@ -33,7 +33,7 @@ export function inferAngles(rgroup: RGroup, entityCount: integer) {
                 }
                 default: {
                     const angles = [] as number[];
-                    rgroup.forEachBond(b => angles.push(normalize(b.getAngle(rgroup))));
+                    rgroup.bonds.forEach(b => angles.push(normalize(b.getAngle(rgroup))));
                     rgroup.lonePairs.forEach(r => angles.push(normalize(r.angle * Math.PI / 180)));
                     angles.sort((a, b) => a - b);
                     const ranges = [[0, -1]] as Array<[number, number]>;
@@ -45,17 +45,17 @@ export function inferAngles(rgroup: RGroup, entityCount: integer) {
                 }
             }
         default:
-            switch (rgroup.bondSize + rgroup.lonePairs.length) {
+            switch (rgroup.bonds.size + rgroup.lonePairs.length) {
                 case 0:
                     return getAnglesForArc(0, Math.PI * 2, entityCount);
                 case 1:
-                    const angle = rgroup.bondSize
+                    const angle = rgroup.bonds.size
                         ? rgroup.nextBond.getAngle(rgroup)
                         : rgroup.lonePairs[0].angle * Math.PI / 180;
                     return getAnglesForArc(angle, angle + Math.PI * 2, entityCount + 1).slice(1).map(normalize);
                 default:
                     const angles = [] as number[];
-                    rgroup.forEachBond(b => angles.push(normalize(b.getAngle(rgroup))));
+                    rgroup.bonds.forEach(b => angles.push(normalize(b.getAngle(rgroup))));
                     rgroup.lonePairs.forEach(r => angles.push(normalize(r.angle * Math.PI / 180)));
                     angles.sort((a, b) => a - b);
                     const ranges = [[0, -1]] as Array<[number, number]>;

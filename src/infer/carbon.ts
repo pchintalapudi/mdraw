@@ -7,7 +7,7 @@ export function inferCarbon(atom: RGroup) {
     const hydrogens = [] as RGroup[];
     for (let i = 0; i < Math.max(Math.min(formalCharge.formalCharge - Math.abs(charge), 4), 0); i++) {
         const h = new RGroup({ name: "Hydrogen", abbrev: "H" });
-        h.setBond(atom, new Bond(atom, h));
+        h.bonds.set(atom, new Bond(atom, h));
         hydrogens.push(h);
     }
     const lonePairs = [] as LonePair[];
@@ -16,7 +16,7 @@ export function inferCarbon(atom: RGroup) {
         lonePairs.push(lp);
     }
     const angles = inferAngles(atom, hydrogens.length + lonePairs.length);
-    if (hydrogens.length === 2 && lonePairs.length === 1 && atom.bondSize === 1) {
+    if (hydrogens.length === 2 && lonePairs.length === 1 && atom.bonds.size === 1) {
         shiftToAngle(atom, hydrogens[0], angles[0]);
         lonePairs[0].angle = angles[1] * 180 / Math.PI;
         shiftToAngle(atom, hydrogens[1], angles[2]);
@@ -24,7 +24,7 @@ export function inferCarbon(atom: RGroup) {
         hydrogens.forEach((h, i) => shiftToAngle(atom, h, angles[i]));
         lonePairs.forEach((lp, i) => lp.angle = angles[hydrogens.length + i] * 180 / Math.PI);
     }
-    hydrogens.forEach(h => atom.setBond(h, h.getBond(atom)!));
+    hydrogens.forEach(h => atom.bonds.set(h, h.bonds.get(atom)!));
     lonePairs.forEach(lp => atom.lonePairs.push(lp));
     return [hydrogens, lonePairs, 0] as [RGroup[], LonePair[], number];
 }
