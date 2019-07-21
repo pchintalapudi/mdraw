@@ -57,7 +57,7 @@ const mouseUpSelecting: Transform = (stateMachine, { target, payload }) => {
     }
 };
 
-const cancelIdle: Transform = (stateMachine, { }) => {
+const cancelIdle: Transform = (stateMachine) => {
     stateMachine.stateVariables.selection.selected.clear();
     stateMachine.state = State.IDLE;
 };

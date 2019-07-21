@@ -1,12 +1,12 @@
 //tslint:disable member-ordering max-classes-per-file
 
 class Wrapper<C> {
-    protected tracker = 0;
+    public tracker = 0;
 
     constructor(protected collection: C) { }
 
     protected log() {
-        this.tracker = (this.tracker + 1) % 1 << 10;
+        this.tracker = (this.tracker + 1) % (1 << 10);
     }
 }
 
@@ -46,7 +46,7 @@ export class WrapperSet<K> extends Wrapper<Set<K>> {
     }
 
     public add(...values: K[]) {
-        values.forEach(this.collection.add.bind(this.collection));
+        values.forEach(v => this.collection.add(v));
         this.log();
     }
 

@@ -5,7 +5,8 @@
     @pointerup.stop="$emit('umouse', {target:'bond', payload:bond, event:$event})"
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
-    :style="`--x:${bond.start.x}px;--y:${bond.start.y}px;--angle:${this.angle}rad;`"
+    :style="`--x:${bond.start.x}px;--y:${bond.start.y}px;--angle:${this.angle}rad;
+            pointer-events:${transparent ? 'none' : 'all'}`"
     class="positioned bond"
   >
     <rect x="0" y="-12.5" height="25" :width="dist" fill="transparent" />
@@ -161,7 +162,7 @@ export default Vue.extend({
       return this.bond.end.softOmittable && this.omitting
         ? this.dist
         : this.dist - this.bond.end.radius;
-    },
+    }
   }
 });
 </script>

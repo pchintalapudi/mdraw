@@ -43,7 +43,7 @@ import StraightArrowVue from "@/components/molecules/StraightArrow.vue";
 import CurvedArrowVue from "@/components/molecules/CurvedArrow.vue";
 import { State, Action, StateMachine } from "@/state_machine";
 import { RGroup, Bond, StraightArrow, CurvedArrow } from "@/models";
-import {WrapperMap, WrapperSet} from "@/utils";
+import { WrapperMap, WrapperSet } from "@/utils";
 export default Vue.extend({
   components: {
     "bond-vue": BondVue,
@@ -77,7 +77,9 @@ export default Vue.extend({
       return this.stateMachine.stateVariables.selection.selected;
     },
     transparent(): WrapperSet<RGroup | Bond | StraightArrow | CurvedArrow> {
-      const transp = new WrapperSet<RGroup | Bond | StraightArrow | CurvedArrow>();
+      const transp = new WrapperSet<
+        RGroup | Bond | StraightArrow | CurvedArrow
+      >();
       switch (this.stateMachine.state) {
         case State.PLACING_ATOM_AND_BOND:
         case State.PLACING_ATOM:
