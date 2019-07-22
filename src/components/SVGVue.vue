@@ -33,6 +33,14 @@
           transition:transform ${$options.frameTime}ms linear
         }
 
+        .transparent {
+          pointer-events:none;
+        }
+
+        .not-transparent {
+          pointer-events:all;
+        }
+
         text {
           cursor:default;
           user-select:none;
@@ -125,18 +133,14 @@ export default Vue.extend({
       return (
         this.autoscroll &&
         this.mx >
-          this.viewPort.width -
-            Constants.screenScrollWidth +
-            this.viewPort.x
+          this.viewPort.width - Constants.screenScrollWidth + this.viewPort.x
       );
     },
     scrollBottom(): boolean {
       return (
         this.autoscroll &&
         this.my >
-          this.viewPort.height -
-            Constants.screenScrollWidth +
-            this.viewPort.y
+          this.viewPort.height - Constants.screenScrollWidth + this.viewPort.y
       );
     },
     needsScroll(): boolean {
@@ -173,15 +177,9 @@ export default Vue.extend({
   },
   methods: {
     transformPoint(payload: { x: number; y: number }) {
-      const pt = (this.svg as any).createSVGPoint() as SVGPoint;
-      pt.x = payload.x;
-      pt.y = payload.y;
-      const transformed = pt.matrixTransform(
-        this.svg.getScreenCTM()!.inverse()
-      );
       return {
-        x: transformed.x + this.viewPort.x,
-        y: transformed.y + this.viewPort.y
+        x: payload.x + this.viewPort.x,
+        y: payload.y + this.viewPort.y
       };
     },
     handleMouseMove(payload: { x: number; y: number }, transformed = false) {

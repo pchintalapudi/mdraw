@@ -5,11 +5,12 @@
       :y="d3 ? -5 : -0.5"
       :width="dist"
       :height="d3 ? 10 : 1"
-      :style="`fill:${d3 ? 'url(#d3bond)' : 'transparent'};stroke:${d3 ? 'transparent' : selected ? 'blue':'black'};`"
+      :style="`fill:${d3 ? 'url(#d3bond)' : 'transparent'};stroke:${d3 ? 'transparent' : selected ? 'blue' : 'black'};`"
     ></rect>
     <polygon
       :points="`${dist},${d3 ? 10.5 : 3.5}, ${dist}, ${d3 ? -10.5 : -3.5}, ${dist + (d3 ? 20 : 10)},0`"
-      :style="`fill:${d3 ? 'url(#d3bond)' : selected?'blue':'black'};stroke:transparent;`"
+      stroke="transparent"
+      :style="`fill:${d3 ? 'url(#d3bond)' : selected ? 'blue' : 'black'};`"
     ></polygon>
   </g>
 </template>
@@ -20,8 +21,7 @@ export default Vue.extend({
   props: {
     arrow: Object as PropType<StraightArrow>,
     selected: Boolean,
-    d3: Boolean,
-    transparent: Boolean
+    d3: Boolean
   },
   computed: {
     dist(): number {
@@ -35,11 +35,6 @@ export default Vue.extend({
     },
     angle(): number {
       return this.arrow.angle;
-    },
-    classes(): string[] {
-      const classes = [] as string[];
-      if (this.transparent) classes.push("transparent");
-      return classes;
     }
   }
 });

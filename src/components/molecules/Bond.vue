@@ -5,54 +5,42 @@
     @pointerup.stop="$emit('umouse', {target:'bond', payload:bond, event:$event})"
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
-    :style="`--x:${bond.start.x}px;--y:${bond.start.y}px;--angle:${this.angle}rad;
-            pointer-events:${transparent ? 'none' : 'all'}`"
+    :style="rootStyle"
     class="positioned bond"
   >
     <rect x="0" y="-12.5" height="25" :width="dist" fill="transparent" />
-    <polygon v-if="showPolygon" :style="polygonFill" :points="`0,0 ${polygonX},5 ${polygonX},-5`"></polygon>
+    <polygon v-if="showPolygon" :fill="polygonFill" :points="`0,0 ${polygonX},5 ${polygonX},-5`"></polygon>
     <rect
-      v-else-if="bond.bondOrder !== 2"
+      v-else-if="singleBond"
       :width="dist"
       :height="height"
       class="positioned"
-      :style="`--y:${-height / 2}px;
-      ${!bond.bondOrder ? `fill:${d3 ? 'url(#patchy-d3bond)' : 'url(#patchy)'}` : ''}`"
+      :fill="this.bond.bondOrder === 0 ? this.d3 ? 'url(#patchy-d3bond)' : 'url(#patchy)' : false"
+      :style="`--y:${-height / 2}px;`"
     />
-    <template v-if="bond.bondOrder > 1">
-      <rect
-        x="0"
-        y="0"
-        height="1"
-        width="1"
-        class="positioned"
-        :style="`--x:${doubleStartLeft}px;--y:${doubleDown}px;--sy:${height};--sx:${doubleDistLeft};`"
-      />
-      <rect
-        x="0"
-        y="0"
-        height="1"
-        width="1"
-        class="positioned"
-        :style="`--x:${doubleStartRight}px;--y:${doubleUp}px;--sy:${height};--sx:${doubleDistRight};`"
-      />
+    <template v-if="flairs">
+      <rect x="0" y="0" height="1" width="1" class="positioned" :style="rect1Style" />
+      <rect x="0" y="0" height="1" width="1" class="positioned" :style="rect2Style" />
     </template>
   </g>
 </template>
 <script lang="ts">
 import Vue, { PropType } from "vue";
-import { Bond, BondState } from "../../models";
+import { Bond, BondState } from "@/models";
+
+function blur(num: number) {
+  const int = num + 0.000005;
+  return int - (int % 0.00001);
+}
+
+const shortenOmitted = 1 / 7;
+const shortenVisible = 2 / 7;
+
 export default Vue.extend({
   props: {
     bond: Object as PropType<Bond>,
-    transparent: Boolean,
     omitting: Boolean,
     d3: Boolean
-  },
-  created() {
-    const options = this.$options as any;
-    options.shortenVisible = 2 / 7;
-    options.shortenOmitted = 1 / 7;
   },
   computed: {
     showPolygon(): boolean {
@@ -79,30 +67,30 @@ export default Vue.extend({
     },
     polygonFill(): string {
       return this.bond.state === BondState.FORWARD
-        ? "fill:black"
-        : "fill:url(#patchy)";
+        ? "black"
+        : "url(#patchy)";
     },
     difX(): number {
-      return this.bond.end.x - this.bond.start.x;
+      return blur(this.bond.end.x - this.bond.start.x);
     },
     difY(): number {
-      return this.bond.end.y - this.bond.start.y;
+      return blur(this.bond.end.y - this.bond.start.y);
     },
     dist(): number {
-      return Math.hypot(this.difX, this.difY);
+      return blur(Math.hypot(this.difX, this.difY));
     },
     angle(): number {
-      return Math.atan2(this.difY, this.difX);
+      return blur(Math.atan2(this.difY, this.difX));
     },
     shortenStart(): number {
       return this.bond.start.softOmittable && this.omitting
-        ? (this.$options as any).shortenOmitted
-        : (this.$options as any).shortenVisible;
+        ? shortenOmitted
+        : shortenVisible;
     },
     shortenEnd(): number {
       return this.bond.end.softOmittable && this.omitting
-        ? (this.$options as any).shortenOmitted
-        : (this.$options as any).shortenVisible;
+        ? shortenOmitted
+        : shortenVisible;
     },
     doubleUp(): number {
       return (
@@ -162,6 +150,21 @@ export default Vue.extend({
       return this.bond.end.softOmittable && this.omitting
         ? this.dist
         : this.dist - this.bond.end.radius;
+    },
+    rootStyle(): string {
+      return `--x:${this.bond.start.x}px;--y:${this.bond.start.y}px;--angle:${this.angle}rad;`;
+    },
+    rect1Style(): string {
+      return `--x:${this.doubleStartLeft}px;--y:${this.doubleDown}px;--sy:${this.height};--sx:${this.doubleDistLeft};`;
+    },
+    rect2Style(): string {
+      return `--x:${this.doubleStartRight}px;--y:${this.doubleUp}px;--sy:${this.height};--sx:${this.doubleDistRight};`;
+    },
+    singleBond(): boolean {
+      return this.bond.bondOrder !== 2;
+    },
+    flairs(): boolean {
+      return this.bond.bondOrder > 1;
     }
   }
 });

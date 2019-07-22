@@ -1,5 +1,5 @@
 <template>
-  <defs>
+  <defs v-once>
     <pattern id="patchy" width="5" height="10" patternUnits="userSpaceOnUse">
       <rect x="0" y="0" width="2" height="10" fill="black"></rect>
     </pattern>

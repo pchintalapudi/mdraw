@@ -10,9 +10,8 @@
       :r="d3 ? 12.5 : abbrev.length * 5 + 5"
       stroke-width="10"
       paint-order="stroke"
-      :style="`fill:${d3 ? `url(#color${color}-gradient)` :
-              (omitting && rgroup.softOmittable && !selected) ? 'transparent' : 'white'};
-              stroke:${selected ? '#0088ff44' : 'transparent'}`"
+      :fill="d3 ? `url(#color${color}-gradient)` :  (omitting && rgroup.softOmittable && !selected) ? 'transparent' : 'white'"
+      :stroke="selected ? '#0088ff44' : 'transparent'"
     />
     <title>{{rgroup.payload.name}}</title>
     <template v-if="selected || !(omitting && rgroup.softOmittable)">
@@ -49,7 +48,6 @@ import { RGroup, LonePair, getColor } from "@/models";
 export default Vue.extend({
   props: {
     rgroup: Object as PropType<RGroup>,
-    transparent: Boolean,
     selected: Boolean,
     omitting: Boolean,
     d3: Boolean
@@ -60,8 +58,7 @@ export default Vue.extend({
       return this.rgroup.payload.abbrev || this.rgroup.payload.name;
     },
     rootStyle(): string {
-      return `pointer-events:${this.transparent ? "none" : "all"};
-      --x:${this.rgroup.x}px;--y:${this.rgroup.y}px;`;
+      return `--x:${this.rgroup.x}px;--y:${this.rgroup.y}px;`;
     },
     color(): string {
       return getColor(this.rgroup);

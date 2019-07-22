@@ -5,13 +5,14 @@
       :key="arrow.id"
       :arrow="arrow"
       :selected="selected.has(arrow)"
+      :class="transparent.has(arrow) ? 'transparent' : 'not-transparent'"
       :d3="d3"
     ></straight-arrow-vue>
     <bond-vue
       v-for="bond in bonds"
       :key="bond.id"
       :bond="bond"
-      :transparent="transparent.has(bond)"
+      :class="transparent.has(bond) ? 'transparent' : 'not-transparent'"
       @click-bond="handleClick"
       @dblclick-bond="handleDblClick"
       @dmouse="handleMouseDown"
@@ -27,12 +28,14 @@
       @dmouse="handleMouseDown"
       @mmouse="handleMouseMove"
       @umouse="handleMouseUp"
-      :transparent="transparent.has(rgroup)"
+      :class="transparent.has(rgroup) ? 'transparent' : 'not-transparent'"
       :selected="selected.has(rgroup)"
       :omitting="omit"
       :d3="d3"
     ></rgroup-vue>
-    <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow" :d3="d3"></curved-arrow-vue>
+    <template v-if="!d3">
+      <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow" :d3="d3"></curved-arrow-vue>
+    </template>
   </g>
 </template>
 <script lang="ts">
