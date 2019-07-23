@@ -8,31 +8,64 @@
       :class="transparent.has(arrow) ? 'transparent' : 'not-transparent'"
       :d3="d3"
     ></straight-arrow-vue>
-    <bond-vue
-      v-for="bond in bonds"
-      :key="bond.id"
-      :bond="bond"
-      :class="transparent.has(bond) ? 'transparent' : 'not-transparent'"
-      @click-bond="handleClick"
-      @dblclick-bond="handleDblClick"
-      @dmouse="handleMouseDown"
-      @mmouse="handleMouseMove"
-      @umouse="handleMouseUp"
-      :omitting="omit"
-      :d3="d3"
-    ></bond-vue>
+    <g :class="bondsTransparent ? 'transparent' : 'not-transparent'" data-group="bonds">
+      <bond-vue
+        v-for="bond in bonds"
+        :key="bond.id"
+        :bond="bond"
+        @click-bond="handleClick"
+        @dblclick-bond="handleDblClick"
+        @dmouse="handleMouseDown"
+        @mmouse="handleMouseMove"
+        @umouse="handleMouseUp"
+        :omitting="omit"
+        :d3="d3"
+      ></bond-vue>
+    </g>
+    <template v-if="rawRGroups.length > 1">
+      <g
+        v-if="!selectedTransparent"
+        :class="rgroupsTransparent ? 'transparent' : 'not-transparent'"
+      >
+        <rgroup-vue
+          v-for="rgroup in shortRGroups"
+          :key="rgroup.id"
+          :rgroup="rgroup"
+          @dmouse="handleMouseDown"
+          @mmouse="handleMouseMove"
+          @umouse="handleMouseUp"
+          :selected="selected.has(rgroup)"
+          :omitting="omit"
+          :d3="d3"
+        ></rgroup-vue>
+      </g>
+      <g v-else>
+        <rgroup-vue
+          v-for="rgroup in shortRGroups"
+          :key="rgroup.id"
+          :rgroup="rgroup"
+          @dmouse="handleMouseDown"
+          @mmouse="handleMouseMove"
+          @umouse="handleMouseUp"
+          :selected="selected.has(rgroup)"
+          :omitting="omit"
+          :d3="d3"
+          :class="selected.has(rgroup) ? 'transparent' : 'not-transparent'"
+        ></rgroup-vue>
+      </g>
+    </template>
     <rgroup-vue
-      v-for="rgroup in rgroups"
-      :key="rgroup.id"
-      :rgroup="rgroup"
+      v-if="rawRGroups.length"
+      :rgroup="endRGroup"
       @dmouse="handleMouseDown"
       @mmouse="handleMouseMove"
       @umouse="handleMouseUp"
-      :class="transparent.has(rgroup) ? 'transparent' : 'not-transparent'"
-      :selected="selected.has(rgroup)"
+      :selected="selected.has(endRGroup)"
       :omitting="omit"
       :d3="d3"
-    ></rgroup-vue>
+      :class="endRGroupTransparent || rgroupsTransparent ||
+              selectedTransparent && selected.has(endRGroup) ? 'transparent' : 'not-transparent'"
+    />
     <template v-if="!d3">
       <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow" :d3="d3"></curved-arrow-vue>
     </template>
@@ -60,10 +93,22 @@ export default Vue.extend({
     d3: Boolean
   },
   computed: {
-    rgroups(): RGroup[] {
+    rawRGroups(): RGroup[] {
+      return this.stateMachine.stateVariables.rgroups;
+    },
+    shortRGroups(): RGroup[] {
+      const rgroups = this.rawRGroups.slice(0, this.rawRGroups.length - 1);
       return this.omit
-        ? this.stateMachine.stateVariables.rgroups.filter(r => !r.omittable)
-        : this.stateMachine.stateVariables.rgroups;
+        ? rgroups.filter(
+            r =>
+              !r.omittable ||
+              this.selected.has(r) ||
+              this.stateMachine.stateVariables.temp.point === r
+          )
+        : rgroups;
+    },
+    endRGroup(): RGroup {
+      return this.rawRGroups[this.rawRGroups.length - 1];
     },
     bonds(): Bond[] {
       return this.omit
@@ -79,27 +124,40 @@ export default Vue.extend({
     selected(): WrapperMap<RGroup | StraightArrow, { x: number; y: number }> {
       return this.stateMachine.stateVariables.selection.selected;
     },
-    transparent(): WrapperSet<RGroup | Bond | StraightArrow | CurvedArrow> {
-      const transp = new WrapperSet<
-        RGroup | Bond | StraightArrow | CurvedArrow
-      >();
+    bondsTransparent(): boolean {
       switch (this.stateMachine.state) {
-        case State.PLACING_ATOM_AND_BOND:
+        default:
+          return false;
         case State.PLACING_ATOM:
-          transp.add(this.rgroups[this.rgroups.length - 1]);
+        case State.PLACING_ATOM_AND_BOND:
         case State.PLACING_LONE_PAIR:
         case State.SELECTING:
-          transp.add(...this.bonds);
-          break;
         case State.MOVING_ATOM:
-          this.selected.forEach((_, rs) => transp.add(rs));
-          transp.add(...this.bonds);
-          break;
         case State.ANGLING_LONE_PAIR:
-          transp.add(...this.rgroups);
-          transp.add(...this.bonds);
+          return true;
       }
-      return transp;
+    },
+    rgroupsTransparent(): boolean {
+      switch (this.stateMachine.state) {
+        default:
+          return false;
+        case State.ANGLING_LONE_PAIR:
+        case State.SELECTING:
+          return true;
+      }
+    },
+    endRGroupTransparent(): boolean {
+      switch (this.stateMachine.state) {
+        default:
+          return false;
+        case State.PLACING_ATOM:
+        case State.PLACING_ATOM_AND_BOND:
+        case State.ANGLING_LONE_PAIR:
+          return true;
+      }
+    },
+    selectedTransparent(): boolean {
+      return this.stateMachine.state === State.MOVING_ATOM;
     },
     transmitLonePair(): boolean {
       switch (this.stateMachine.state) {
