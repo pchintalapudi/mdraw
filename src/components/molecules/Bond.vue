@@ -5,8 +5,8 @@
     @pointerup.stop="$emit('umouse', {target:'bond', payload:bond, event:$event})"
     @click.stop="$emit('click-bond', {target:'bond', payload:bond, event:$event})"
     @dblclick.stop="$emit('dblclick-bond', {target:'bond', payload:bond, event:$event})"
-    :style="rootStyle"
-    class="positioned bond"
+    :transform="`translate(${bond.start.x} ${bond.start.y}) rotate(${angle * 180 / Math.PI})`"
+    class="bond"
   >
     <rect x="0" y="-12.5" height="25" :width="dist" fill="transparent" />
     <polygon v-if="showPolygon" :fill="polygonFill" :points="`0,0 ${polygonX},5 ${polygonX},-5`"></polygon>
@@ -14,9 +14,8 @@
       v-else-if="singleBond"
       :width="dist"
       :height="height"
-      class="positioned"
       :fill="this.bond.bondOrder === 0 ? this.d3 ? 'url(#patchy-d3bond)' : 'url(#patchy)' : false"
-      :style="`--y:${-height / 2}px;`"
+      :transform="`translate(0 ${-height / 2})`"
     />
     <template v-if="flairs">
       <rect x="0" y="0" height="1" width="1" class="positioned" :style="rect1Style" />

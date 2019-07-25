@@ -3,8 +3,7 @@
     @pointerdown.stop="pointerDown"
     @pointerup.stop="pointerUp"
     @pointermove.stop="pointerMove"
-    :style="rootStyle"
-    class="positioned"
+    :transform="`translate(${rgroup.x} ${rgroup.y})`"
   >
     <circle
       :r="d3 ? 12.5 : abbrev.length * 5 + 5"
@@ -17,8 +16,6 @@
     <template v-if="selected || !(omitting && rgroup.softOmittable)">
       <text
         v-if="!d3"
-        class="abbrev"
-        ref="content"
         text-anchor="middle"
         dominant-baseline="central"
       >{{abbrev}}</text>
@@ -28,7 +25,6 @@
       :x="abbrev.length * 5 + 2.5"
       y="-5"
       font-size="small"
-      ref="charge"
       text-anchor="start"
     >{{rgroup.charge === -1 ? '-' : rgroup.charge === 1 ? '+' : rgroup.charge > 0 ? rgroup.charge + "+" : rgroup.charge + "-"}}</text>
     <lone-pair-vue

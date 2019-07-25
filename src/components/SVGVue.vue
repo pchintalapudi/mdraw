@@ -30,7 +30,13 @@
         }
 
         svg > .positioned {
-          transition:transform ${$options.frameTime}ms linear
+          transition:transform ${$options.frameTime}ms linear;
+          --angle:0;
+          --tx:center;
+          --ty:center;
+          --sx:1;
+          --sy:1;
+          will-change:transform;
         }
 
         .transparent {
@@ -61,8 +67,7 @@
     />
     <g
       class="positioned"
-      :style="`--x:${printing ? 0 : -viewPort.x}px;--y:${printing ? 0 : -viewPort.y}px;
-              --angle:0;--tx:center;--ty:center;--sx:1;--sy:1;`"
+      :style="`--x:${printing ? 0 : -viewPort.x}px;--y:${printing ? 0 : -viewPort.y}px;`"
     >
       <slot />
     </g>

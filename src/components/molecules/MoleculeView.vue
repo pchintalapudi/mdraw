@@ -50,12 +50,12 @@
           :selected="selected.has(rgroup)"
           :omitting="omit"
           :d3="d3"
-          :class="selected.has(rgroup) ? 'transparent' : 'not-transparent'"
+          :class="selected.has(rgroup) || rgroup === stateMachine.stateVariables.temp.point ? 'transparent' : 'not-transparent'"
         ></rgroup-vue>
       </g>
     </template>
     <rgroup-vue
-      v-if="rawRGroups.length"
+      v-if="rawRGroups.length && (!omit || !endRGroup.omittable)"
       :rgroup="endRGroup"
       @dmouse="handleMouseDown"
       @mmouse="handleMouseMove"
@@ -63,8 +63,7 @@
       :selected="selected.has(endRGroup)"
       :omitting="omit"
       :d3="d3"
-      :class="endRGroupTransparent || rgroupsTransparent ||
-              selectedTransparent && selected.has(endRGroup) ? 'transparent' : 'not-transparent'"
+      :class="endRGroupTransparent ? 'transparent' : 'not-transparent'"
     />
     <template v-if="!d3">
       <curved-arrow-vue v-for="arrow in curvedArrows" :key="arrow.id" :arrow="arrow" :d3="d3"></curved-arrow-vue>
@@ -149,7 +148,12 @@ export default Vue.extend({
     endRGroupTransparent(): boolean {
       switch (this.stateMachine.state) {
         default:
-          return false;
+          return this.rgroupsTransparent;
+        case State.MOVING_ATOM:
+          return (
+            this.selected.has(this.endRGroup) ||
+            this.stateMachine.stateVariables.temp.point === this.endRGroup
+          );
         case State.PLACING_ATOM:
         case State.PLACING_ATOM_AND_BOND:
         case State.ANGLING_LONE_PAIR:

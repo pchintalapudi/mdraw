@@ -29,7 +29,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
         cancelMoving(stateMachine, undefined as any);
         if (rgs instanceof RGroup) {
             stateMachine.state = State.PLACING_ATOM_AND_BOND;
-            const rg = new RGroup({ name: "Carbon", abbrev: "C" }, rgs.x, rgs.y);
+            const rg = new RGroup(stateMachine.stateVariables.cache.lastElement, rgs.x, rgs.y);
             stateMachine.stateVariables.rgroups.push(rg);
             const bond = new Bond(rgs, rg);
             rgs.bonds.set(rg, bond);
@@ -106,7 +106,7 @@ const mouseUpMoving: Transform = (stateMachine, { target, payload }) => {
                 }
             });
             const oldBonds = [...stateMachine.stateVariables.bonds];
-            const newBonds = oldBonds.filter(remove.has.bind(remove));
+            const newBonds = oldBonds.filter(b => !remove.has(b));
             payload.lonePairs.push(...rgs.lonePairs);
             const undo = (sm: StateMachine) => {
                 sm.stateVariables.rgroups.splice(idx, 0, rgs);
