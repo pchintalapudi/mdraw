@@ -26,12 +26,12 @@ export const colors = (() => {
     const colorArr: string[] = [];
     // tslint:disable-next-line: forin
     for (const e in ElementColor) {
-        colorArr.push(ElementColor[e]);
+        colorArr.push((ElementColor as any)[e]);
     }
     return colorArr;
 })();
 
 export function getColor(rgroup: RGroup | string): string {
-    return ElementColor[typeof rgroup === "string" ? rgroup.toUpperCase() : rgroup.payload.name.toUpperCase() as any]
+    return (ElementColor as any)[typeof rgroup === "string" ? rgroup.toUpperCase() : rgroup.payload.name.toUpperCase() as any]
         || ElementColor.DEFAULT;
 }
