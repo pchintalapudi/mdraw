@@ -16,6 +16,7 @@ const targeter = new Map<string, Transform>([
     spawn, lonePair, straightArrow, curvedArrow, panning, mapping, infer].map(pair));
 
 const touchBar: Transform = (stateMachine, payload) => {
+    console.log(targeter);
     if (targeter.has(payload.target)) targeter.get(payload.target)!(stateMachine, payload);
     else {
         // tslint:disable-next-line: no-console
