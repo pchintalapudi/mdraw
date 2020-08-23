@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/mdraw/precache-manifest.142840722ea0741695e9c9275003580b.js"
+  "/mdraw/precache-manifest.e10ecfac9267ff18465630c94b57a5cb.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "mdraw"});
