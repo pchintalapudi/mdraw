@@ -8,15 +8,10 @@ import { infer } from "./infer";
 import { Transform, registerTransform } from "@/state_machine/transitions";
 import { State, Action } from "@/state_machine";
 
-function pair(f: Transform): [string, Transform] {
-    return [f.name.replace(/[A-Z]/g, (match) => "-" + match.toLowerCase()), f];
-}
-
 const targeter = new Map<string, Transform>([
-    spawn, lonePair, straightArrow, curvedArrow, panning, mapping, infer].map(pair));
+    ["spawn", spawn], ["lone-pair", lonePair], ["straight-arrow", straightArrow], ["curved-arrow", curvedArrow], ["panning", panning], ["mapping", mapping], ["infer", infer]]);
 
 const touchBar: Transform = (stateMachine, payload) => {
-    console.log(targeter);
     if (targeter.has(payload.target)) targeter.get(payload.target)!(stateMachine, payload);
     else {
         // tslint:disable-next-line: no-console
